@@ -1,0 +1,133 @@
+/*The login, resistering and .... backgrounder manager style*/
+
+.bg-image-fgt-pwd {
+    background: url("/registrationImages/fgt-img-bg.jpg") top left/cover no-repeat;
+    background-position: 0px -17px;
+    border-bottom: thin solid white;
+    border-left: thin solid white;
+    display: table-cell;
+    width: 50%;
+}
+
+.bg-image-reg {
+    background: url("/registrationImages/reg-img-6.jpg")top left/cover no-repeat;
+    border-bottom: thin solid white;
+    border-left: thin solid white;
+    display: table-cell;
+}
+
+.bg-image-login {
+    background: url("/registrationImages/reg-img-6.jpg") top left/cover no-repeat;
+    background-position: -160px 0;
+    border-bottom: thin solid white;
+    border-left: thin solid white;
+    display: table-cell;
+    width: 50%;
+}
+
+.image-loader {
+    background: url('/registrationImages/img-photo-loader.jpg') top left/cover no-repeat;
+    border-bottom: thin solid white;
+    border-left: thin solid white;
+    display: table-cell;
+    width: 50%;
+}
+
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.z-justify-relative-top-80 {
+    position: relative;
+    top: 80px !important;
+}
+
+.z-admin-active {
+    background-color: wheat;
+    color: #000;
+    font-weight: bold !important;
+}
+
+.z-table tr:nth-child(odd) {
+    background: #333;
+}
+
+.z-table tr {
+    background: #334;
+}
+
+.z-table tr td {
+    padding-left: 10px;
+}
+
+.success-hover:hover {
+    transform: scale(0.9);
+    background-color: green;
+    color: #000 !important;
+    border: thin solid black !important;
+}
+
+.danger-hover:hover {
+    transform: scale(0.9);
+    background-color: crimson;
+    color: #000 !important;
+    border: thin solid black !important;
+}
+
+.warning-hover:hover {
+    transform: scale(0.9);
+    background-color: orange;
+    color: #000 !important;
+    border: thin solid black !important;
+}
+
+.secondary-hover-no-transform:hover {
+    background-color: #334;
+    color: #fff !important;
+    border: thin solid black !important;
+}
+
+.messages-box .messages-content {
+    font-family: cursive;
+    font-size: 14px;
+    font-weight: ;
+}
+
+.z-scale:hover {
+    transform: scale(1.1);
+}
+
+.z-rotate:hover {
+    transform: rotate(180deg);
+}
+
+.chatMessageCard:hover {
+    opacity: 0.888;
+}
+
+.border-muted {
+    border-color: gray !important;
+    opacity: 0.7;
+}
+
+.z-title-master {
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 24px;
+    font-weight: 700;
+    -webkit-transition: all .3s ease 0s;
+    -moz-transition: all .3s ease 0s;
+    -o-transition: all .3s ease 0s;
+    transition: all .3s ease 0s;
+}
+
+.z-title-md {
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 700;
+    -webkit-transition: all .3s ease 0s;
+    -moz-transition: all .3s ease 0s;
+    -o-transition: all .3s ease 0s;
+    transition: all .3s ease 0s;
+}
