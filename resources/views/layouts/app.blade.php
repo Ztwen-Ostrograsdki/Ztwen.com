@@ -18,7 +18,7 @@
         <!-- Scripts -->
         <script src="{{ mix('js/app.js') }}" defer></script>
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased" style="background-color: lightslategray;">
         @include('components.mycomponents.loader') {{-- chargement du loader --}}
         @livewire('header') {{-- chargement du header --}}
         {{-- chargement des modals --}}
@@ -32,7 +32,7 @@
         @livewire('product-editor')
         {{-- chargement des modals --}}
 
-        <div class="min-h-screen bg-gray-100" style="background-color: lightslategray;">
+        <div class="min-h-screen bg-gray-100" style="background-color: rgb(167, 193, 219);">
             <!-- Page Content -->
             <div class="">
                 @if (isset($slot))
@@ -50,8 +50,5 @@
             @include("components.mycomponents.footer") {{-- chargement du footer --}}
         @endif
         @include("components.mycomponents.scripts") {{-- chargement des scripts js --}}
-
-
-    
     </body>
 </html>

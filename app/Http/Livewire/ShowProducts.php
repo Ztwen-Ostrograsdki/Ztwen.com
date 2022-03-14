@@ -9,12 +9,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ShowProducts extends Component
 {
-
+    protected $listeners = ['productUpdated'];
     public $products = [];
     public $product;
+    public $targetedProductSeens;
+    public $targetedProduct;
     public $allProducts = [];
     public $allProductsComments = [];
-    public $name = "composant ";
     public $pages = [];
     public $active_page = 0;
     public $minPage = 0;
@@ -35,6 +36,11 @@ class ShowProducts extends Component
     public function booted()
     {
         $this->getProducts();
+    }
+
+    public function productUpdated($product_id)
+    {
+        $this->getProducts(); 
     }
 
     public function setTargetedProduct($product_id)
@@ -80,24 +86,28 @@ class ShowProducts extends Component
     }
 
     public function decreasePage()
-    {
-        if($this->minPage - 1 == 0){
-            $this->minPage = 0;
+    {  
+        if($this){
+            if($this->minPage - 1 == 0){
+                $this->minPage = 0;
+            }
+            else{
+                $this->minPage = $this->minPage - 1;
+            }
+            $this->maxPage = $this->maxPage - 1;
         }
-        else{
-            $this->minPage = $this->minPage - 1;
-        }
-        $this->maxPage = $this->maxPage - 1;
     }
     public function increasePage()
     {
-        if($this->maxPage + 1 == count($this->pages) - 1){
-            $this->maxPage = count($this->pages) - 1;
+        if($this){
+            if($this->maxPage + 1 == count($this->pages) - 1){
+                $this->maxPage = count($this->pages) - 1;
+            }
+            else{
+                $this->maxPage = $this->maxPage + 1;
+            }
+            $this->minPage = $this->minPage + 1;
         }
-        else{
-            $this->maxPage = $this->maxPage + 1;
-        }
-        $this->minPage = $this->minPage + 1;
     }
 
 
@@ -123,9 +133,20 @@ class ShowProducts extends Component
                     'reaction' => true,
                 ]);
             }
+            $this->refreshData($product->id);
+            // $this->emit('productUpdated', $product->id);
         }
         else{
             return abort(403, "Votre requête ne peut aboutir");
+        }
+    }
+
+    public function refreshData($product_id)
+    {
+        $product = Product::find($product_id);
+        if($product){
+            $this->targetedProduct = $product;
+            $this->targetedProductSeens = $product->seen;
         }
     }
 

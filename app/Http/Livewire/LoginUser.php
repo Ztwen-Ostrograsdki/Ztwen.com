@@ -17,7 +17,7 @@ class LoginUser extends Component
 
     public $email;
     public $password;
-    protected $listeners = ['newUserAdded'];
+    // protected $listeners = ['newUserAdded'];
     protected $rules = [
         'email' => 'required|email|between:5,255',
         'password' => 'required|string',

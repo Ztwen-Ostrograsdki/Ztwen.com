@@ -59,6 +59,12 @@ class Product extends Model
         return $this->hasMany(SeenLikeProductSytem::class);
     }
 
+
+    public function mySeens()
+    {
+        return $this->seen;
+    }
+
     public function productGalery()
     {
         if($this->images->count() < 1){
@@ -67,6 +73,25 @@ class Product extends Model
         else{
             return $this->images;
         }
+    }
+
+
+    public function getRandomDefaultImage()
+    {
+        $r = rand(0, 2);
+        return ($this->productGalery())[$r];
+    }
+
+    public function getProductDefaultImageInGalery()
+    {
+        $galery = $this->productGalery();
+        $size = $galery->count() - 1;
+        $r = rand(0, $size);
+        $images = [];
+        foreach ($galery as $key => $image) {
+            $images[] = $image;
+        }
+        return $images[$r]->name;
     }
 
 }

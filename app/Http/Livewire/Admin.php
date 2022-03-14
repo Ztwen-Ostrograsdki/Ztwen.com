@@ -35,7 +35,7 @@ class Admin extends Component
         $data = User::all();
         foreach ($data as $u) {
             if ($u->currentPhoto() !== []) {
-                $this->currentUsersProfil[$u->id] = $u->currentPhoto()->name;
+                $this->currentUsersProfil[$u->id] = $u->currentPhoto();
                 
             }
             else{

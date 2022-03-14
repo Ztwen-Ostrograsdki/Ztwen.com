@@ -28,94 +28,121 @@
                     <div class="wrapper wrapper--w780 ">
                         <div class="card card-3 border border-danger w-100 p-0 m-0">
                             <div class="m-0 p-0 w-100 row">
-                                <div class="text-white bg-white col-md-12 col-lg-5 col-xl-5 col-12 border m-0 p-0">
-                                    @if($product->images->count() > 0)
-                                    <div id="productProfilImagesCarouselTrue" class="carousel slide m-0" data-ride="carousel">
-                                        <ol class="carousel-indicators">
-                                            @foreach ($galery as $key => $image)
-                                                <li data-target="#productProfilImagesCarouselTrue" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
-                                            @endforeach
-                                        </ol>
-                                        <div class="carousel-inner">
-                                            @foreach ($galery as $key => $image)
-                                                <div class="carousel-item @if($key == 0)active @endif">
-                                                    <img class="d-block w-100" src="/storage/articlesImages/{{$image->name}}" alt="slide-{{$key}}">
-                                                </div>
-                                            @endforeach
+                                @if($updating !== true)
+                                    <div class="text-white bg-white col-md-12 col-lg-5 col-xl-5 col-12 border m-0 p-0">
+                                        @if($product->images->count() > 0 && $galery !== [])
+                                        <div id="productProfilImagesCarouselTrue" class="carousel slide m-0" data-ride="carousel">
+                                            <ol class="carousel-indicators">
+                                                @foreach ($galery as $key => $image)
+                                                    <li data-target="#productProfilImagesCarouselTrue" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
+                                                @endforeach
+                                            </ol>
+                                            <div class="carousel-inner">
+                                                @foreach ($galery as $key => $image)
+                                                    <div class="carousel-item @if($key == 0)active @endif">
+                                                        <img class="d-block w-100" src="/storage/articlesImages/{{$image->name}}" alt="slide-{{$key}}">
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <a class="carousel-control-prev" href="#productProfilImagesCarouselTrue" role="button" data-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                            <a class="carousel-control-next" href="#productProfilImagesCarouselTrue" role="button" data-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Next</span>
+                                            </a>
                                         </div>
-                                        <a class="carousel-control-prev" href="#productProfilImagesCarouselTrue" role="button" data-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Previous</span>
-                                        </a>
-                                        <a class="carousel-control-next" href="#productProfilImagesCarouselTrue" role="button" data-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Next</span>
-                                        </a>
-                                    </div>
-                                    @else
-                                    <div id="productProfilImagesCarouselFalse" class="carousel slide m-0" data-ride="carousel">
-                                        <ol class="carousel-indicators">
-                                            @foreach ($galery as $key => $image)
-                                                <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
-                                            @endforeach
-                                        </ol>
-                                        <div class="carousel-inner">
-                                            @foreach ($galery as $key => $image)
-                                                <div class="carousel-item @if($key == 0)active @endif">
-                                                    <img class="d-block w-100" src="{{$image}}" alt="slide-{{$key}}">
-                                                </div>
-                                            @endforeach
+                                        @elseif($product->images->count() < 1 || $galery == [])
+                                        <div id="productProfilImagesCarouselFalse" class="carousel slide m-0" data-ride="carousel">
+                                            <ol class="carousel-indicators">
+                                                @foreach ($galery as $key => $image)
+                                                    <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
+                                                @endforeach
+                                            </ol>
+                                            <div class="carousel-inner">
+                                                @foreach ($galery as $key => $image)
+                                                    <div class="carousel-item @if($key == 0)active @endif">
+                                                        <img class="d-block w-100" src="{{$image}}" alt="slide-{{$key}}">
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <a class="carousel-control-prev" href="#productProfilImagesCarouselFalse" role="button" data-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                            <a class="carousel-control-next" href="#productProfilImagesCarouselFalse" role="button" data-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Next</span>
+                                            </a>
                                         </div>
-                                        <a class="carousel-control-prev" href="#productProfilImagesCarouselFalse" role="button" data-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Previous</span>
-                                        </a>
-                                        <a class="carousel-control-next" href="#productProfilImagesCarouselFalse" role="button" data-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Next</span>
-                                        </a>
-                                    </div>
-                                    @endif
-                                    <div class="m-0 w-100 border border-dark">
-                                        <div class="w-100 p-0 m-0 p-2">
-                                            <div class="d-flex justify-content-betwween w-100 m-0 p-0 mx-auto">
-                                                <div class="d-flex flex-column justify-center col-3 text-danger">
-                                                   <div class="mx-auto w-100 d-flex justify-content-center">
-                                                        <span class="fa fa-star"></span>
-                                                        <span class="fa fa-star"></span>
-                                                        <span class="fa fa-star"></span>
-                                                        <span class="fa fa-star"></span>
-                                                        <span class="fa fa-star"></span>
-                                                   </div>
+                                        @else
+                                        <div id="productProfilImagesCarouselFalse" class="carousel slide m-0" data-ride="carousel">
+                                            <ol class="carousel-indicators">
+                                                    <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
+                                            </ol>
+                                            <div class="carousel-inner">
+                                                    <div class="carousel-item @if($key == 0)active @endif">
+                                                        <img class="d-block w-100" src="{{$image}}" alt="slide-{{$key}}">
+                                                    </div>
+                                            </div>
+                                            <a class="carousel-control-prev" href="#productProfilImagesCarouselFalse" role="button" data-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                            <a class="carousel-control-next" href="#productProfilImagesCarouselFalse" role="button" data-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="sr-only">Next</span>
+                                            </a>
+                                        </div>
+                                        @endif
+                                        <div class="m-0 w-100 border border-dark">
+                                            <div class="w-100 p-0 m-0 p-2">
+                                                <div class="d-flex justify-content-betwween w-100 m-0 p-0 mx-auto">
+                                                    <div class="d-flex flex-column justify-center col-3 text-danger">
                                                     <div class="mx-auto w-100 d-flex justify-content-center">
-                                                        <span wire:click="liked" title="Cliquez pour liker cet article" class="cursor-pointer fa fa-heart z-scale text-danger fa-2x"></span>
+                                                            <span class="fa fa-star"></span>
+                                                            <span class="fa fa-star"></span>
+                                                            <span class="fa fa-star"></span>
+                                                            <span class="fa fa-star"></span>
+                                                            <span class="fa fa-star"></span>
                                                     </div>
-                                                </div>
-                                                <div class="m-0 p-0 col-9" >
-                                                    <div class="m-0 p-0 d-flex justify-content-end w-100 text-danger">
-                                                        <strong>
-                                                            <strong class="mt-1"> {{$product->myLikes}}</strong>
-                                                            <strong class="fa fa-heart mt-1"></strong>
-                                                        </strong>
-                                                        <strong class="mx-3">
-                                                            <strong class="mt-1"> {{$product->comments->count()}} </strong>
-                                                            <strong class="fa fa-comments mt-1"></strong>
-                                                        </strong>
-                                                        <strong class="">
-                                                            <strong class="mt-1"> {{$product->seen}} </strong>
-                                                            <strong class="fa fa-eye mt-1"></strong>
-                                                        </strong>
+                                                        <div class="mx-auto w-100 d-flex justify-content-center">
+                                                            <span wire:click="liked" title="Cliquez pour liker cet article" class="cursor-pointer fa fa-heart z-scale text-danger fa-2x"></span>
+                                                        </div>
                                                     </div>
-                                                    <div class="w-100 d-flex justify-content-end pt-1">
-                                                        @if(isset($product))
-                                                            <small class="text-secondary">Posté {{ $product->dateAgoToString }}</small>
-                                                        @endif
+                                                    <div class="m-0 p-0 col-9" >
+                                                        <div class="m-0 p-0 d-flex justify-content-end w-100 text-danger">
+                                                            <strong>
+                                                                <strong class="mt-1"> {{$product->likes->count()}}</strong>
+                                                                <strong class="fa fa-heart mt-1"></strong>
+                                                            </strong>
+                                                            <strong class="mx-3">
+                                                                <strong class="mt-1"> {{$product->comments->count()}} </strong>
+                                                                <strong class="fa fa-comments mt-1"></strong>
+                                                            </strong>
+                                                            <strong class="">
+                                                                <strong class="mt-1"> {{$product->seen}} </strong>
+                                                                <strong class="fa fa-eye mt-1"></strong>
+                                                            </strong>
+                                                        </div>
+                                                        <div class="w-100 d-flex justify-content-end pt-1">
+                                                            @if(isset($product))
+                                                                <small class="text-secondary">Posté {{ $product->dateAgoToString }}</small>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @else
+                                    <div class="col-md-12 text-center col-lg-5 col-xl-5 col-12 border m-0 p-0 bg-secondary">
+                                        <h5 class="text-center text-uppercase p-2 w-75 fa-2x">
+                                            <span class="fa fa-download m-1"></span>Mise à jour en cours...
+                                        </h5>                                    
+                                    </div>
+                                @endif
                                 <div class="border-bottom border-dark bg-white w-100 d-block d-lg-none d-xl-none">
                                     <span class="w-100 p-2"></span>
                                 </div>
@@ -173,6 +200,7 @@
                     </div>
                 </div>
             </div>
+            
             @else
                 @include('components.mycomponents.product-profil-loader')
             @endif

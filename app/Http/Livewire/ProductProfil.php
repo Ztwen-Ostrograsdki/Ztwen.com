@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\Route;
 class ProductProfil extends Component
 {
 
-    public $name = "salut les gens";
-    protected $listeners = ['targetedProduct', 'resetTargetedProduct', 'productUpdated'];
+    protected $listeners = ['targetedProduct', 'resetTargetedProduct', 'productUpdated', 'updatingFinish'];
     public $galery;
     public $product;
+    public $updating = false;
 
     public function mount()
     {
@@ -24,6 +24,7 @@ class ProductProfil extends Component
                 $product = Product::find($id);
                 if($product){
                     $this->product = $product;
+                    $this->product->__setDateAgo();
                 }
                 else{
                     return abort(403, "Votre requête ne peut aboutir désolé");
@@ -32,8 +33,6 @@ class ProductProfil extends Component
         }
 
         if($this->product){
-            $this->product->myLikes = $this->product->likes->count();
-            $this->product->__setDateAgo();
             $this->galery = $this->product->productGalery();
             $this->emit('targetedProduct', $this->product->id);
         }
@@ -56,6 +55,7 @@ class ProductProfil extends Component
         $product = Product::find($p);
         $this->product = $product;
         $this->galery = $this->product->productGalery();
+        $this->product->__setDateAgo();
     }
 
     
@@ -64,10 +64,10 @@ class ProductProfil extends Component
         return view('livewire.product-profil');
     }
 
-    public function booted()
-    {
-        // return $this->mount();
-    }
+    // public function booted()
+    // {
+    //     // $this->product->__setDateAgo();
+    // }
 
 
 
@@ -98,25 +98,29 @@ class ProductProfil extends Component
         else{
             return abort(403, "Votre requête ne peut aboutir");
         }
-
-        $this->productUpdated($product->id);
-
+        $this->product->__setDateAgo();
     }
 
     public function productUpdated($product_id)
     {
+        $this->updating = true;
+        $this->galery = [];
         $product = Product::find($product_id);
         if($product){
-            $this->mount();
             $this->emit('productUpdated', $product_id);
         }
+    }
+
+    public function updatingFinish($asset = true)
+    {
+        $this->updating = false;
+        $this->getProduct();
     }
 
 
     public function updategalery()
     {
         $this->emit('targetedProduct', $this->product->id);
-        // $this->dispatchBrowserEvent('hide-form');
         $this->dispatchBrowserEvent('modal-updateProductGalery');
         
     }

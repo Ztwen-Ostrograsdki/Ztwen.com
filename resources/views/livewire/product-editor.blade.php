@@ -1,10 +1,10 @@
 
  {{-- Photo Modal --}}
- <div wire:ignore.self class="modal fade lug" id="updateProductModal" role="dialog" >
+<div>
+    {{--  --}}
+ <div wire:loaded='product' wire:ignore.self class="modal fade lug" id="updateProductModal" role="dialog" >
     <div class="modal-dialog modal-z-xlg" role="document">
        <!-- Modal content-->
-
-
 
 
        {{-- Product images  --}}
@@ -17,8 +17,11 @@
                         <span class="bi-exclamation-triangle text-danger mx-2"></span>
                     @else
                         Mise à jour d'article
+                         @if (session()->has('alert'))
+                             <span class="alert text-capitalize alert-{{session('type')}} ml-4">{{session('alert')}}</span>
+                        @endif
                     @enderror
-                    <span class="ml-3 text-warning text-capitalize text-italic" wire:loading wire:target="product_image" >Chargement de l'image den cours, veuillez patienter...</span>
+                    <span class="ml-3 text-warning text-capitalize text-italic" wire:loading wire:target="product_image" >Chargement de l'image en cours, veuillez patienter...</span>
                 </h4>
                 <div class="d-flex justify-content-end w-20">
                    <div class="w-15 mx-0 px-0">
@@ -92,4 +95,5 @@
           </div>
        </div>
     </div>
+ </div>
  </div>

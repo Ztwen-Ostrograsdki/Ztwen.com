@@ -131,3 +131,40 @@
     -o-transition: all .3s ease 0s;
     transition: all .3s ease 0s;
 }
+
+.carousel .carousel-item,
+.z-img-container {
+    height: 300px !important;
+}
+
+.carousel-item img,
+.z-img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    min-height: 300px !important;
+}
+
+.z-img-h-200 {
+    height: 200px !important;
+}
+
+.z-img-h-250 {
+    height: 250px !important;
+}
+
+.z-img-h-300 {
+    height: 3000px !important;
+}
+
+.z-img-mh-200 {
+    min-height: 200px !important;
+}
+
+.z-img-mh-250 {
+    min-height: 250px !important;
+}
+
+.z-img-mh-300 {
+    min-height: 300px !important;
+}

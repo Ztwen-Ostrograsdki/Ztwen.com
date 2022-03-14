@@ -30,8 +30,12 @@
                         @foreach($products as $product)
                             <div class="col-lg-4 col-md-4 all des">
                                 <div class="product-item">
-                                    <a title="Cliquez pour charger l'article {{ $product->slug }}" wire:click="setTargetedProduct({{$product->id}})" class="cursor-pointer" data-dismiss="modal" data-target="#productProfilModal" data-toggle="modal">
-                                        <img src="/myassets/loaders/loader{{$product->id}}.gif" alt="pas d'mage">
+                                    <a title="Cliquez pour charger l'article {{ $product->slug }}" wire:click="setTargetedProduct({{$product->id}})" class="cursor-pointer " data-dismiss="modal" data-target="#productProfilModal" data-toggle="modal">
+                                        @if($product->images->count() > 0)
+                                            <img class="z-img-h-250" src="/storage/articlesImages/{{$product->getProductDefaultImageInGalery()}}" alt="image de l'article {{$product->slug}}">
+                                        @else
+                                            <img class="z-img-h-250" src="{{$product->getRandomDefaultImage()}}" alt="image de l'article {{$product->slug}}">
+                                        @endif
                                     </a>
                                         <div class="down-content mx-auto px-lg-1">
                                             <a ><h4>{{mb_substr($product->slug, 0, 15)}} ...</h4></a>
@@ -47,7 +51,7 @@
                                                     <li><i class="fa fa-star"></i></li>
                                                     <li><i class="fa fa-star"></i></li>
                                                 </ul>
-                                                <div class="m-0 p-0 col-lg-7 col-xl-7 px-xl-2 pr-xl-2 px-lg-2 pr-lg-2 col-12" wire:poll>
+                                                <div class="m-0 p-0 col-lg-7 col-xl-7 px-xl-2 pr-xl-2 px-lg-2 pr-lg-2 col-12">
                                                     <div class="m-0 p-0 d-flex justify-content-lg-end justify-content-xl-end justify-content-center w-100 text-danger">
                                                         <strong>
                                                             <strong class="mt-1"> {{$product->likes->count()}} </strong>
@@ -58,7 +62,11 @@
                                                             <strong class="fa fa-comments mt-1"></strong>
                                                         </strong>
                                                         <strong class="">
-                                                            <strong class="mt-1"> {{$product->seen}} </strong>
+                                                            @if($targetedProduct && $targetedProductSeens && $targetedProduct->id == $product->id)
+                                                                <strong class="mt-1"> {{$targetedProductSeens}} </strong>
+                                                            @else
+                                                                <strong class="mt-1"> {{$product->mySeens()}} </strong>
+                                                            @endif
                                                             <strong class="fa fa-eye mt-1"></strong>
                                                         </strong>
                                                     </div>
@@ -87,7 +95,13 @@
             <div class="col-md-12 ">
                 <ul class="pages mb-3">
                     @if($minPage > 0)
-                        <span><li wire:click="decreasePage()"><a><i class="fa fa-angle-double-left"></i></a></li></span>
+                        <span>
+                            <li wire:click="decreasePage()">
+                            <a>
+                                <i class="fa fa-angle-double-left"></i>
+                            </a>
+                            </li>
+                        </span>
                     @endif
                     @foreach ($pages as $page)
                         @if($page + 1 <= $maxPage && $page + 1 > $minPage)

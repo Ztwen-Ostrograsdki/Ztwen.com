@@ -6,6 +6,9 @@ window.addEventListener('hide-form', event => {
 });
 
 
+window.addEventListener('reloadPage', event => {
+    location.reload(true);
+});
 window.addEventListener('modal-updateProductGalery', event => {
     $('#updateProductModal').modal();
 });
@@ -20,7 +23,7 @@ $(function() {
 
 window.addEventListener('FireAlert', event => {
     Swal.fire({
-        title: 'Operation ' + event.detail.finality,
+        title: 'Operation ' + event.detail.title,
         icon: event.detail.type,
         text: event.detail.message,
         timer: 3000,

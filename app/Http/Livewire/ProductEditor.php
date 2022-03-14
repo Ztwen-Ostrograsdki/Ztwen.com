@@ -42,18 +42,29 @@ class ProductEditor extends Component
         $this->validate(['product_image' => 'image|max:1500|mimes:png,jpg,jpeg']);
         $this->photoExtension = $this->product_image->extension();
         $this->setImageName($this->photoExtension);
+        $first = null;
+
+        $oldsImages = $this->product->images;
+        if($oldsImages->count() > 2){
+            $first = $oldsImages->first();
+        }
         $this->product_image->storeAs('articlesImages', $this->getImageName());
         $intoDB = Image::create(['name' => $this->getImageName(), 'product_id' => $this->product->id]);
         if ($intoDB) {
+            if($first){
+                $local = Storage::delete($first->name);
+                $first->delete();
+            }
             $this->dispatchBrowserEvent('hide-form');
+            $this->emit('updatingFinish', true);
             $this->dispatchBrowserEvent('FireAlert', ['title' => 'Mise à jour réussie', 'message' => "La mise à jour de la galerie s'est bien déroulée", 'type' => 'success']);
-            $this->emit('productUpdated', $this->product->id);
         }
         else{
             $local = Storage::delete($this->getImageName());
+            $this->emit('updatingFinish', true);
             $this->dispatchBrowserEvent('FireAlert', ['title' => 'Ereur serveur', 'message' => "La mise à jour de la galerie a échoué, veuillez réessayer!", 'type' => 'error']);
-            $this->product_image->storeAs('articlesImages', $this->getImageName());
         }
+        $this->emit('updatingFinish', true);
 
     }
 

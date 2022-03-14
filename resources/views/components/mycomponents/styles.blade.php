@@ -14,7 +14,8 @@ https://templatemo.com/tm-546-sixteen-clothing
 <link rel="stylesheet" href="{{ asset('myassets/css/fontawesome.css') }}">
 <link rel="stylesheet" href="{{ asset('myassets/css/templatemo-sixteen.css') }}">
 <link rel="stylesheet" href="{{ asset('myassets/css/owl.css') }}">
-<link rel="stylesheet" href="{{ asset('myassets/css/backgrounder.css') }}">
 <link rel="stylesheet" href="{{ asset('myassets/css/regANDloginStyle.css') }}">
 <link rel="stylesheet" href="{{ asset('myassets/css/grid.css')}}">
+<link rel="stylesheet" href="{{ asset('myassets/css/backgrounder.css') }}">
+
 @livewireStyles
