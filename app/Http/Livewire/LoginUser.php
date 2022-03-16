@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\UserOnlineSession;
 use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Redirect;
 
 class LoginUser extends Component
 {
@@ -39,11 +40,11 @@ class LoginUser extends Component
             $this->dispatchBrowserEvent('Login');
             $this->emit("newUserConnected");
             $this->dispatchBrowserEvent('hide-form');
+            // dd(url()->previous());
+            return redirect()->back();
             if(Auth::user()->id == 1){
-                return redirect(RouteServiceProvider::ADMIN);
+                
             }
-            
-            
 
        }
        else{

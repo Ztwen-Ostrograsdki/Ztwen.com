@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Product;
 use Livewire\Component;
+use App\Models\ShoppingBag;
 use App\Models\SeenLikeProductSytem;
 use Illuminate\Support\Facades\Auth;
 
@@ -147,6 +148,49 @@ class ShowProducts extends Component
         if($product){
             $this->targetedProduct = $product;
             $this->targetedProductSeens = $product->seen;
+        }
+    }
+    public function addToCart($product_id)
+    {
+        $user = Auth::user();
+
+        if($user){
+            $product = Product::find($product_id);
+            if($product && !$user->alreadyIntoCart($product->id)){
+                $panier = ShoppingBag::create(['user_id' => $user->id, 'product_id' => $product->id]);
+                $this->emit('cartEdited', $user->id);
+                $this->dispatchBrowserEvent('FireAlert', ['title' => false, 'message' => "vous avez ajouté l'article {$product->getName()} à votre panier", 'type' => 'success']);
+            }
+            else{
+                return abort(403, "Votre requête ne peut aboutir");
+            }
+
+        }
+        else{
+            return redirect(route('login'));
+        }
+    }
+    public function deleteFromCart($product_id)
+    {
+        $user = Auth::user();
+        if($user){
+            $product = Product::find($product_id);
+            if($product && $user->alreadyIntoCart($product->id)){
+                $shop = ShoppingBag::where('user_id', $user->id)->where('product_id', $product->id);
+                if($shop->get()->count() > 0){
+                    $action  = $shop->first()->delete();
+                    if($action){
+                        $this->emit('cartEdited', $user->id);
+                        $this->dispatchBrowserEvent('FireAlert', ['title' => false, 'message' => "L'article {$product->getName()} a été retiré de votre panier", 'type' => 'success']);
+                    }
+                }
+            }
+            else{
+                return abort(403, "Votre requête ne peut aboutir");
+            }
+        }
+        else{
+            return redirect(route('login'));
         }
     }
 

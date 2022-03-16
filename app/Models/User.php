@@ -6,11 +6,12 @@ use App\Models\Image;
 use App\Models\Photo;
 use App\Models\Comment;
 use App\Models\History;
-use App\Models\MyRequest;
 use App\Models\Product;
-use App\Models\User as ModelsUser;
+use App\Models\MyRequest;
+use App\Models\ShoppingBag;
 use Hamcrest\Type\IsInteger;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\User as ModelsUser;
 use Laravel\Jetstream\HasProfilePhoto;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -227,6 +228,28 @@ class User extends Authenticatable
 
         return $tabs;
 
+    }
+
+    public function shoppingBags()
+    {
+        return $this->hasMany(ShoppingBag::class);
+    }
+
+    public function alreadyIntoCart($product_id)
+    {
+        $product = Product::find($product_id);
+        if($product){
+            $alreadyIntoCart = ShoppingBag::where('user_id', $this->id)->where('product_id', $product->id)->get();
+            if($alreadyIntoCart->count() > 0){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return abort(403, "Votre requête ne peut aboutir");
+        }
     }
 
 

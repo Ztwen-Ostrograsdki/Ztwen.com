@@ -22,13 +22,13 @@
               @endisRoute
               @isRoute( 'products')
                   <li class="nav-item active cursor-pointer">
-                      <a class="nav-link" href="{{route('products')}}">Les articles
+                      <a class="nav-link" href="{{route('products')}}">Articles
                         <span class="sr-only">(current)</span>
                       </a>
                   </li> 
               @else
                   <li class="nav-item cursor-pointer">
-                      <a class="nav-link" href="{{route('products')}}">Les articles
+                      <a class="nav-link" href="{{route('products')}}">Articles
                         <span class="sr-only">(current)</span>
                       </a>
                   </li> 
@@ -37,24 +37,24 @@
                   @isAdmin(Auth::user())
                       @isRoute('admin')
                           <li class="nav-item active cursor-pointer">
-                              <a class="nav-link" href="{{route('admin')}}">Administration
+                              <a class="nav-link" href="{{route('admin')}}">Admin<span class="d-lg-none d-md-none">istration</span>
                               <span class="sr-only">(current)</span>
                               </a>
                           </li> 
                       @else
                           <li class="nav-item cursor-pointer">
-                              <a class="nav-link" href="{{route('admin')}}">Administration
+                              <a class="nav-link" href="{{route('admin')}}">Admin<span class="d-lg-none d-md-none">istration</span>
                               <span class="sr-only">(current)</span>
                               </a>
                           </li> 
                       @endisRoute
                   @endisAdmin
                 <li class="nav-item cursor-pointer">
-                    <div class="hidden sm:flex sm:items-center sm:ml-6">
+                    <div class=" sm:flex sm:items-center sm:ml-6">
                         <x-dropdown align="right" width="48" class="text-bold">
                             <x-slot name="trigger">
                                 <x-responsive-nav-link class="text-secondary cursor-pointer">
-                                    <span class="fa fa-user text-success"></span> {{  Auth::user()->name }}
+                                    <span class="fa fa-user text-success"></span> {{  mb_substr(Auth::user()->name, 0, 7) }}
                                 </x-responsive-nav-link>
                             </x-slot>
                             <x-slot name="content" :class="'text-left'">
@@ -75,6 +75,9 @@
                                 @endisNotRoute
                                 <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold"  href="{{ route('chat')}}">
                                     <span class="fa fa-wechat mr-3"></span>{{ __('Messenger') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold"  href="{{route('user-profil', Auth::user()->id)}}">
+                                    <span class="bi-minecart mr-3"></span>{{ __('Mon Panier') }} <span class="text-danger ml-1">{{$carts}}</span>
                                 </x-dropdown-link>
                                 <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold" data-toggle="modal" data-dismiss="modal" data-target="#logoutModal" href="#">
                                     <span class="fa fa-upload  mr-3"></span>{{ __('Déconnexion') }}

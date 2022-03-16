@@ -22,15 +22,26 @@ $(function() {
 
 
 window.addEventListener('FireAlert', event => {
-    Swal.fire({
-        title: 'Operation ' + event.detail.title,
-        icon: event.detail.type,
-        text: event.detail.message,
-        timer: 3000,
-        showCloseButton: false,
-        showCancelButton: false,
-        showConfirmButton: false,
-    });
+    if (event.detail.title) {
+        Swal.fire({
+            title: 'Operation ' + event.detail.title,
+            icon: event.detail.type,
+            text: event.detail.message,
+            timer: 3000,
+            showCloseButton: false,
+            showCancelButton: false,
+            showConfirmButton: false,
+        });
+    } else {
+        Swal.fire({
+            icon: event.detail.type,
+            text: event.detail.message,
+            timer: 2000,
+            showCloseButton: false,
+            showCancelButton: false,
+            showConfirmButton: false,
+        });
+    }
 });
 
 

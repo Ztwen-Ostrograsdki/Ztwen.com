@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use App\Helpers\DateFormattor;
 use App\Models\User;
 use App\Models\Image;
 use App\Models\Comment;
+use App\Models\ShoppingBag;
+use App\Helpers\DateFormattor;
 use App\Models\SeenLikeProductSytem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -92,6 +93,12 @@ class Product extends Model
             $images[] = $image;
         }
         return $images[$r]->name;
+    }
+
+
+    public function shoppingBags()
+    {
+        return $this->hasMany(ShoppingBag::class);
     }
 
 }
