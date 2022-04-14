@@ -53,4 +53,9 @@ class Header extends Component
     {
         
     }
+
+    public function createNewProduct()
+    {
+        $this->emit('createAProduct');
+    }
 }

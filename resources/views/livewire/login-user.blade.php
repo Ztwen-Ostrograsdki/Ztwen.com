@@ -34,7 +34,7 @@
                             <hr class="m-0 p-0 bg-info">
                                 <form autocomplete="false" class="mt-3" wire:submit.prevent="login" >
                                     <div class="input-group mt-0 mb-2">
-                                        <label class="text-white @error('email') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="email_log">Votre adresse mail</label>
+                                        <label class="z-text-cyan @error('email') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="email_log">Votre adresse mail</label>
                                         <hr class="m-0 p-0 bg-info w-100 mb-1">
                                         <input class="input--style-3 @error('email') text-danger border border-danger @enderror" wire:model.defer="email" id="email_log" type="email" placeholder="Votre adresse mail..." name="email">
                                         @error('email')
@@ -42,7 +42,7 @@
                                         @enderror
                                     </div>
                                     <div class="input-group mt-0 mb-2">
-                                        <label class="text-white @error('password') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="password_log">Votre mot de passe</label>
+                                        <label class="z-text-cyan @error('password') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="password_log">Votre mot de passe</label>
                                         <hr class="m-0 p-0 bg-info w-100 mb-1">
                                         <input class="input--style-3 @error('password') text-danger border border-danger @enderror" wire:model.defer="password" id="password_log" type="password" placeholder="Votre mot de passe..." name="password">
                                         @error('password')

@@ -4,44 +4,43 @@ namespace App\Http\Livewire;
 
 use App\Models\Product;
 use Livewire\Component;
+use App\Models\ShoppingBag;
 use App\Models\SeenLikeProductSytem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 
 class ProductProfil extends Component
 {
 
-    protected $listeners = ['targetedProduct', 'resetTargetedProduct', 'productUpdated', 'updatingFinish'];
+    protected $listeners = ['connected', 'targetedProduct', 'resetTargetedProduct', 'productUpdated', 'updatingFinish'];
     public $galery;
     public $product;
+    public $product_category;
     public $updating = false;
 
     public function mount()
     {
-        if(Route::currentRouteName() == 'product-profil'){
-            $id = (int)request()->id;
-            if($id){
-                $product = Product::find($id);
-                if($product){
-                    $this->product = $product;
-                    $this->product->__setDateAgo();
-                }
-                else{
-                    return abort(403, "Votre requête ne peut aboutir désolé");
-                }
+        $id = (int)request()->id;
+        if($id){
+            $product = Product::find($id);
+            if($product){
+                $this->product = $product;
+                $this->product_category = $this->product->category;
+                $this->galery = $this->product->productGalery();
+                $this->emit('targetedProduct', $this->product->id);
+                $this->product->__setDateAgo();
+            }
+            else{
+                return abort(403, "Votre requête ne peut aboutir désolé");
             }
         }
-
-        if($this->product){
-            $this->galery = $this->product->productGalery();
-            $this->emit('targetedProduct', $this->product->id);
-        }
-        
     }
 
     public function getProduct()
     {
         $this->mount();
+        $this->product_category = $this->product->category;
     }
 
 
@@ -64,10 +63,10 @@ class ProductProfil extends Component
         return view('livewire.product-profil');
     }
 
-    // public function booted()
-    // {
-    //     // $this->product->__setDateAgo();
-    // }
+    public function booted()
+    {
+        // $this->product->__setDateAgo();
+    }
 
 
 
@@ -76,7 +75,6 @@ class ProductProfil extends Component
     {
         $user = Auth::user();
         $product = $this->product;
-
         if($product){
             $seen = $product->seen;
             if($user){
@@ -123,6 +121,73 @@ class ProductProfil extends Component
         $this->emit('targetedProduct', $this->product->id);
         $this->dispatchBrowserEvent('modal-updateProductGalery');
         
+    }
+    public function editAProduct()
+    {
+        $this->emit('editAProduct', $this->product->id);
+        $this->dispatchBrowserEvent('modal-editProduct');
+        $this->getProduct();
+    }
+
+
+    public function bought()
+    {
+
+    }
+
+
+    public function addToCart()
+    {
+        $product_id = $this->product->id;
+        $user = Auth::user();
+
+        if($user){
+            $product = Product::find($product_id);
+            if($product && !$user->alreadyIntoCart($product->id)){
+                $panier = ShoppingBag::create(['user_id' => $user->id, 'product_id' => $product->id]);
+                $this->emit('cartEdited', $user->id);
+                $this->dispatchBrowserEvent('FireAlert', ['title' => false, 'message' => "vous avez ajouté l'article {$product->getName()} à votre panier", 'type' => 'success']);
+            }
+            else{
+                return abort(403, "Votre requête ne peut aboutir");
+            }
+
+        }
+        else{
+            return redirect(route('login'));
+        }
+        $this->getProduct();
+    }
+    public function deleteFromCart()
+    {
+        $product_id = $this->product->id;
+        $user = Auth::user();
+        if($user){
+            $product = Product::find($product_id);
+            if($product && $user->alreadyIntoCart($product->id)){
+                $shop = ShoppingBag::where('user_id', $user->id)->where('product_id', $product->id);
+                if($shop->get()->count() > 0){
+                    $action  = $shop->first()->delete();
+                    if($action){
+                        $this->emit('cartEdited', $user->id);
+                        $this->dispatchBrowserEvent('FireAlert', ['title' => false, 'message' => "L'article {$product->getName()} a été retiré de votre panier", 'type' => 'success']);
+                    }
+                }
+            }
+            else{
+                return abort(403, "Votre requête ne peut aboutir");
+            }
+        }
+        else{
+            return redirect(route('login'));
+        }
+        $this->getProduct();
+    }
+
+
+    public function connected($user_id)
+    {
+        $this->getProduct();
     }
 
 }

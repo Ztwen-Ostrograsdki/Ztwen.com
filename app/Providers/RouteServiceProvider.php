@@ -19,7 +19,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/';
     public const ADMIN = '/administration';
-    public const LOGIN = '/login';
+    public const LOGIN = '/connexion';
     // public const REGISTRATION = '/';
 
     /**

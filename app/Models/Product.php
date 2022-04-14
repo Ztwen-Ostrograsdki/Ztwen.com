@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\Image;
 use App\Models\Comment;
+use App\Models\Category;
 use App\Models\ShoppingBag;
 use App\Helpers\DateFormattor;
 use App\Models\SeenLikeProductSytem;
@@ -28,10 +29,11 @@ class Product extends Model
         'price',
         'total',
         'bought',
-        'total',
         'sells',
         'seen',
-        'user_id'
+        'user_id',
+        'reduction', 
+        'category_id'
     ];
 
 
@@ -99,6 +101,11 @@ class Product extends Model
     public function shoppingBags()
     {
         return $this->hasMany(ShoppingBag::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
 }

@@ -88,4 +88,6 @@ class ProductEditor extends Component
             $this->emit('productUpdated', $product_id);
         }
     }
+
+    
 }

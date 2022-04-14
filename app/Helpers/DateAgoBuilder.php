@@ -82,12 +82,13 @@ trait DateAgoBuilder{
                             }
                         }
                         else{
-                            if($matrice['s'] > 1){
-                                $string .= $matrice['s'] . " secondes ";
-                            }
-                            else{
-                                $string .= $matrice['s'] . " une seconde ";
-                            }
+                            $string .= " moins d'une minute";
+                            // if($matrice['s'] > 1){
+                            //     $string .= $matrice['s'] . " secondes ";
+                            // }
+                            // else{
+                            //     $string .= $matrice['s'] . " une seconde ";
+                            // }
                         }
                     }
                 }
@@ -95,6 +96,18 @@ trait DateAgoBuilder{
         }
         
         return $string;
+    }
+
+
+    public function __strings($matrice_created, $matrice_updated = null)
+    {
+        $strings = [];
+        $strings['created_at'] = $this->__AgoToString($matrice_created);
+        if($matrice_updated){
+            $strings['updated_at'] = $this->__AgoToString($matrice_updated);
+        }
+
+        return $strings;
     }
 
 
@@ -425,6 +438,17 @@ trait DateAgoBuilder{
             's' => $secondes,
         ];
 
+    }
+
+
+    public function __getDiff($date_created, $date_updated = null)
+    {
+        $dates = [];
+        $dates['created_at'] = $this->__diffDateAgoManager($date_created);
+        if($date_updated){
+            $dates['updated_at'] = $this->__diffDateAgoManager($date_updated);
+        }
+        return $dates;
     }
 
 

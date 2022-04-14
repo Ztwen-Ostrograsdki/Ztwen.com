@@ -3,10 +3,13 @@
 use App\Http\Livewire\Home;
 use App\Http\Livewire\Admin;
 use App\Http\Livewire\Messenger;
-use App\Http\Livewire\MessengerChat;
-use App\Http\Livewire\ProductProfil;
 use App\Http\Livewire\UserProfil;
 use App\Http\Livewire\ShowProducts;
+use App\Http\Livewire\MessengerChat;
+use App\Http\Livewire\ProductProfil;
+use App\Http\Livewire\ShowCategories;
+use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\AuthRedirections;
 use App\Http\Livewire\RegisteringNewUser;
 
 /*
@@ -21,7 +24,12 @@ use App\Http\Livewire\RegisteringNewUser;
 */
 
 Route::get('/', Home::class)->name('home');
+Route::get('/connexion', AuthRedirections::class)->name('login')->middleware('guest');
+Route::get('/inscription', AuthRedirections::class)->name('registration')->middleware('guest');
+
+
 Route::get('/articles', ShowProducts::class)->name('products');
+Route::get('/categories', ShowCategories::class)->name('categories');
 Route::get('/articles/{id?}', ProductProfil::class)->name('product-profil');
 Route::post('/inscription', RegisteringNewUser::class)->middleware('guest')->name('inscription');
 
@@ -43,4 +51,4 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';

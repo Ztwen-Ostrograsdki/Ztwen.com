@@ -1,4 +1,4 @@
-<header class="yours @fixedHeaderForRoute() position-fixed @endfixedHeaderForRoute" style="z-index:200;" >
+<header class="yours @fixedHeaderForRoute() position-fixed @endfixedHeaderForRoute" style="z-index:2000;" >
     <nav class="navbar navbar-expand-lg">
       <div class="container">
         <a class="navbar-brand" href="{{route('home')}}"><h2>ZtweN <em>Oströgrasdki</em> <small class="text-lowercase text-muted"><sup>market</sup></small> </h2></a>
@@ -79,6 +79,14 @@
                                 <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold"  href="{{route('user-profil', Auth::user()->id)}}">
                                     <span class="bi-minecart mr-3"></span>{{ __('Mon Panier') }} <span class="text-danger ml-1">{{$carts}}</span>
                                 </x-dropdown-link>
+                                @isAdmin()
+                                    <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold" data-toggle="modal" data-target="#createProductModal" href="#" wire:click="createNewProduct">
+                                        <span class="fa fa-cart-plus mr-3"></span>{{ __('Ajouter un article') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold" data-toggle="modal" data-target="#createCategoryModal" href="#" wire:click="createNewProduct">
+                                        <span class="fa fa-plus mr-3"></span>{{ __('Une catégorie') }}
+                                    </x-dropdown-link>
+                                @endisAdmin
                                 <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold" data-toggle="modal" data-dismiss="modal" data-target="#logoutModal" href="#">
                                     <span class="fa fa-upload  mr-3"></span>{{ __('Déconnexion') }}
                                 </x-dropdown-link>

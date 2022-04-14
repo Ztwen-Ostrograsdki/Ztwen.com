@@ -28,8 +28,11 @@
         @livewire('logout') 
         @livewire('user-profil-manager') 
         @livewire('following-system') 
-        @livewire('product-profil')
+        @livewire('create-category')
+        {{-- @livewire('edit-category') --}}
         @livewire('product-editor')
+        @livewire('edit-product-data')
+        @livewire('create-new-product')
         {{-- chargement des modals --}}
 
         <div class="min-h-screen bg-gray-100" style="background-color: rgb(167, 193, 219);">

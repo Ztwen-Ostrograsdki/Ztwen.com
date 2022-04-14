@@ -36,7 +36,7 @@
                             <hr class="m-0 p-0 bg-info">
                                 <form autocomplete="false" method="post" class="mt-3" wire:submit.prevent="submit()" >
                                     <div class="input-group mt-0 mb-2">
-                                        <label class="text-white @error('name') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="name_reg">@auth Le @endauth @guest Votre @endguest nom et prénoms</label>
+                                        <label class="z-text-cyan @error('name') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="name_reg">@auth Le @endauth @guest Votre @endguest nom et prénoms</label>
                                         <hr class="m-0 p-0 bg-info w-100 mb-1">
                                         <input class="input--style-3 @error('name') text-danger border border-danger @enderror" wire:model.defer="name" id="name_reg" type="text" placeholder="@auth Le @endauth @guest Votre @endguest nom et prénoms..." name="name">
                                         @error('name')
@@ -44,7 +44,7 @@
                                         @enderror
                                     </div>
                                     <div class="input-group mt-0 mb-2">
-                                        <label class="text-white @error('email') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="email_reg">@auth L'@endauth @guest Votre @endguest adresse mail</label>
+                                        <label class="z-text-cyan @error('email') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="email_reg">@auth L'@endauth @guest Votre @endguest adresse mail</label>
                                         <hr class="m-0 p-0 bg-info w-100 mb-1">
                                         <input class="input--style-3 @error('email') text-danger border border-danger @enderror" wire:model.defer="email" id="email_reg" type="email" placeholder="@auth L'@endauth @guest Votre @endguest adresse mail..." name="email">
                                         @error('email')
@@ -53,7 +53,7 @@
                                     </div>
                                     @guest
                                         <div class="input-group mt-0 mb-2">
-                                            <label class="text-white @error('password') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="password_reg">Votre mot de passe</label>
+                                            <label class="z-text-cyan @error('password') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="password_reg">Votre mot de passe</label>
                                             <hr class="m-0 p-0 bg-info w-100 mb-1">
                                             <input class="input--style-3 @error('password') text-danger border border-danger @enderror" wire:model.defer="password" id="password_reg" type="password" placeholder="Votre mot de passe..." name="password">
                                             @error('password')
@@ -61,7 +61,7 @@
                                             @enderror
                                         </div>
                                         <div class="input-group mt-0 mb-2">
-                                            <label class="text-white @error('password_confirmation') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="password_confirmation_reg">Confirmez mot de passe</label>
+                                            <label class="z-text-cyan @error('password_confirmation') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="password_confirmation_reg">Confirmez mot de passe</label>
                                             <hr class="m-0 p-0 bg-info w-100 mb-1">
                                             <input class="input--style-3 @error('password') text-danger border border-danger @enderror" wire:model.defer="password_confirmation" id="password_confirmation_reg" type="password" placeholder="Votre mot de passe..." name="password_confirmation">
                                             @error('password')

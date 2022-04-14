@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\UserOnlineSession;
 use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 
 class LoginUser extends Component
@@ -30,17 +31,12 @@ class LoginUser extends Component
        $this->validate();
        $credentials = ['email' => $this->email, 'password' => $this->password];
        if(Auth::attempt($credentials)){
-            $deletedConnection = UserOnlineSession::where('user_id', Auth::user()->id)->get();
-            if($deletedConnection->count() > 0){
-                foreach($deletedConnection as $d){
-                    $d->delete();
-                }
-            }
-            $deletedConnection = UserOnlineSession::create(['user_id' => Auth::user()->id]);
+            
             $this->dispatchBrowserEvent('Login');
             $this->emit("newUserConnected");
+            $this->emit("connected", Auth::user()->id);
             $this->dispatchBrowserEvent('hide-form');
-            // dd(url()->previous());
+            Session::put('user-'.Auth::user()->id, Auth::user()->id);
             return redirect()->back();
             if(Auth::user()->id == 1){
                 

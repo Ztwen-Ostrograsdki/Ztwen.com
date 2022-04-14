@@ -4,16 +4,21 @@ namespace App\Http\Livewire;
 
 use App\Models\Product;
 use Livewire\Component;
+use App\Models\Category;
 use App\Models\ShoppingBag;
 use App\Models\SeenLikeProductSytem;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class ShowProducts extends Component
 {
-    protected $listeners = ['productUpdated'];
+    protected $listeners = ['productUpdated', 'newCategoryCreated'];
     public $products = [];
     public $product;
     public $targetedProductSeens;
+    public $categorySelected = null;
+    public $categorySelected_id;
+    public $categories;
     public $targetedProduct;
     public $allProducts = [];
     public $allProductsComments = [];
@@ -23,6 +28,7 @@ class ShowProducts extends Component
     public $maxPage = 5;
     public $perpage = 6;
     public $galery;
+
 
     public function mount()
     {
@@ -50,30 +56,127 @@ class ShowProducts extends Component
         $product = Product::find($product_id);
         if($product){
             $this->product = $product;
-            $this->emit('targetedProduct', $product_id);
-            $this->getProducts();
+            $product->update(['seen' => $product->seen + 1]);
         }
         else{
             return abort(403, "Votre requête ne peut aboutir");
         }
     }
-
-    public function getProducts()
+    
+    public function changeEvent()
     {
+        $category = $this->categorySelected;
+        if($category !== null && $category !== ""){
+            session()->put('sectionSelected', 'allPosted');
+            session()->put('categorySelected', $this->categorySelected);
+            $this->categorySelected_id = Category::where('name', $this->categorySelected)->first()->id;
+            $all = Product::where('category_id', $this->categorySelected_id)->get();
+            $products = Product::where('category_id', $this->categorySelected_id)->get()->chunk($this->perpage);
+            $this->getProducts($all, $products);
+            
+        }
+        else{
+            session()->forget('categorySelected');
+            $this->getProducts();
+        }
 
-        $allProducts = Product::all()->chunk($this->perpage);
-        $totalPages = count($allProducts);
+    }
 
-        if($this->pages == []){
-            for ($i = 0; $i < $totalPages; $i++) { 
-                $this->pages[] = $i;
+    public function changeSection($section = 'allPosted')
+    {
+        session()->put('sectionSelected', $section);
+        if($section == 'lastPosted'){
+            $this->lastPosted();
+        }
+        elseif($section == 'mostSeen'){
+            $this->mostSeen();
+        }
+        else{
+            $this->getProducts();
+        }
+        
+    }
+
+    public function lastPosted($max = 6)
+    {
+        if(!$max){
+            $max = $this->perpage;
+        }
+        else{
+            $max = $max;
+        }
+        $all = Product::all()->reverse()->take($max);
+        $products = $all->chunk($max);
+        $this->reset('pages', 'products', 'allProducts', 'active_page');
+        session()->forget('categorySelected');
+        session()->put('sectionSelected', 'lastPosted');
+        $this->getProducts($all, $products);
+    }
+
+    public function mostSeen($max = 6)
+    {
+        if(!$max){
+            $max = $this->perpage;
+        }
+        else{
+            $max = $max;
+        }
+        $all = Product::orderBy('seen', 'desc')->get()->take($max);
+        $products = $all->chunk($max);
+        $this->reset('pages', 'products', 'allProducts', 'active_page');
+        session()->forget('categorySelected');
+        session()->put('sectionSelected', 'mostSeen');
+        $this->getProducts($all, $products);
+    }
+
+    public function getProducts($all = [], $products = [])
+    {
+        $this->reset('pages', 'products', 'allProducts', 'active_page');
+        $this->categories = Category::all();
+        if($all !== []){
+            $this->allProducts = $all;
+            if(count($all) > 0){
+                $totalPages = count($products);
+                for ($i = 0; $i < $totalPages; $i++) { 
+                    $this->pages[] = $i;
+                }
+                $this->products = $products[$this->active_page];
+                foreach($this->products as $p){
+                    $this->allProductsComments[$p->id] = $p->comments;
+                }
             }
-     
+            
         }
-        $this->products = $allProducts[$this->active_page];
-        foreach($this->products as $p){
-            $this->allProductsComments[$p->id] = $p->comments;
+        else{
+            if(session()->has('categorySelected')){
+                $this->categorySelected = session('categorySelected');
+                $this->changeEvent();
+            }
+            elseif(session()->has('sectionSelected') && session('sectionSelected') !== 'allPosted'){
+                session()->forget('categorySelected');
+                $section = session('sectionSelected');
+                $this->changeSection($section);
+            }
+            else{
+                $this->allProducts = Product::all();
+                session()->put('sectionSelected', 'allPosted');
+                if(Product::all()->count() > 0){
+                    $allProducts = Product::all()->reverse()->chunk($this->perpage);
+                    $totalPages = count($allProducts);
+        
+                    for ($i = 0; $i < $totalPages; $i++) { 
+                        $this->pages[] = $i;
+                    }
+                    $this->products = $allProducts[$this->active_page];
+                    foreach($this->products as $p){
+                        $this->allProductsComments[$p->id] = $p->comments;
+                    }
+                }
+            }
+            
         }
+        
+        
         
     }
 
@@ -192,7 +295,15 @@ class ShowProducts extends Component
         else{
             return redirect(route('login'));
         }
+        
     }
+
+    public function newCategoryCreated($category)
+    {
+        $this->getProducts();
+    }
+
+    
 
 
 

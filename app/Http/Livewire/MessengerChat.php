@@ -4,9 +4,10 @@ namespace App\Http\Livewire;
 
 use App\Models\Chat;
 use App\Models\User;
-use App\Models\UserOnlineSession;
 use Livewire\Component;
+use App\Models\UserOnlineSession;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class MessengerChat extends Component
 {
@@ -35,7 +36,7 @@ class MessengerChat extends Component
         $this->sender = Auth::user();
         $this->getUsers();
         $this->allUsers = $this->users->count() + 1;
-        $this->getConnectedUsers();
+        // $this->getConnectedUsers();
 
         if($id){
             $user = User::find($id);
@@ -72,7 +73,19 @@ class MessengerChat extends Component
 
     public function getConnectedUsers()
     {
-        $this->connectedUsers = count(UserOnlineSession::all()->pluck('user_id'));
+        if(Auth::user()){
+            Session::put('user-'.Auth::user()->id, Auth::user()->id);
+        }
+        $connectedUsers = [];
+        $users = User::all()->pluck('id');
+
+        foreach($users as $user){
+            if(session()->has('user-'.$user)){
+                $connectedUsers[] = $user;
+            }
+        }
+
+        $this->connectedUsers = count($connectedUsers) - 1;
     }
 
     public function getUsers()

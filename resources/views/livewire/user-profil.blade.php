@@ -5,6 +5,13 @@
              <div class="row w-100 m-0">
                 <div class="col-3 m-0 text-capitalize border border-dark bg-dark p-0 text-white" style="min-height: 650px;">
                    <div class="d-fex flex-column w-100 mb-3">
+                        <div class="m-0 py-2 px-4 @if($activeTagName == 'panier') bg-info @endif">
+                           <div class="d-flex w-100 cursor-pointer m-0 p-0" wire:click="setActiveTag('panier', 'Mon Panier')">
+                              <span class="fa fa-2x bi-cart-check "></span>
+                              <h5 class="w-100 m-0 mt-1 ml-3">Mon Panier</h5>
+                              <span class="badge badge-danger badge-pill pt-2" wire:poll>{{count($carts)}}</span>
+                           </div>
+                        </div>
                         <div class="m-0 py-2 px-4 @if($activeTagName == 'demandes') bg-info @endif">
                            <div class="d-flex w-100 cursor-pointer m-0 p-0" wire:click="setActiveTag('demandes', 'Les demandes')">
                               <span class="fa fa-2x fa-inbox"></span>
@@ -17,7 +24,11 @@
                            <div class="d-flex w-100 cursor-pointer m-0 p-0" wire:click="setActiveTag('followers', 'Les amis qui me suivent')">
                               <span class="fa fa-2x fa-users"></span>
                               <h5 class="w-100 m-0 mt-1 ml-3">Mes followers</h5>
-                              <span class="fa fa-2x">255</span>
+                              @if (count($myFollowers) < 10)
+                                 <span class="fa fa-2x">(0{{ count($myFollowers) }})</span>
+                              @else
+                                 <span class="fa fa-2x">({{ count($myFollowers) }})</span>
+                              @endif
                            </div>
                         </div>
                         <hr class="m-0 p-0 bg-white w-100">
@@ -176,6 +187,24 @@
                                  <div class="d-flex flex-column mx-auto text-center p-3 mt-4">
                                     <span class="fa fa-warning text-warning fa-4x"></span>
                                     <h4 class="text-warning fa fa-2x">Ouups vous n'avez aucun amis qui vous suit !!!</h4>
+                                 </div>
+                              @endif
+                           </div>
+                        @endif
+                        @if($activeTagName == 'panier')
+                           <div class="mx-auto justify-center d-flex w-100">
+                              @if(count($carts) > 0)
+                                 @foreach($carts as $cart)
+                                    
+                                 @endforeach
+                              @else
+                                 <div class="d-flex flex-column mx-auto text-center p-3 mt-4">
+                                    <span class="fa fa-warning text-warning fa-4x"></span>
+                                    <h4 class="text-warning fa fa-3x">Ouups votre panier est vide !!!</h4>
+                                    <span class="btn btn-primary">
+                                       <span class="bi-cart"></span>
+                                       Ajouter des articles
+                                    </span>
                                  </div>
                               @endif
                            </div>

@@ -3,22 +3,26 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
+use App\Models\Product;
 use Livewire\Component;
+use App\Models\MyRequest;
+use App\Models\FollowSystem;
 use Livewire\WithFileUploads;
 use App\Helpers\ProfilManager;
 use App\Models\FollowingSystem;
-use App\Models\FollowSystem;
-use App\Models\MyRequest;
 use Illuminate\Support\Facades\Auth;
 
 class UserProfil extends Component
 {
     public $user;
+    public $carts;
     public $profilImage;
     public $activeTagName;
     public $activeTagTitle;
     public $demandes;
     public $myFollowers = [];
+    public $myProducts;
+    public $myProductsComments = [];
 
     protected $listeners = ['userProfilUpdate'];
 
@@ -31,6 +35,7 @@ class UserProfil extends Component
         $this->activeTagTitle = (new ProfilManager('demandes', "Les demandes d'ajout"))->title;
         $this->user = User::find($id);
         $this->getDemandes();
+        $this->getUserCart();
         $this->getMyFollowers();
         $this->profilImage = $this->user->currentPhoto();
         if(!$this->user){
@@ -46,6 +51,11 @@ class UserProfil extends Component
     {
         $this->getDemandes();
         $this->getMyFollowers();
+    }
+
+    public function getUserCart()
+    {
+        $this->carts = $this->user->shoppingBags;
     }
 
     public function getMyFollowers()
@@ -130,6 +140,17 @@ class UserProfil extends Component
                     'followed_id' => $user->id
                 ]);
         }
+    }
+
+    public function getMyProducts()
+    {
+        $allProducts = Product::all();
+
+        $this->myProducts = $allProducts;
+        foreach($this->myProducts as $p){
+            $this->myProductsComments[$p->id] = $p->comments;
+        }
+        
     }
 
     

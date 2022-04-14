@@ -36,7 +36,7 @@
              </div>
           </div>
           <div class="modal-body m-0 p-0 border border-warning">
-             <div class="page-wrapper bg-gra-01 font-poppins            ">
+             <div class="page-wrapper bg-gra-01 font-poppins">
                  <div class="wrapper wrapper--w780 ">
                     <div class="card card-3 border border-danger row w-100 p-0 m-0">
                         @if($product_image)

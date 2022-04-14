@@ -168,3 +168,45 @@
 .z-img-mh-300 {
     min-height: 300px !important;
 }
+
+.zw-30 {
+    width: 30% !important;
+}
+
+.zw-33 {
+    width: 33% !important;
+}
+
+.zw-40 {
+    width: 40% !important;
+}
+
+.zw-95 {
+    width: 95% !important;
+}
+
+.z-text-cyan {
+    color: cyan !important;
+}
+
+.z-modal {
+    margin: 0 auto !important;
+}
+
+.z-banner {
+    background: url('/myassets/banners/morecolor.jpg');
+    height: 120px !important;
+}
+
+.text-cursive {
+    font-family: cursive !important;
+}
+
+.z-hover-secondary:hover {
+    background-color: #334 !important;
+    color: #bbb !important;
+}
+
+.z-secondary {
+    background-color: #334 !important;
+}

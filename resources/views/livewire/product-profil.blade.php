@@ -1,7 +1,7 @@
-<div wire:ignore.self class="m-0 p-0  @isNotRoute('product-profil') modal fade @endisNotRoute" id="productProfilModal" role="dialog" tabindex="-1" aria-labelledby="productProfilModalTitle" >
-    <div class="modal-dialog modal-z-xlg m-0 mx-auto" role="document">
+<div wire:ignore.self class="m-0 p-0 id="productProfil"  >
+    <div class=" modal-z-xlg z-modal m-0 mx-auto" role="document">
        <!-- Modal content-->
-        <div class="modal-content" style="position: absolute; top:100px; z-index: 1000">
+        <div class="modal-content" style="top:100px; z-index: 1000">
             <div class="modal-header">
                 <div class="d-flex justify-content-between w-100">
                     @if(isset($product))
@@ -23,7 +23,7 @@
                 </div>
             </div>
             @if(isset($product))
-            <div class="modal-body m-0 p-0 border border-warning" @isRoute('product-profil') @endisRoute>
+            <div class="modal-body m-0 p-0 border border-warning">
                 <div class="page-wrapper bg-gra-01 font-poppins">
                     <div class="wrapper wrapper--w780 ">
                         <div class="card card-3 border border-danger w-100 p-0 m-0">
@@ -149,7 +149,10 @@
                                 <div class="bg-secondary text-dark col-md-12 col-lg-7 col-xl-7 col-12 m-0 p-0">
                                     <table class="w-100 p-0 m-0" style="height: 70px;">
                                         <div class="w-100 m-0 p-2">
-                                            <h4 class="text-center p-2 text-uppercase">{{ $product->getName() }}</h4>
+                                            <h4 class="text-center p-2 text-uppercase">
+                                                <span class="text-white-50">Catégorie:</span> 
+                                                <span class="text-white">{{ $product_category->name }}</span>
+                                            </h4>
                                             <hr class="m-0 p-0 bg-white">
                                         </div>
                                         <div class="w-100 m-0 p-0">
@@ -168,13 +171,13 @@
                                                             <strong>Total Vendu :</strong>  <span> {{$product->sells}} </span>
                                                         </h5>
                                                         <h5>
-                                                            <strong>Réduction :</strong>  <span>{{rand(1, 30)}} %</span>
+                                                            <strong>Réduction :</strong>  <span> {{$product->reduction}} %</span>
                                                         </h5>
                                                     </div>
                                                 </div>
                                             </div>
                                             <hr class="m-0 p-0 bg-white mx-2 mt-1">
-                                            <div class="container w-100 m-0" style="max-height: 350px; overflow: auto">
+                                            <div class="container w-100 m-0 p-2" style="max-height: 350px; overflow: auto">
                                                 <p>
                                                     {{$product->description}}
                                                 </p>
@@ -182,15 +185,44 @@
                                         </div>
                                         <td class="w-100 m-0 p-0 align-bottom">
                                             <div class="container col-11 d-flex justify-content-end pb-2">
+                                                @isAdmin()
+                                                <span wire:click="editAProduct"  class="z-scale py-1 cursor-pointer btn-secondary mr-2 py-0 px-3 border border-white">
+                                                    <span class="fa fa-edit p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Editer</small>
+                                                </span>
+                                                @endisAdmin
+                                                @auth
+                                                    <span class="z-scale py-1 cursor-pointer btn-primary py-0 px-3 border border-white">
+                                                        <span wire:click="bought" class="bi-download p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Acheter</small>
+                                                    </span>
+                                                    @if(Auth::user()->alreadyIntoCart($product->id))
+                                                        <span wire:click="deleteFromCart" class="z-scale py-1 cursor-pointer btn-danger mx-2 px-3 border border-white">
+                                                            <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Retirer du panier</small>
+                                                        </span>
+                                                    @else
+                                                        <span wire:click="addToCart" class="z-scale py-1 cursor-pointer btn-primary mx-2 px-3 border border-white">
+                                                            <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Panier</small>
+                                                        </span>
+                                                    @endif
+                                                @endauth
+                                                @guest
                                                 <span class="z-scale py-1 cursor-pointer btn-primary py-0 px-3 border border-white">
-                                                    <span class="bi-download p-0 m-0"></span> <small>Acheter</small>
+                                                    <span wire:click="bought" class="bi-download p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Acheter</small>
                                                 </span>
-                                                <span class="z-scale py-1 cursor-pointer btn-primary mx-2 px-3 border border-white">
-                                                    <span class="bi-minecart "></span> <small>Panier</small>
+                                                <span wire:click="addToCart" class="z-scale py-1 cursor-pointer btn-primary mx-2 px-3 border border-white">
+                                                    <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Panier</small>
                                                 </span>
+                                                @endguest
+                                                @isAdmin()
                                                 <span wire:click="updategalery" class="z-scale cursor-pointer py-1 btn-primary px-3 border border-white">
-                                                    <span class="bi-image"></span> <small>Ajouter une image</small>
+                                                    <span class="bi-image"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Ajouter une image</small>
                                                 </span>
+                                                @endisAdmin
+
+                                            </div>
+                                            <div class="container col-11 d-flex justify-content-end pb-2">
+                                                <small class="text-white-50">
+                                                    Editée le {{ $product->dateAgoToStringForUpdated }}
+                                                </small>
                                             </div>
                                         </td>
                                     </table>
@@ -200,7 +232,6 @@
                     </div>
                 </div>
             </div>
-            
             @else
                 @include('components.mycomponents.product-profil-loader')
             @endif

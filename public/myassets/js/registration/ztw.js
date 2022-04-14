@@ -12,6 +12,9 @@ window.addEventListener('reloadPage', event => {
 window.addEventListener('modal-updateProductGalery', event => {
     $('#updateProductModal').modal();
 });
+window.addEventListener('modal-editProduct', event => {
+    $('#editProductModal').modal();
+});
 
 
 $(function() {
@@ -22,7 +25,7 @@ $(function() {
 
 
 window.addEventListener('FireAlert', event => {
-    if (event.detail.title) {
+    if (event.detail.title !== undefined) {
         Swal.fire({
             title: 'Operation ' + event.detail.title,
             icon: event.detail.type,

@@ -25,12 +25,7 @@ class Logout extends Component
 
     public function logout()
     {
-        $deletedConnection = UserOnlineSession::where('user_id', Auth::user()->id)->get();
-            if($deletedConnection->count() > 0){
-                foreach($deletedConnection as $d){
-                    $d->delete();
-                }
-            }
+        Session::forget('user-' . Auth::user()->id);
         Auth::guard('web')->logout();
         $this->emit("newUserConnected");
         $this->dispatchBrowserEvent('hide-form');
