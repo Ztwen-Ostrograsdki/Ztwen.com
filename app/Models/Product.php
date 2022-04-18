@@ -8,6 +8,7 @@ use App\Models\Comment;
 use App\Models\Category;
 use App\Models\ShoppingBag;
 use App\Helpers\DateFormattor;
+use App\Helpers\ProductManager;
 use App\Models\SeenLikeProductSytem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,6 +19,7 @@ class Product extends Model
     use HasFactory;
     use SoftDeletes;
     use DateFormattor;
+    use ProductManager;
 
     public $myLikes;
     const MAX_IMAGES = 3;

@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\MyRequest;
 use App\Models\ShoppingBag;
 use Hamcrest\Type\IsInteger;
+use App\Helpers\ProductManager;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\User as ModelsUser;
 use Laravel\Jetstream\HasProfilePhoto;
@@ -28,6 +29,7 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
     use SoftDeletes;
+    use ProductManager;
 
 
     /**

@@ -31,11 +31,16 @@ class UserProfil extends Component
 
     public function mount($id)
     {
-        $this->activeTagName = (new ProfilManager('demandes', "Les demandes d'ajout"))->name;
-        $this->activeTagTitle = (new ProfilManager('demandes', "Les demandes d'ajout"))->title;
+        if(session()->has('userProfilTagName') && session()->has('userProfilTagTitle')){
+            $this->activeTagName = session('userProfilTagName');
+            $this->activeTagTitle = session('userProfilTagTitle');
+        }
+        else{
+            $this->activeTagName = (new ProfilManager('demandes', "Les demandes d'ajout"))->name;
+            $this->activeTagTitle = (new ProfilManager('demandes', "Les demandes d'ajout"))->title;
+        }
         $this->user = User::find($id);
         $this->getDemandes();
-        $this->getUserCart();
         $this->getMyFollowers();
         $this->profilImage = $this->user->currentPhoto();
         if(!$this->user){
@@ -44,18 +49,30 @@ class UserProfil extends Component
         if(Auth()->user()->id !== $this->user->id){
             abort(403);
         }
+        $this->getUserCart();
 
-    }
-
-    public function booted()
-    {
-        $this->getDemandes();
-        $this->getMyFollowers();
     }
 
     public function getUserCart()
     {
-        $this->carts = $this->user->shoppingBags;
+        $this->carts = [];
+        $carts = $this->user->shoppingBags->pluck('product_id')->toArray();
+        if(count($carts) > 0){
+            $this->carts = Product::whereIn('id', $carts)->get();
+        }
+        $this->reformateDates($this->carts);
+    }
+
+    public function reformateDates($data = [])
+    {
+        if($data == []){
+            $data = $this->carts;
+        }
+        if($data->count() > 0){
+            foreach($data as $d){
+                $d->__setDateAgo();
+            }
+        }
     }
 
     public function getMyFollowers()
@@ -77,7 +94,9 @@ class UserProfil extends Component
     {
         $this->activeTagName = (new ProfilManager($name, $title))->name;
         $this->activeTagTitle = (new ProfilManager($name, $title))->title;
-        $this->booted();
+        session()->put('userProfilTagName', $name);
+        session()->put('userProfilTagTitle', $title);
+        $this->reformateDates();
     }
     public function getDemandes()
     {
@@ -142,15 +161,66 @@ class UserProfil extends Component
         }
     }
 
-    public function getMyProducts()
-    {
-        $allProducts = Product::all();
 
-        $this->myProducts = $allProducts;
-        foreach($this->myProducts as $p){
-            $this->myProductsComments[$p->id] = $p->comments;
+    public function addToCart($product_id)
+    {
+        $product = Product::find($product_id);
+        if($product && $this->user){
+            if($this->user->addToCart($product->id)){
+                $this->dispatchBrowserEvent('FireAlert', ['title' => 'Réussie', 'message' => "vous avez ajouté l'article {$product->getName()} à votre panier", 'type' => 'success']);
+                $this->emit('cartEdited', $this->user->id);
+            }
+            else{
+                return abort(403, "Votre requête ne peut aboutir");
+            }
         }
-        
+    }
+
+    public function deleteFromCart($product_id)
+    {
+        $product = Product::find($product_id);
+        if($product && $this->user){
+            if($this->user->deleteFromCart($product->id)){
+                $this->emit('cartEdited', $this->user->id);
+                $this->dispatchBrowserEvent('FireAlert', ['title' => 'Réussie', 'message' => "L'article {$product->getName()} a été retiré de votre panier", 'type' => 'success']);
+            }
+            else{
+                return abort(403, "Votre requête ne peut aboutir");
+            }
+        }
+    }
+
+
+
+    public function updategalery($product_id)
+    {
+        $product = Product::find($product_id);
+        if($product){
+            $this->emit('targetedProduct', $product->id);
+            $this->dispatchBrowserEvent('modal-updateProductGalery');
+        }
+    }
+
+    public function editAProduct($product_id)
+    {
+        $product = Product::find($product_id);
+        if($product){
+            $this->emit('editAProduct', $product->id);
+            $this->dispatchBrowserEvent('modal-editProduct');
+        }
+    }
+
+    public function liked($product_id)
+    {
+        $product = Product::find($product_id);
+        if($product && $this->user){
+            if($this->user->likedThis('product', $product->id, $this->user->id)){
+                $this->getUserCart();
+            }
+        }
+        else{
+            return abort(403, "Votre requête ne peut aboutir");
+        }
     }
 
     

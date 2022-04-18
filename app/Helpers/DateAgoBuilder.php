@@ -58,7 +58,7 @@ trait DateAgoBuilder{
                 else{
                     if($matrice['H']){
                         if($matrice['H'] > 1){
-                            $string .= $matrice['H'] . " heures ";
+                            $string .= $matrice['H'] . " H ";
                         }
                         else{
                             $string .= " une heure ";
@@ -67,14 +67,14 @@ trait DateAgoBuilder{
                     else{
                         if($matrice['m']){
                             if($matrice['m'] > 1){
-                                $string .= $matrice['m'] . " minutes ";
+                                $string .= $matrice['m'] . " min ";
                             }
                             else{
-                                $string .= " une minutes ";
+                                $string .= " 01 min ";
                             }
                             if($matrice['s']){
                                 if($matrice['s'] > 1){
-                                    $string .= $matrice['s'] . " secondes ";
+                                    $string .= $matrice['s'] . " sec ";
                                 }
                                 else{
                                     $string .= $matrice['s'] . " une seconde ";

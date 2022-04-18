@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CreateNewProduct extends Component
 {
-    protected $listeners = ['createAProduct'];
+    protected $listeners = ['createAProduct', 'createNewCategory'];
     public $product;
     public $slug;
     public $description;
@@ -56,6 +56,7 @@ class CreateNewProduct extends Component
                     ]
                 );
                 if($product){
+                    $this->emit('newProductCreated');
                     $this->reset('slug', 'description', 'total', 'price', 'reduction', 'category_id');
                     $this->dispatchBrowserEvent('hide-form');
                     $this->dispatchBrowserEvent('FireAlert', ['title' => 'Ajout du nouvel article', 'message' => "La création de l'article s'est bien déroulée", 'type' => 'success']);
@@ -70,7 +71,17 @@ class CreateNewProduct extends Component
         }
     }
 
+    public function newCategoryCreated($category)
+    {
+        $this->mount();
+    }
 
+    public function createNewCategory()
+    {
+        if(session()->has('categorySelectedID') && session('categorySelectedID') !== null){
+            $this->category_id = session('categorySelectedID');
+        }
+    }
 
     public function createAProduct()
     {

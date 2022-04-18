@@ -83,7 +83,7 @@
                                     <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold" data-toggle="modal" data-target="#createProductModal" href="#" wire:click="createNewProduct">
                                         <span class="fa fa-cart-plus mr-3"></span>{{ __('Ajouter un article') }}
                                     </x-dropdown-link>
-                                    <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold" data-toggle="modal" data-target="#createCategoryModal" href="#" wire:click="createNewProduct">
+                                    <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 border-bottom text-bold" data-toggle="modal" data-target="#createCategoryModal" href="#">
                                         <span class="fa fa-plus mr-3"></span>{{ __('Une catégorie') }}
                                     </x-dropdown-link>
                                 @endisAdmin

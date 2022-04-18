@@ -30,6 +30,7 @@ Route::get('/inscription', AuthRedirections::class)->name('registration')->middl
 
 Route::get('/articles', ShowProducts::class)->name('products');
 Route::get('/categories', ShowCategories::class)->name('categories');
+Route::get('/categories/{id?}', ShowCategories::class)->name('category');
 Route::get('/articles/{id?}', ProductProfil::class)->name('product-profil');
 Route::post('/inscription', RegisteringNewUser::class)->middleware('guest')->name('inscription');
 

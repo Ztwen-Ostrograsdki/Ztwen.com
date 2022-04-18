@@ -75,22 +75,9 @@ class ProductProfil extends Component
     {
         $user = Auth::user();
         $product = $this->product;
-        if($product){
-            $seen = $product->seen;
-            if($user){
-                $product->update(['seen' => $seen + 1]);
-                SeenLikeProductSytem::create([
-                    'user_id' => $user->id,
-                    'product_id' => $product->id,
-                    'reaction' => true,
-                ]);
-            }
-            else{
-                $product->update(['seen' => $seen + 1]);
-                SeenLikeProductSytem::create([
-                    'product_id' => $product->id,
-                    'reaction' => true,
-                ]);
+        if($product && $user){
+            if($this->user->likedThis('product', $product->id, $this->user->id)){
+                $this->mount();
             }
         }
         else{
