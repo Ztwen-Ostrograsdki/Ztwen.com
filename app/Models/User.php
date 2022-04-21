@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\MyRequest;
 use App\Models\ShoppingBag;
 use Hamcrest\Type\IsInteger;
+use App\Helpers\DateFormattor;
 use App\Helpers\ProductManager;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\User as ModelsUser;
@@ -18,6 +19,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Helpers\ActionsTraits\ModelActionTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -30,6 +32,8 @@ class User extends Authenticatable
     use TwoFactorAuthenticatable;
     use SoftDeletes;
     use ProductManager;
+    use DateFormattor;
+    use ModelActionTrait;
 
 
     /**

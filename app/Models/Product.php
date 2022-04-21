@@ -12,6 +12,7 @@ use App\Helpers\ProductManager;
 use App\Models\SeenLikeProductSytem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Helpers\ActionsTraits\ModelActionTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
@@ -20,6 +21,7 @@ class Product extends Model
     use SoftDeletes;
     use DateFormattor;
     use ProductManager;
+    use ModelActionTrait;
 
     public $myLikes;
     const MAX_IMAGES = 3;

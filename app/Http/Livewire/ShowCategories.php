@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ShowCategories extends Component
 {
-    protected $listeners = ['productUpdated', 'newCategoryCreated', 'newProductCreated', 'connected'];
+    protected $listeners = ['productUpdated', 'newCategoryCreated', 'newProductCreated', 'connected', 'aProductHasBeenDeleted', 'aProductHasBeenRestored'];
     public $products = [];
     public $categorySelectedID;
     public $categories;
@@ -91,6 +91,14 @@ class ShowCategories extends Component
     }
 
     public function newCategoryCreated()
+    {
+        $this->mount();
+    }
+    public function aProductHasBeenDeleted($product_id)
+    {
+        $this->mount();
+    }
+    public function aProductHasBeenRestored($product_id)
     {
         $this->mount();
     }

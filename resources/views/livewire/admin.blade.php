@@ -3,7 +3,7 @@
       <div class="w-100 border m-0 p-0">
          <div class="m-0 p-0 w-100">
             <div class="row w-100 m-0">
-               <div class="col-3 m-0 text-capitalize border border-dark bg-dark p-0 text-white" style="min-height: 650px;">
+               <div class="col-3 m-0 text-capitalize border border-dark bg-dark p-0  @if($adminTrashedData) text-danger @else text-white @endif" style="min-height: 650px;">
                   <div class="d-fex flex-column w-100 mb-3">
                      <div class="m-0 py-2 @if($adminTagName == 'notifications') z-admin-active @endif  px-4">
                         <div wire:click="setActiveTag('notifications', 'Les Notifications')" class="d-flex w-100 cursor-pointer m-0 p-0">
@@ -66,10 +66,21 @@
                <div class="col-9 border-left border-white bg-dark pb-3">
                   <div class="w-100 mx-auto mt-2 border">
                     <div class="mx-auto d-flex w-100 justify-content-between">
-                        <div class="col-9">
+                        <div class="col-6 bg-info">
                            <h4 class="text-center text-white text-uppercase mt-4">
                               {{$adminTagTitle}}
                            </h4>
+                        </div>
+                        <div class="col-3 p-0 text-white flex-column border-left d-flex justify-content-between">
+                           <span wire:click="getTheActiveData" class="py-2 px-2 cursor-pointer @if(!$adminTrashedData) bg-info @endif">
+                              <span class="bi-minecart"></span>
+                              <span>Actifs</span>
+                           </span>
+                           <hr class="bg-white p-0 m-0">
+                           <span wire:click="getTheTrashedData" class="py-2 px-2 cursor-pointer @if($adminTrashedData) bg-info @endif">
+                              <span class="bi-trash"></span>
+                              <span>Corbeille</span>
+                           </span>
                         </div>
                         @isAdmin()
                            @if ($adminTagName == 'users' || $adminTagName == 'admins')

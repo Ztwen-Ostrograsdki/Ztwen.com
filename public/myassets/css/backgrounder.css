@@ -56,8 +56,13 @@
     background: #334;
 }
 
-.z-table tr td {
-    padding-left: 10px;
+.z-table {
+    border-collapse: collapse;
+}
+
+.z-table-border th,
+.z-table-border td {
+    border: thin solid white !important;
 }
 
 .success-hover:hover {
@@ -209,4 +214,8 @@
 
 .z-secondary {
     background-color: #334 !important;
+}
+
+.z-link-border a+a {
+    border-top: 1px solid #fff !important;
 }

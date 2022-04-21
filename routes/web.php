@@ -34,7 +34,7 @@ Route::get('/categories/{id?}', ShowCategories::class)->name('category');
 Route::get('/articles/{id?}', ProductProfil::class)->name('product-profil');
 Route::post('/inscription', RegisteringNewUser::class)->middleware('guest')->name('inscription');
 
-Route::get('/administration', Admin::class)->middleware('auth')->name('admin');
+Route::get('/administration', Admin::class)->middleware('admin')->name('admin');
 Route::get('/messenger', Messenger::class)->middleware('auth')->name('messenger');
 Route::get('/messenger/chat/{id?}', MessengerChat::class)->middleware('auth')->name('chat');
 Route::get('profil/{id}', UserProfil::class)->middleware('auth')->name('user-profil');
