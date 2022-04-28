@@ -15,6 +15,9 @@ window.addEventListener('modal-updateProductGalery', event => {
 window.addEventListener('modal-editProduct', event => {
     $('#editProductModal').modal();
 });
+window.addEventListener('modal-editCategory', event => {
+    $('#editCategoryModal').modal();
+});
 
 
 $(function() {
@@ -40,6 +43,27 @@ window.addEventListener('FireAlert', event => {
             icon: event.detail.type,
             text: event.detail.message,
             timer: 2000,
+            showCloseButton: false,
+            showCancelButton: false,
+            showConfirmButton: false,
+        });
+    }
+});
+
+window.addEventListener('FireAlertDoNotClose', event => {
+    if (event.detail.title !== undefined) {
+        Swal.fire({
+            title: 'Operation ' + event.detail.title,
+            icon: event.detail.type,
+            text: event.detail.message,
+            showCloseButton: false,
+            showCancelButton: false,
+            showConfirmButton: false,
+        });
+    } else {
+        Swal.fire({
+            icon: event.detail.type,
+            text: event.detail.message,
             showCloseButton: false,
             showCancelButton: false,
             showConfirmButton: false,

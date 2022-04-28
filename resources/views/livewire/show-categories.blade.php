@@ -24,13 +24,14 @@
                                 <h4 class="d-flex justify-content-between cursor-pointer text-center text-white py-2 border border-bottom px-2">
                                     <span class="text-center pt-2">
                                         <span>{{$category->name}} </span> <span class="">({{$category->products->count()}})</span>
+                                        <span wire:click="editACategory({{$category->id}})" title="Editer cette catégorie" class="fa fa-edit text-white-50 float-right mt-1 ml-3 cursor-pointer"></span>
                                     </span>
                                    @if($category->products->count() > 0)
                                         @isAdmin()
-                                        <span wire:click="createNewCategory" data-target="#createProductModal" data-toggle="modal" data-dismiss="modal" class="btn btn-primary border border-white">
-                                            <span class="fa fa-plus"></span>
-                                            Ajouter un article
-                                        </span>
+                                            <span wire:click="createNewCategory" data-target="#createProductModal" data-toggle="modal" data-dismiss="modal" class="btn btn-primary border border-white">
+                                                <span class="fa fa-plus"></span>
+                                                Ajouter un article
+                                            </span>
                                         @endisAdmin
                                    @else
                                         <span class="btn btn-info border border-warning">

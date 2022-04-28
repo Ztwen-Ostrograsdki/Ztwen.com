@@ -37,7 +37,7 @@ Route::post('/inscription', RegisteringNewUser::class)->middleware('guest')->nam
 Route::get('/administration', Admin::class)->middleware('admin')->name('admin');
 Route::get('/messenger', Messenger::class)->middleware('auth')->name('messenger');
 Route::get('/messenger/chat/{id?}', MessengerChat::class)->middleware('auth')->name('chat');
-Route::get('profil/{id}', UserProfil::class)->middleware('auth')->name('user-profil');
+Route::get('profil/{id}', UserProfil::class)->middleware('user')->name('user-profil');
 
 
 

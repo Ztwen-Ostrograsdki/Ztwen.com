@@ -32,8 +32,8 @@ class CreateProductsTable extends Migration
             $table->foreign('category_id')
                   ->references('id')
                   ->on('categories')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
+                  ->onDelete('restrict')
+                  ->onUpdate('restrict');
             $table->decimal('price', 12, 2)->default(500)->nullable();
             $table->decimal('reduction', 12, 2)->default(0)->nullable();
             $table->timestamps();

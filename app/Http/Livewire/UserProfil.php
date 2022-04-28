@@ -44,10 +44,10 @@ class UserProfil extends Component
         $this->getMyFollowers();
         $this->profilImage = $this->user->currentPhoto();
         if(!$this->user){
-            abort(404);
+            return abort(403, "Vous n'êtes pas authorisé");
         }
         if(Auth()->user()->id !== $this->user->id){
-            abort(403);
+            return abort(403, "Vous n'êtes pas authorisé");
         }
         $this->getUserCart();
 
@@ -68,11 +68,7 @@ class UserProfil extends Component
         if($data == []){
             $data = $this->carts;
         }
-        if($data->count() > 0){
-            foreach($data as $d){
-                $d->__setDateAgo();
-            }
-        }
+        
     }
 
     public function getMyFollowers()
@@ -97,6 +93,7 @@ class UserProfil extends Component
         session()->put('userProfilTagName', $name);
         session()->put('userProfilTagTitle', $title);
         $this->reformateDates();
+        $this->mount($this->user->id);
     }
     public function getDemandes()
     {
@@ -136,6 +133,7 @@ class UserProfil extends Component
                 $this->emit('updateRequests');
             }
         }
+        $this->mount($this->user->id);
     }
 
     public function cancelRequestFriend($user_id)
@@ -147,6 +145,7 @@ class UserProfil extends Component
             $req->delete();
             $this->emit('updateRequests');
         }
+        $this->mount($this->user->id);
     }
 
     public function followThisUser($user_id)
@@ -159,6 +158,7 @@ class UserProfil extends Component
                     'followed_id' => $user->id
                 ]);
         }
+        $this->mount($this->user->id);
     }
 
 
@@ -174,6 +174,7 @@ class UserProfil extends Component
                 return abort(403, "Votre requête ne peut aboutir");
             }
         }
+        $this->mount($this->user->id);
     }
 
     public function deleteFromCart($product_id)
@@ -188,6 +189,7 @@ class UserProfil extends Component
                 return abort(403, "Votre requête ne peut aboutir");
             }
         }
+        $this->mount($this->user->id);
     }
 
 

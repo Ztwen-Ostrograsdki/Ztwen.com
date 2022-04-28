@@ -29,7 +29,7 @@
         @livewire('user-profil-manager') 
         @livewire('following-system') 
         @livewire('create-category')
-        {{-- @livewire('edit-category') --}}
+        @livewire('edit-category')
         @livewire('product-editor')
         @livewire('edit-product-data')
         @livewire('create-new-product')
@@ -50,7 +50,7 @@
         </div>
         @include('sweetalert::alert')
         @if(Route::currentRouteName() !== 'chat' && Route::currentRouteName() !== 'messenger' && Route::currentRouteName() !== 'product-profil')
-            @include("components.mycomponents.footer") {{-- chargement du footer --}}
+            @livewire("footer") {{-- chargement du footer --}}
         @endif
         @include("components.mycomponents.scripts") {{-- chargement des scripts js --}}
     </body>

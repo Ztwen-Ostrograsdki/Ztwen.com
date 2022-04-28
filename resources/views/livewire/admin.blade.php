@@ -13,6 +13,18 @@
                         </div>
                      </div>
                      <hr class="m-0 p-0 w-100 bg-white">
+                     <div class="m-0 py-2 @if($adminTagName == 'comments') z-admin-active @endif  px-4">
+                        <div wire:click="setActiveTag('comments', 'Les Commentaires')" class="d-flex w-100 cursor-pointer m-0 p-0">
+                           <span class="fa fa-2x fa-comment "></span>
+                           <h4 class="w-100 m-0 mt-2 ml-3">Commentaires</h4>
+                           @if ($comments->count() > 9)
+                              <span class="fa fa-2x">{{$comments->count()}}</span>
+                           @else
+                              <span class="fa fa-2x">0{{$comments->count()}}</span>
+                           @endif
+                        </div>
+                     </div>
+                     <hr class="m-0 p-0 w-100 bg-white">
                      <div class="m-0 py-2 @if($adminTagName == 'admins') z-admin-active @endif px-4">
                         <div wire:click="setActiveTag('admins', 'Les administrateurs')" class="d-flex w-100 cursor-pointer m-0 p-0">
                            <span class="fa fa-user-secret fa-2x"></span>
@@ -63,7 +75,7 @@
                      <hr class="m-0 p-0 w-100 bg-white">
                   </div>
                </div>
-               <div class="col-9 border-left border-white bg-dark pb-3">
+               <div class="col-9 border-left border-white bg-dark pb-5">
                   <div class="w-100 mx-auto mt-2 border">
                     <div class="mx-auto d-flex w-100 justify-content-between">
                         <div class="col-6 bg-info">

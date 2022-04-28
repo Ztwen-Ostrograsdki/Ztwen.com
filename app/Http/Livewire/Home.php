@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Comment;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
@@ -12,6 +13,7 @@ class Home extends Component
     public $products = [];
     public $categories;
     public $targetedProduct;
+    public $lastComments;
     public $allProducts = [];
     public $allProductsComments = [];
     public $perpage = 6;
@@ -24,6 +26,8 @@ class Home extends Component
 
     public function mount()
     {
+        $this->lastComments = Comment::where('blocked', 0)->where('approved', 1)->take(3)->get();
+        $this->lastComments = Comment::all()->take(3);
         $this->lastPosted(); 
     }
 

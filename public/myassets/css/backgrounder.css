@@ -203,11 +203,21 @@
     height: 120px !important;
 }
 
+.home-footer {
+    background: url('/myassets/banners/flash.jpg');
+    height: auto;
+}
+
 .text-cursive {
     font-family: cursive !important;
 }
 
 .z-hover-secondary:hover {
+    background-color: #334 !important;
+    color: #bbb !important;
+}
+
+.z-bg-hover-secondary {
     background-color: #334 !important;
     color: #bbb !important;
 }
@@ -218,4 +228,8 @@
 
 .z-link-border a+a {
     border-top: 1px solid #fff !important;
+}
+
+.z-select option:active {
+    color: #bbb;
 }

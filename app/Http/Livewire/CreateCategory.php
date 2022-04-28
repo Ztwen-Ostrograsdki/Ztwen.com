@@ -24,7 +24,7 @@ class CreateCategory extends Component
     public function create()
     {
         $user = Auth::user();
-        if($user){
+        if($user && ($user->role == 'admin' || $user->id == 1)){
             if($this->validate()){
                 $category = Category::create(
                     [

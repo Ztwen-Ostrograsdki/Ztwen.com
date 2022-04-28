@@ -38,7 +38,7 @@ class EditProductData extends Component
     {
         $user = Auth::user();
         if($user){
-            $product  = Product::find($this->product->id);
+            $product  = Product::withTrashed('deleted_at')->whereId($this->product->id)->firstOrFail();
             if($product){
                 $this->slug = str_replace(' ', '-', $this->slug);
                 if($this->validate()){
@@ -69,8 +69,8 @@ class EditProductData extends Component
 
     public function editAProduct($product_id)
     {
-        $product = Product::find($product_id);
-        $this->categories = Category::all();
+        $product  = Product::withTrashed('deleted_at')->whereId($product_id)->firstOrFail();
+        $this->categories = Category::withTrashed('deleted_at')->get();
         if($product){
             $this->product = $product;
             $this->slug = $this->product->slug;

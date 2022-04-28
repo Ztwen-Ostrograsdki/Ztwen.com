@@ -259,4 +259,11 @@ class User extends Authenticatable
     }
 
 
+    public function getDateAgoFormated()
+    {
+        $this->__setDateAgo();
+        return $this->dateAgoToStringForUpdated;
+    }
+
+
 }

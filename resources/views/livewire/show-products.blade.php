@@ -59,8 +59,8 @@
                     <div class="filters-content">
                         <div class="row grid">
                             @foreach($products as $product)
-                                <div class="col-lg-4 col-md-4 all des">
-                                    <div class="product-item">
+                                <div class="col-lg-4 col-md-4 all des ">
+                                    <div class="product-item @if(Auth::user() && Auth::user()->alreadyIntoCart($product->id)) shadow @endif">
                                         <a wire:click="setTargetedProduct({{$product->id}})" title="Cliquez pour charger l'article {{ $product->slug }}" href="{{route('product-profil', ['id' => $product->id])}}">
                                             @if($product->images->count() > 0)
                                                 <img class="z-img-h-250" src="/storage/articlesImages/{{$product->getProductDefaultImageInGalery()}}" alt="image de l'article {{$product->slug}}">
@@ -70,17 +70,16 @@
                                         </a>
                                             <div class="down-content mx-auto px-lg-1">
                                                 <a ><h4>{{mb_substr($product->slug, 0, 15)}} ...</h4></a>
-                                                <h6>{{$product->price}}</h6>
+                                                <h6>{{$product->price}}
+                                                    @auth
+                                                        @if(Auth::user()->alreadyIntoCart($product->id))
+                                                            <strong title="Vous suivez cet article: Vous l'avez ajouté à votre panier" class="text-success bi-cart-check-fill cursor-pointer"></strong>
+                                                        @endif
+                                                    @endauth
+                                                </h6>
                                                 <p class="px-1">
                                                     {{$product->description}}
                                                 </p>
-                                                @auth
-                                                    @if(Auth::user()->alreadyIntoCart($product->id))
-                                                        <small class="text-center d-inline-block text-white bg-success w-100 p-1 shadow mx-auto">
-                                                            vous suivez cet article. Vous l'avez ajouté à votre panier
-                                                        </small>
-                                                    @endif
-                                                @endauth
                                                 <div class="d-flex justify-content-betwween w-100 m-0 p-0 mx-auto">
                                                     <ul class="col-lg-5 col-xl-5 d-xl-inline-block d-lg-inline-block d-none">
                                                         <li><i class="fa fa-star"></i></li>

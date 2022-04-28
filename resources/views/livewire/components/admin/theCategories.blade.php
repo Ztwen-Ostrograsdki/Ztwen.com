@@ -2,7 +2,7 @@
 <div class="w-100 m-0 p-0 mt-3">
     <table class="w-100 m-0 p-0 table-striped table-bordered z-table text-white mb-2">
         <thead class="text-white text-center">
-            <th class="py-2 text-center">#ID</th>
+            <th class="py-1 text-center">#ID</th>
             <th class="">Catégorie</th>
             <th>Description</th>
             <th>Articles</th>
@@ -11,24 +11,24 @@
         </thead>
         <tbody>
             @foreach($categories as $key => $c)
-                <tr class="z-hover-secondary">
-                    <td class="py-2">{{$key + 1}}</td>
+                <tr class="z-hover-secondary p-0">
+                    <td class="text-center p-0">{{$key + 1}}</td>
                     <td class="p-0">
-                        <a class="text-white col-9 h-100 d-inline-block py-2 pl-1" href="{{route('category', ['id' => $c->id])}}">
+                        <a class="text-white col-9 d-inline-block pl-1" href="{{route('category', ['id' => $c->id])}}">
                             {{$c->name}}
                         </a>
-                        <span class="col-3 py-2 cursor-pointer float-right fa fa-edit text-white" data-toggle="modal" data-dismiss="modal" data-target="#EditCategoryModal"></span>
+                        <span wire:click="editACategory({{$c->id}})" title="Editer cette catégorie" class="col-3 cursor-pointer float-right fa fa-edit mt-1 text-white"></span>
 
                     </td>
                     <td class="p-0">
-                        <a class="text-white w-100 h-100 d-inline-block py-2 pl-1" href="{{route('category', ['id' => $c->id])}}">
+                        <a class="text-white w-100 d-inline-block pl-1" href="{{route('category', ['id' => $c->id])}}">
                             {{ mb_substr($c->description, 0, 27) }} ...
                         </a>
                     </td>
                     <td class="">
                         <x-dropdown align="right" width="48" class="text-bold m-0 p-0 bg-secondary">
                             <x-slot name="trigger">
-                                <x-responsive-nav-link class="text-white-50 cursor-pointer">
+                                <x-responsive-nav-link class="text-white-50 cursor-pointer p-0 m-0">
                                     <span class="fa fa-chevron-down text-success"></span> 
                                     @if ($c->products->count() > 0)
                                         @if ($c->products->count() == 1)
@@ -59,12 +59,18 @@
                         </x-dropdown>
                     </td>
                     <td class="text-center">{{ $c->products->count() }}</td>
-                    <td class="text-center w-auto p-0">
+                    <td class="text-center w-auto p-0 m-0">
+                        @if($c->deleted_at)
                         <span class="row mx-auto w-100 m-0 p-0">
-                            <span class="text-danger  col-4 p-2 px-3 cursor-pointer fa fa-trash"></span>
-                            <span class="text-info col-4 p-2 px-3 cursor-pointer fa fa-trash border-right border-left"></span>
-                            <span class="text-warning col-4 p-2 px-3 cursor-pointer fa fa-key"></span>
+                            <span class="text-danger col-6 p-2 px-3 cursor-pointer fa fa-trash"></span>
+                            <span title="Restaurer cette catégorie: Elle sera réajouté à la liste des catégorie ainsi que les différents articles qui lui sont associés seront restaurés" wire:click="restoreACategory({{$c->id}})" class="text-success col-6 p-2 px-3 cursor-pointer fa fa-reply border-right border-left"></span>
                         </span>
+                        @else
+                        <span class="row mx-auto w-100 m-0 p-0">
+                            <span class="text-danger col-6 p-2 px-3 cursor-pointer fa fa-trash"></span>
+                            <span title="Envoyez cette catégorie dans la corbeille: Elle sera retiré de la liste des catégorie ainsi que les différents articles qui lui sont associés" wire:click="deleteACategory({{$c->id}})" class="text-info col-6 p-2 px-3 cursor-pointer fa fa-trash border-right border-left"></span>
+                        </span>
+                        @endif
                     </td>
                 </tr>
             @endforeach

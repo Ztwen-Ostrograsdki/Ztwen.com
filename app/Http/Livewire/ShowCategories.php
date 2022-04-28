@@ -11,7 +11,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ShowCategories extends Component
 {
-    protected $listeners = ['productUpdated', 'newCategoryCreated', 'newProductCreated', 'connected', 'aProductHasBeenDeleted', 'aProductHasBeenRestored'];
+    protected $listeners = [
+        'productUpdated', 'categoriesUpdated',
+        'newCategoryCreated', 'newProductCreated', 
+        'connected', 
+        'aProductHasBeenDeleted', 'aProductHasBeenRestored', 
+        'aCategoryHasBeenDeleted', 'aCategoryHasBeenRestored'
+    ];
     public $products = [];
     public $categorySelectedID;
     public $categories;
@@ -94,6 +100,14 @@ class ShowCategories extends Component
     {
         $this->mount();
     }
+    public function aCategoryHasBeenRestored($category_id)
+    {
+        $this->mount();
+    }
+    public function aCategoryHasBeenDeleted($category_id)
+    {
+        $this->mount();
+    }
     public function aProductHasBeenDeleted($product_id)
     {
         $this->mount();
@@ -103,6 +117,10 @@ class ShowCategories extends Component
         $this->mount();
     }
     public function newProductCreated()
+    {
+        $this->mount();
+    }
+    public function categoriesUpdated()
     {
         $this->mount();
     }
@@ -153,6 +171,13 @@ class ShowCategories extends Component
         }
     }
 
+    public function editACategory($category_id)
+    {
+        $category = Category::find($category_id);
+        if($category){
+            $this->emit('targetedCategory', $category->id);
+        }
+    }
     public function editAProduct($product_id)
     {
         $product = Product::find($product_id);
@@ -161,6 +186,11 @@ class ShowCategories extends Component
             $this->dispatchBrowserEvent('modal-editProduct');
         }
     }
+
+
+
+
+
 
     public function liked($product_id)
     {

@@ -37,14 +37,14 @@
         <div class="container">
           <div class="row">
             <div class="col-md-12">
-              <div class="section-heading">
-                <h2>Les articles récents</h2>
+              <div class="section-heading m-0 p-0 mb-2">
+                <h2 class="m-0 p-0 my-1">Les articles récents</h2>
                 <a href="{{route('products')}}">Voir tous les articles <i class="fa fa-angle-right"></i></a>
               </div>
               @if($allProducts->count() > 0)
                 <div class="col-md-12">
-                    <div class="filters-content">
-                        <div class="row grid">
+                    <div class="filters-content m-0 p-0">
+                        <div class="row grid m-0 p-0">
                             @foreach($products as $product)
                                 <div class="col-lg-4 col-md-4 all des">
                                     <div class="product-item">
@@ -57,17 +57,16 @@
                                         </a>
                                             <div class="down-content mx-auto px-lg-1">
                                                 <a ><h4>{{mb_substr($product->slug, 0, 15)}} ...</h4></a>
-                                                <h6>{{$product->price}}</h6>
+                                                <h6>{{$product->price}}
+                                                    @auth
+                                                        @if(Auth::user()->alreadyIntoCart($product->id))
+                                                            <strong title="Vous suivez cet article: Vous l'avez ajouté à votre panier" class="text-success bi-cart-check-fill cursor-pointer"></strong>
+                                                        @endif
+                                                    @endauth
+                                                </h6>
                                                 <p class="px-1">
                                                     {{$product->description}}
                                                 </p>
-                                                @auth
-                                                    @if(Auth::user()->alreadyIntoCart($product->id))
-                                                        <small class="text-center d-inline-block text-white bg-success w-100 p-1 shadow mx-auto">
-                                                            vous suivez cet article. Vous l'avez ajouté à votre panier
-                                                        </small>
-                                                    @endif
-                                                @endauth
                                                 <div class="d-flex justify-content-betwween w-100 m-0 p-0 mx-auto">
                                                     <ul class="col-lg-5 col-xl-5 d-xl-inline-block d-lg-inline-block d-none">
                                                         <li><i class="fa fa-star"></i></li>
@@ -162,7 +161,28 @@
           </div>
         </div>
       </div>
-      <div class="best-features pb-0">
+      <div class="pb-0">
+        {{-- THE LAST COMMENTS --}}
+        @if($lastComments->count() > 0)
+        <div class="container">
+          <div class="row mb-0 p-0 mb-2">
+            <div class="col-md-12">
+                <div class="section-heading m-0 p-0 my-1">
+                    <h3  class="m-0 p-0" >Les Derniers Commentaires <span class="fa fa-comment-o"></span></h3>
+                </div>
+            </div>
+            <div class="col-12">
+                <div>
+                    @include('livewire.components.commentsCardsComponents', 
+                    [
+                    'comments' => $lastComments
+                    ])
+                </div>
+            </div>
+          </div>
+        </div>
+        @endif
+        {{-- THE END OF LAST COMMENTS --}}
         <div class="container">
           <div class="row mb-0 p-0 py-2 mb-2">
             <div class="col-md-12">

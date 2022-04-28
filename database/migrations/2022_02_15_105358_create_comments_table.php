@@ -17,6 +17,8 @@ class CreateCommentsTable extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->boolean('approved')->default(0);
+            $table->boolean('blocked')->default(0);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('product_id');
             $table->text('content')->nullable();

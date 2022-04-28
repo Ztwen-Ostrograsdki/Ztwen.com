@@ -33,6 +33,19 @@
                       </a>
                   </li> 
               @endisRoute
+              @isRoute( 'categories')
+                  <li class="nav-item active cursor-pointer">
+                      <a class="nav-link" href="{{route('products')}}">Catégories
+                        <span class="sr-only">(current)</span>
+                      </a>
+                  </li> 
+              @else
+                  <li class="nav-item cursor-pointer">
+                      <a class="nav-link" href="{{route('categories')}}">Catégories
+                        <span class="sr-only">(current)</span>
+                      </a>
+                  </li> 
+              @endisRoute
               @auth
                   @isAdmin(Auth::user())
                       @isRoute('admin')

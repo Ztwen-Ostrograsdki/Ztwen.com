@@ -92,7 +92,7 @@
                                                 </span>
                                                 <span wire:click="requestManager({{$req['user']->id}}, 'refused')" class="text-danger d-flex w-50">
                                                    <span class="fa fa-close cursor-pointer mt-1"></span>
-                                                   <span class="cursor-pointer">Accepter</span>
+                                                   <span class="cursor-pointer">Réfuser</span>
                                                 </span>
                                              </td>
                                           </tr>

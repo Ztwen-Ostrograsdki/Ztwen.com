@@ -20,10 +20,10 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(20)->create();
        
-        // Comment::factory(30)->create();
+        // Comment::factory(7)->create();
         
-        Category::factory(20)->create();
-        Product::factory(40)->create();
+        // Category::factory(20)->create();
+        // Product::factory(40)->create();
 
         // $comments = Comment::all();
 

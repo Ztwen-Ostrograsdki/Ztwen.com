@@ -31,7 +31,7 @@
                         {{ $p->price }}
                     </td>
                     <td class="text-center">
-                        {{ str_ireplace("Il y a ", '', $p->dateAgoToString) }}
+                        {{ str_ireplace("Il y a ", '', $p->getDateAgoFormated()) }}
                     </td>
                     <td class="">
                         <x-dropdown align="right" width="48" class="text-bold m-0 p-0 bg-secondary">
@@ -53,7 +53,7 @@
                     <td class="text-center w-auto p-0">
                         <span class="row mx-auto w-100 m-0 p-0">
                             <span title="Supprimer définivement cet article. Il sera ainsi rétiré définitivement des articles postés" wire:click="forceDeleteAProduct({{$p->id}})" class="text-danger  col-6 p-2 px-3 cursor-pointer fa fa-trash"></span>
-                            <span title="Restaurer cet article, Il sera ainsi visible à nouveau dans les articles postés!" wire:click="restoreThisProduct({{$p->id}})" class="text-success border-left col-6 p-2 px-3 cursor-pointer fa bi-back"></span>
+                            <span title="Restaurer cet article, Il sera ainsi visible à nouveau dans les articles postés!" wire:click="restoreThisProduct({{$p->id}})" class="text-success border-left col-6 p-2 px-3 cursor-pointer fa fa-reply"></span>
                         </span>
                     </td>
                     @else

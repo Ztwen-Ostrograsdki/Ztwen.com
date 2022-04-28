@@ -19,5 +19,10 @@
     [
        'products' => $products
     ])
+    @elseif ($tag == "comments")
+    @include('livewire.components.admin.theLastComments', 
+    [
+       'comments' => $comments
+    ])
     @endif
 </div>

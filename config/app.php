@@ -15,7 +15,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
     'society_name' => '',
-    'routes' =>  ['home', 'product-profil'],
+    'routes' =>  ['home', 'product-profil', 'admin'],
 
     /*
     |--------------------------------------------------------------------------

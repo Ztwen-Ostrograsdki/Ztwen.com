@@ -101,7 +101,6 @@ class Product extends Model
         return $images[$r]->name;
     }
 
-
     public function shoppingBags()
     {
         return $this->hasMany(ShoppingBag::class);
@@ -110,6 +109,12 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function getDateAgoFormated()
+    {
+        $this->__setDateAgo();
+        return $this->dateAgoToStringForUpdated;
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
+use App\Models\Comment;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
@@ -18,6 +19,7 @@ class Admin extends Component
     public $users;
     public $adminTrashedData = false;
     public $admins;
+    public $comments;
     public $categories;
     public $products;
     public $role;
@@ -46,9 +48,9 @@ class Admin extends Component
             $this->admins = User::where('role', 'admin')->orderBy('name', 'asc')->get();
             $this->products = Product::orderBy('slug', 'asc')->get();
         }
+        $this->comments = Comment::all();
 
         $this->getUsers();
-        $this->refreshAgo();
     }
 
     public function render()
@@ -67,22 +69,8 @@ class Admin extends Component
         $this->adminTagName = $name;
         session()->put('adminTagName',$name);
         session()->put('adminTagTitle',$title);
-        $this->refreshAgo();
     }
 
-
-    public function refreshAgo()
-    {
-        foreach ($this->users as $u){
-            $u->__setDateAgo();
-        }
-        foreach ($this->admins as $a){
-            $a->__setDateAgo();
-        }
-        foreach ($this->products as $p){
-            $p->__setDateAgo();
-        }
-    }
 
     public function getTheTrashedData()
     {
@@ -92,7 +80,6 @@ class Admin extends Component
         $this->categories = Category::onlyTrashed()->orderBy('name', 'asc')->get();
         $this->users = User::onlyTrashed()->orderBy('name', 'asc')->get();
         $this->admins = User::onlyTrashed()->where('role', 'admin')->orderBy('name', 'asc')->get();
-        $this->refreshAgo();
     }
 
     public function getTheActiveData()
@@ -103,7 +90,6 @@ class Admin extends Component
         $this->categories = Category::orderBy('name', 'asc')->get();
         $this->admins = User::where('role', 'admin')->orderBy('name', 'asc')->get();
         $this->products = Product::orderBy('slug', 'asc')->get();
-        $this->refreshAgo();
     }
 
 
@@ -213,16 +199,61 @@ class Admin extends Component
     }
 
 
+    // CATEGORIES
+    public function deleteACategory($category_id)
+    {
+        $category = Category::find($category_id);
+        if($category){
+            if($category->deleteThisModel(false)){
+                $products = $category->products;
+                if($category->products->count() > 0){
+                    foreach ($products as $p){
+                        $p->deleteThisModel(false);
+                    }
+                }
+                $this->emit('aCategoryHasBeenDeleted', $category->id);
+                $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "La catégorie {$category->name} a été envoyé dans la corbeile avec succès",  'title' => 'Réussie']);
+                $this->mount();
+            }
+            else{
+                $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La suppression de la catégorie {$category->name} a échoué",  'title' => 'Echec']);
+            }
+        }
+    }
+    public function restoreACategory($category_id)
+    {
+        $category = Category::withTrashed('deleted_at')->whereId($category_id)->firstOrFail();
+        if($category){
+            if($category->restoreThisModel()){
+                $products = Product::onlyTrashed()->where('category_id', $category->id)->get();
+                if($products->count() > 0){
+                    foreach ($products as $p){
+                        $p->restoreThisModel();
+                    }
+                }
+                $this->emit('aCategoryHasBeenRestored', $category->id);
+                $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "La catégorie {$category->name} a été restauré avec succès",  'title' => 'Réussie']);
+                $this->mount();
+            }
+            else{
+                $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La restauration de la catégorie {$category->name} a échoué",  'title' => 'Echec']);
+            }
+        }
+    }
 
+    public function editACategory($category_id)
+    {
+        $category = Category::withTrashed('deleted_at')->whereId($category_id)->firstOrFail();
+        if($category){
+            $this->emit('targetedCategory', $category->id);
+        }
+    }
 
-
-
-
-
-
+    
+    //PRODUCTS
     public function editAProduct($product_id)
     {
-        $product = Product::find($product_id);
+        $product = Product::withTrashed('deleted_at')->whereId($product_id)->firstOrFail();
         if($product){
             $this->emit('editAProduct', $product->id);
             $this->dispatchBrowserEvent('modal-editProduct');
@@ -278,14 +309,26 @@ class Admin extends Component
     public function restoreThisProduct($product_id)
     {
         $product = Product::onlyTrashed()->where('id', $product_id)->firstOrFail();
+        $category = Category::whereId($product->category_id)->first();
         if($product){
-            if($product->restoreThisModel()){
-                $this->mount();
-                $this->emit('aProductHasBeenRestored', $product->id);
-                $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'article {$product->getName()} a été restauré avec succès",  'title' => 'Réussie']);
+            if($category){
+                if($product->restoreThisModel()){
+                    $this->mount();
+                    $this->emit('aProductHasBeenRestored', $product->id);
+                    $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'article {$product->getName()} a été restauré avec succès",  'title' => 'Réussie']);
+                }
+                else{
+                    $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La restauration de l'article {$product->getName()} a échoué",  'title' => 'Echec']);
+                }
             }
             else{
-                $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La restauration de l'article {$product->getName()} a échoué",  'title' => 'Echec']);
+                $category = Category::onlyTrashed()->whereId($product->category_id)->first();
+                if($category){
+                    $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'error ', 'message' => "Cet article {$product->getName()} est lié à une catégorie retirée, ou supprimée! Veuillez restaurer en premier la catégorie. Il s'agit de la catégorie: {$category->name}",  'title' => 'Echec']);
+                }
+                else{
+                    return abort(403, "Votre requête ne peut aboutir; les données sont corrompues");
+                }
             }
         }
     }

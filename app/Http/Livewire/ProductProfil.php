@@ -32,7 +32,13 @@ class ProductProfil extends Component
                 $this->product->__setDateAgo();
             }
             else{
-                return abort(403, "Votre requête ne peut aboutir désolé");
+                $product = Product::withTrashed('deleted_at')->whereId($id)->firstOrFail();
+                if($product){
+                    return abort(403, "L'article que vous rechercher a été retiré ou supprimé");
+                }
+                else{
+                    return abort(403, "Votre requête ne peut aboutir désolé");
+                }
             }
         }
     }

@@ -9,7 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ShowProducts extends Component
 {
-    protected $listeners = ['productUpdated', 'newCategoryCreated', 'aProductHasBeenDeleted', 'aProductHasBeenRestored'];
+    protected $listeners = [
+        'productUpdated', 
+        'newCategoryCreated',
+        'aProductHasBeenDeleted', 'aProductHasBeenRestored', 
+        'aCategoryHasBeenDeleted', 'aCategoryHasBeenRestored'
+    ];
     public $products = [];
     public $product;
     public $targetedProductSeens;
@@ -314,6 +319,14 @@ class ShowProducts extends Component
     public function newCategoryCreated($category)
     {
         $this->getProducts();
+    }
+    public function aCategoryHasBeenRestored($category)
+    {
+        $this->booted();
+    }
+    public function aCategoryHasBeenDeleted($category)
+    {
+        $this->booted();
     }
 
 }

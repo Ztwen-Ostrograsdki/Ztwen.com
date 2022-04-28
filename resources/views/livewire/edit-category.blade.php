@@ -1,6 +1,6 @@
-
  <div>
-    <div wire:ignore.self class="modal fade lug" id="EditCategoryModal" role="dialog" >
+   @if($category)
+    <div wire:ignore.self class="modal fade lug" id="editCategoryModal" role="dialog" >
        <div class="modal-dialog modal-z-xlg" role="document">
           <!-- Modal content-->
           <div class="modal-content" style="position: absolute; top:100px; z-index: 2010">
@@ -70,4 +70,5 @@
           </div>
        </div>
     </div>
+    @endif
     </div>

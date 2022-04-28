@@ -62,10 +62,10 @@
                                         <div class="input-group mt-0 mb-2 zw-33">
                                             <label class="text-white @error('slug') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="product_edit_slug">La catégorie</label>
                                             <hr class="m-0 p-0 bg-info w-100 mb-1">
-                                            <select class="input--style-3 px-2 @error('slug') text-danger border border-danger @enderror" wire:model.defer="category_id" name="product_id" id="product_edit_category">
+                                            <select class="z-select input--style-3 px-2 text-dark @error('slug') text-danger border border-danger @enderror" wire:model.defer="category_id" name="product_id" id="product_edit_category">
                                                 <option value="">Choisissez la catégorie de l'article</option>
                                                 @foreach ($categories as $category)
-                                                    <option value="{{$category->id}}">{{$category->name}}</option>
+                                                    <option @if($category->deleted_at) disabled @endif class="@if($category->deleted_at) text-danger @endif @if($category->id == $category_id) text-success @endif" value="{{$category->id}}">{{$category->name}}</option>
                                                 @endforeach
                                             </select>
                                             @error('slug')

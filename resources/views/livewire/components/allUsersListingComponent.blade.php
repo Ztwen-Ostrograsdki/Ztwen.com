@@ -11,7 +11,7 @@
         </thead>
         <tbody>
             @foreach($data as $k => $u)
-                <tr>
+                <tr class="@isMaster($u) text-warning @endisMaster">
                     <td class=" text-center">{{$k + 1}}</td>
                     <td class="text-capitalize pl-2">
                         @if($u->current_photo)
@@ -19,7 +19,7 @@
                                 <img width="30" class="border rounded-circle" src="/storage/profilPhotos/{{$u->currentPhoto()}}" alt="mon profil">
                                 <span class="mx-2">{{$u->name}}</span>
                                 @if($u->role == 'admin')
-                                    <span class="fa fa-user-secret mt-1 text-white-50 float-right"></span>
+                                    <span class="fa fa-user-secret mt-1 @isMaster($u) text-warning @else text-white-50 @endisMaster float-right"></span>
                                 @endif
                                 </span>
                         @else
@@ -27,14 +27,14 @@
                                 <img width="30" class="border rounded-circle" src="{{$u->currentPhoto()}}" alt="mon profil">
                                 <span class="mx-2">{{$u->name}}</span>
                                 @if($u->role == 'admin')
-                                <span class="fa fa-user-secret text-white-50 mt-1 float-right"></span>
+                                <span class="fa fa-user-secret @isMaster($u) text-warning @else text-white-50 @endisMaster mt-1 float-right"></span>
                                 @endif
                             </span>
                         @endif
                     </td>
                     <td class="text-center">{{$u->email}}</td>
                     <td class="text-center">
-                        {{ str_ireplace("Il y a ", '', $u->dateAgoToString) }}
+                        {{ str_ireplace("Il y a ", '', $u->getDateAgoFormated()) }}
                     </td>
                     <td class="text-center w-auto p-0">
                         @isNotMaster($u)
