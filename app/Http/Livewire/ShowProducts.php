@@ -31,6 +31,25 @@ class ShowProducts extends Component
     public $perpage = 6;
     public $galery;
     public $user;
+    public $target = null;
+    public $targetSize = 0;
+
+
+    public function updatedTarget($v)
+    {
+        if($v && strlen($v) >= 3)
+        {
+            $searchTerm = '%'.$v.'%';
+            $all = Product::where('slug','like', $searchTerm)->orWhere('description','like', $searchTerm)->get();
+            $products = Product::where('slug','like', $searchTerm)->orWhere('description','like', $searchTerm)->get()->chunk($this->perpage);
+            $this->targetSize = $all->count();
+            $this->getProducts($all, $products);
+        }
+        else{
+            $this->reset('targetSize');
+            $this->getProducts();
+        }
+    }
 
 
     public function mount()

@@ -3,10 +3,29 @@
         <div class="container">
         <div class="row">
             <div class="col-md-12">
-            <div class="text-content">
-                <h4>nouvel arrivage</h4>
-                <h2>Les articles à la une</h2> 
-            </div>
+                <div class="text-content">
+                    <h4>nouvel arrivage</h4>
+                    <h2>Les articles à la une</h2> 
+                </div>
+                {{-- search --}}
+                <div class="input-group my-3 w-75 mx-auto">
+                    <input type="text" wire:model="target" class="form-control bg-transparent border border-white text-white" placeholder="Taper un mot ou groupe de mots clé" aria-label="Chercher" aria-describedby="basic-addon2">
+                    <div class="input-group-append cursor-pointer bg-primary">
+                        <span class="input-group-text bg-primary text-white" id="basic-addon2">
+                            <span class="fa fa-search mx-2"></span>
+                            <span>Rechercher</span>
+                        </span>
+                    </div>
+                </div>
+                @if ($target !== null && strlen($target))
+                    <div class="text-white mx-auto">
+                        <div>
+                            <h4>
+                                <span>{{$targetSize}}</span> résultats trouvés pour "<span class='text-warning'>{{$target}}</span>"
+                            </h4>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
         </div>
