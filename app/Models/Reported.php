@@ -4,18 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
-class MyRequest extends Model
+class Reported extends Model
 {
     use HasFactory;
+    protected $fillable = ['user_id', 'reporter_id'];
 
-    protected $fillable = [
-        'user_id',
-        'target_id',
-        'request_object',
-        'status',
-    ];
 
     public function user()
     {

@@ -5,7 +5,7 @@
         <thead class="text-white text-center">
             <th class="py-2 text-center">#ID</th>
             <th class="">Nom</th>
-            <th>Email</th>
+            <th class="d-none d-lg-table-cell d-xl-table-cell">Email</th>
             <th>Inscrit depuis</th>
             <th>Action</th>
         </thead>
@@ -15,13 +15,18 @@
                     <td class=" text-center">{{$k + 1}}</td>
                     <td class="text-capitalize pl-2">
                         @if($u->current_photo)
-                                <span class="d-flex">
-                                <img width="30" class="border rounded-circle" src="/storage/profilPhotos/{{$u->currentPhoto()}}" alt="mon profil">
-                                <span class="mx-2">{{$u->name}}</span>
-                                @if($u->role == 'admin')
-                                    <span class="fa fa-user-secret mt-1 @isMaster($u) text-warning @else text-white-50 @endisMaster float-right"></span>
-                                @endif
-                                </span>
+                            <span class="d-flex">
+                            <img width="30" class="border rounded-circle" src="/storage/profilPhotos/{{$u->currentPhoto()}}" alt="mon profil">
+                            <span class="mx-2 d-none d-lg-inline d-xl-inline">
+                                {{$u->name}}
+                            </span>
+                            <span class="d-inline d-lg-none d-xl-none">
+                                {{mb_substr($u->name, 0, 9)}}...
+                            </span>
+                            @if($u->role == 'admin')
+                                <span class="fa fa-user-secret mt-1 @isMaster($u) text-warning @else text-white-50 @endisMaster float-right"></span>
+                            @endif
+                            </span>
                         @else
                             <span class="d-flex">
                                 <img width="30" class="border rounded-circle" src="{{$u->currentPhoto()}}" alt="mon profil">
@@ -29,12 +34,21 @@
                                 @if($u->role == 'admin')
                                 <span class="fa fa-user-secret @isMaster($u) text-warning @else text-white-50 @endisMaster mt-1 float-right"></span>
                                 @endif
+                                @if(auth()->user()->id !== $u->id)
+                                <span title="Lancer un chat avec {{$u->name}} pas message" class="float-right mx-2">
+                                    <span wire:click="openSingleChat({{$u->id}})" class="float-right cursor-pointer">
+                                        <span class="fa bi-messenger cursor-pointer text-success"></span>
+                                    </span>
+                                </span>
+                                @endif
                             </span>
                         @endif
                     </td>
-                    <td class="text-center">{{$u->email}}</td>
+                    <td title="Cette addresse mail @if($u->hasVerifiedEmail()) a déja été confirmé @else n'a pas encore été confirmé @endif" class="text-center @if($u->hasVerifiedEmail()) text-success @else text-danger @endif d-none d-lg-table-cell d-xl-table-cell">
+                        {{$u->email}}
+                    </td>
                     <td class="text-center">
-                        {{ str_ireplace("Il y a ", '', $u->getDateAgoFormated()) }}
+                        {{ str_ireplace("Il y a ", '', $u->getDateAgoFormated(true)) }}
                     </td>
                     <td class="text-center w-auto p-0">
                         @isNotMaster($u)

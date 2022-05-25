@@ -6,7 +6,7 @@
              <div class="d-flex justify-content-between w-100">
                 <h4 class="text-uppercase mr-2 mt-1">
                     @guest
-                    Inscription @if($name !== "") de {{$name}} @endif
+                    @lang('lang.reg') @if($name !== "") de {{$name}} @endif
                     @endguest
                     @auth
                         Ajout d'un utilisateur

@@ -15,7 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
     'society_name' => '',
-    'routes' =>  ['home', 'product-profil', 'admin'],
+    // 'routes' =>  ['home', 'product-profil', 'admin', 'category'],
+    'routes' =>  [],
+    'payment_type_default' => 'Mobile',
 
     /*
     |--------------------------------------------------------------------------
@@ -82,7 +84,7 @@ return [
     |
     */
 
-    'locale' => 'fr',
+    // 'locale' => 'fr',
 
     /*
     |--------------------------------------------------------------------------
@@ -95,7 +97,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => 'fr',
 
     /*
     |--------------------------------------------------------------------------

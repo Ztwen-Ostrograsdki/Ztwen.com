@@ -1,240 +1,194 @@
-<div wire:ignore.self class="m-0 p-0 id="productProfil"  >
-    <div class=" modal-z-xlg z-modal m-0 mx-auto" role="document">
-       <!-- Modal content-->
-        <div class="modal-content" style="top:100px; z-index: 1000">
-            <div class="modal-header">
-                <div class="d-flex justify-content-between w-100">
-                    @if(isset($product))
-                        <h5 class="text-capitalize  mr-2 mt-1 modal-title" id="productProfilModalTitle">
-                            Profil de l'article <span class="text-warning">{{ $product->getName() ?? 'En cours...'}}</span>
-                        </h5>
-                    @else
-                        <span class="ml-3 text-warning text-capitalize text-italic" >Chargement en cours, veuillez patienter...</span>
-                    @endif
-                    <div class="d-flex justify-content-end w-20">
-                        <div class="w-15 mx-0 px-0">
-                                <ul class="d-flex mx-0 px-0 mt-1 justify-content-between w-100">
-                                <li class=" mx-1"><a href="#"><img src="/images/flag-up-1.png" width="100" alt="" /> </a></li>
-                                <li><a href="#"><img src="/images/flag-up-2.png" width="100" alt="" /></a></li>
-                                </ul>
-                        </div>
-                        <div class="w-25"></div>
-                    </div>
-                </div>
-            </div>
-            @if(isset($product))
-            <div class="modal-body m-0 p-0 border border-warning">
-                <div class="page-wrapper bg-gra-01 font-poppins">
-                    <div class="wrapper wrapper--w780 ">
-                        <div class="card card-3 border border-danger w-100 p-0 m-0">
-                            <div class="m-0 p-0 w-100 row">
-                                @if($updating !== true)
-                                    <div class="text-white bg-white col-md-12 col-lg-5 col-xl-5 col-12 border m-0 p-0">
-                                        @if($product->images->count() > 0 && $galery !== [])
-                                        <div id="productProfilImagesCarouselTrue" class="carousel slide m-0" data-ride="carousel">
-                                            <ol class="carousel-indicators">
-                                                @foreach ($galery as $key => $image)
-                                                    <li data-target="#productProfilImagesCarouselTrue" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
-                                                @endforeach
-                                            </ol>
-                                            <div class="carousel-inner">
-                                                @foreach ($galery as $key => $image)
-                                                    <div class="carousel-item @if($key == 0)active @endif">
-                                                        <img class="d-block w-100" src="/storage/articlesImages/{{$image->name}}" alt="slide-{{$key}}">
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                            <a class="carousel-control-prev" href="#productProfilImagesCarouselTrue" role="button" data-slide="prev">
-                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Previous</span>
-                                            </a>
-                                            <a class="carousel-control-next" href="#productProfilImagesCarouselTrue" role="button" data-slide="next">
-                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Next</span>
-                                            </a>
-                                        </div>
-                                        @elseif($product->images->count() < 1 || $galery == [])
-                                        <div id="productProfilImagesCarouselFalse" class="carousel slide m-0" data-ride="carousel">
-                                            <ol class="carousel-indicators">
-                                                @foreach ($galery as $key => $image)
-                                                    <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
-                                                @endforeach
-                                            </ol>
-                                            <div class="carousel-inner">
-                                                @foreach ($galery as $key => $image)
-                                                    <div class="carousel-item @if($key == 0)active @endif">
-                                                        <img class="d-block w-100" src="{{$image}}" alt="slide-{{$key}}">
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                            <a class="carousel-control-prev" href="#productProfilImagesCarouselFalse" role="button" data-slide="prev">
-                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Previous</span>
-                                            </a>
-                                            <a class="carousel-control-next" href="#productProfilImagesCarouselFalse" role="button" data-slide="next">
-                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Next</span>
-                                            </a>
-                                        </div>
-                                        @else
-                                        <div id="productProfilImagesCarouselFalse" class="carousel slide m-0" data-ride="carousel">
-                                            <ol class="carousel-indicators">
-                                                    <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
-                                            </ol>
-                                            <div class="carousel-inner">
-                                                    <div class="carousel-item @if($key == 0)active @endif">
-                                                        <img class="d-block w-100" src="{{$image}}" alt="slide-{{$key}}">
-                                                    </div>
-                                            </div>
-                                            <a class="carousel-control-prev" href="#productProfilImagesCarouselFalse" role="button" data-slide="prev">
-                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Previous</span>
-                                            </a>
-                                            <a class="carousel-control-next" href="#productProfilImagesCarouselFalse" role="button" data-slide="next">
-                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Next</span>
-                                            </a>
-                                        </div>
-                                        @endif
-                                        <div class="m-0 w-100 border border-dark">
-                                            <div class="w-100 p-0 m-0 p-2">
-                                                <div class="d-flex justify-content-betwween w-100 m-0 p-0 mx-auto">
-                                                    <div class="d-flex flex-column justify-center col-3 text-danger">
-                                                    <div class="mx-auto w-100 d-flex justify-content-center">
-                                                            <span class="fa fa-star"></span>
-                                                            <span class="fa fa-star"></span>
-                                                            <span class="fa fa-star"></span>
-                                                            <span class="fa fa-star"></span>
-                                                            <span class="fa fa-star"></span>
-                                                    </div>
-                                                        <div class="mx-auto w-100 d-flex justify-content-center">
-                                                            <span wire:click="liked" title="Cliquez pour liker cet article" class="cursor-pointer fa fa-heart z-scale text-danger fa-2x"></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="m-0 p-0 col-9" >
-                                                        <div class="m-0 p-0 d-flex justify-content-end w-100 text-danger">
-                                                            <strong>
-                                                                <strong class="mt-1"> {{$product->likes->count()}}</strong>
-                                                                <strong class="fa fa-heart mt-1"></strong>
-                                                            </strong>
-                                                            <strong class="mx-3">
-                                                                <strong class="mt-1"> {{$product->comments->count()}} </strong>
-                                                                <strong class="fa fa-comments mt-1"></strong>
-                                                            </strong>
-                                                            <strong class="">
-                                                                <strong class="mt-1"> {{$product->seen}} </strong>
-                                                                <strong class="fa fa-eye mt-1"></strong>
-                                                            </strong>
-                                                        </div>
-                                                        <div class="w-100 d-flex justify-content-end pt-1">
-                                                            @if(isset($product))
-                                                                <small class="text-secondary">Posté {{ $product->dateAgoToString }}</small>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @else
-                                    <div class="col-md-12 text-center col-lg-5 col-xl-5 col-12 border m-0 p-0 bg-secondary">
-                                        <h5 class="text-center text-uppercase p-2 w-75 fa-2x">
-                                            <span class="fa fa-download m-1"></span>Mise à jour en cours...
-                                        </h5>                                    
-                                    </div>
-                                @endif
-                                <div class="border-bottom border-dark bg-white w-100 d-block d-lg-none d-xl-none">
-                                    <span class="w-100 p-2"></span>
-                                </div>
-                                <div class="bg-secondary text-dark col-md-12 col-lg-7 col-xl-7 col-12 m-0 p-0">
-                                    <table class="w-100 p-0 m-0" style="height: 70px;">
-                                        <div class="w-100 m-0 p-2">
-                                            <h4 class="text-center p-2 text-uppercase">
-                                                <span class="text-white-50">Catégorie:</span> 
-                                                <span class="text-white">{{ $product_category->name }}</span>
-                                            </h4>
-                                            <hr class="m-0 p-0 bg-white">
-                                        </div>
-                                        <div class="w-100 m-0 p-0">
-                                            <div class="container w-75 m-0 mx-auto">
-                                                <div class="row text-center text-capitalize">
-                                                    <div class="col-6 d-flex flex-column">
-                                                        <h5>
-                                                            <strong>Prix :</strong>  <span>{{ $product->price }} FCFA</span>
-                                                        </h5>
-                                                        <h5>
-                                                            <strong>Total :</strong>  <span> {{$product->total}} </span>
-                                                        </h5>
-                                                    </div>
-                                                    <div class="col-6 d-flex flex-column">
-                                                        <h5>
-                                                            <strong>Total Vendu :</strong>  <span> {{$product->sells}} </span>
-                                                        </h5>
-                                                        <h5>
-                                                            <strong>Réduction :</strong>  <span> {{$product->reduction}} %</span>
-                                                        </h5>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr class="m-0 p-0 bg-white mx-2 mt-1">
-                                            <div class="container w-100 m-0 p-2" style="max-height: 350px; overflow: auto">
-                                                <p>
-                                                    {{$product->description}}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <td class="w-100 m-0 p-0 align-bottom">
-                                            <div class="container col-11 d-flex justify-content-end pb-2">
-                                                @isAdmin()
-                                                <span wire:click="editAProduct"  class="z-scale py-1 cursor-pointer btn-secondary mr-2 py-0 px-3 border border-white">
-                                                    <span class="fa fa-edit p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Editer</small>
-                                                </span>
-                                                @endisAdmin
-                                                @auth
-                                                    <span class="z-scale py-1 cursor-pointer btn-primary py-0 px-3 border border-white">
-                                                        <span wire:click="bought" class="bi-download p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Acheter</small>
-                                                    </span>
-                                                    @if(Auth::user()->alreadyIntoCart($product->id))
-                                                        <span wire:click="deleteFromCart" class="z-scale py-1 cursor-pointer btn-danger mx-2 px-3 border border-white">
-                                                            <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Retirer du panier</small>
-                                                        </span>
-                                                    @else
-                                                        <span wire:click="addToCart" class="z-scale py-1 cursor-pointer btn-primary mx-2 px-3 border border-white">
-                                                            <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Panier</small>
-                                                        </span>
-                                                    @endif
-                                                @endauth
-                                                @guest
-                                                <span class="z-scale py-1 cursor-pointer btn-primary py-0 px-3 border border-white">
-                                                    <span wire:click="bought" class="bi-download p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Acheter</small>
-                                                </span>
-                                                <span wire:click="addToCart" class="z-scale py-1 cursor-pointer btn-primary mx-2 px-3 border border-white">
-                                                    <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Panier</small>
-                                                </span>
-                                                @endguest
-                                                @isAdmin()
-                                                <span wire:click="updategalery" class="z-scale cursor-pointer py-1 btn-primary px-3 border border-white">
-                                                    <span class="bi-image"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Ajouter une image</small>
-                                                </span>
-                                                @endisAdmin
-
-                                            </div>
-                                            <div class="container col-11 d-flex justify-content-end pb-2">
-                                                <small class="text-white-50">
-                                                    Editée le {{ $product->dateAgoToStringForUpdated }}
-                                                </small>
-                                            </div>
-                                        </td>
-                                    </table>
-                                </div>
+<div class="w-100 mx-auto my-1" style="position: absolute; top: 100px;">
+    <div class="w-75 mx-auto p-0 border shadow mb-2">
+        <div class="row m-0 mx-auto p-0 w-100">
+            <div class="col-3 p-0 m-0">
+                @if($product->images->count() > 0 && $galery !== [])
+                <div id="productProfilImagesCarouselTrue" class="carousel slide m-0" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        @foreach ($galery as $key => $image)
+                            <li data-target="#productProfilImagesCarouselTrue" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
+                        @endforeach
+                    </ol>
+                    <div class="carousel-inner"  style="height: 250px">
+                        @foreach ($galery as $key => $image)
+                            <div class="carousel-item @if($key == 0)active @endif">
+                                <img width="" class="" src="/storage/articlesImages/{{$image->name}}" alt="slide-{{$key}}">
                             </div>
-                        </div>
+                        @endforeach
+                    </div>
+                    <a class="carousel-control-prev" href="#productProfilImagesCarouselTrue" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#productProfilImagesCarouselTrue" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                @elseif($product->images->count() < 1 || $galery == [])
+                <div id="productProfilImagesCarouselFalse" class="carousel slide  m-0" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        @foreach ($galery as $key => $image)
+                            <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
+                        @endforeach
+                    </ol>
+                    <div class="carousel-inner border"  style="height: 250px">
+                        @foreach ($galery as $key => $image)
+                            <div class="carousel-item @if($key == 0)active @endif">
+                                <img width="" class="" src="{{$image}}" alt="slide-{{$key}}">
+                            </div>
+                        @endforeach
+                    </div>
+                    <a class="carousel-control-prev" href="#productProfilImagesCarouselFalse" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#productProfilImagesCarouselFalse" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                @else
+                <div id="productProfilImagesCarouselFalse" class="carousel slide m-0" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                            <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
+                    </ol>
+                    <div class="carousel-inner">
+                            <div class="carousel-item @if($key == 0)active @endif">
+                                <img width="150" class="" src="{{$image}}" alt="slide-{{$key}}">
+                            </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#productProfilImagesCarouselFalse" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#productProfilImagesCarouselFalse" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                @endif
+            </div>
+            <div class="col-9">
+                <h4 class="text-center text-uppercase py-2">
+                    Article : 
+                    <strong>
+                        {{$product->getName()}}
+                    </strong>
+                </h4>
+                <hr>
+
+                <div class="w-100 mx-auto d-flex flex-column">
+                    <span class="d-flex justify-content-between">
+                        <strong class="text-bold">Description :</strong>
+                        <small class="text-secondary">Posté {{ $product->getDateAgoFormated(true) }}</small>
+                    </span>
+                    <span>
+                        {{$product->description}}
+                    </span>
+                </div>
+                <hr>
+
+                <div class="d-flex w-100 justify-content-between">
+                    <span>
+                        <strong>Prix: </strong> <span>{{$product->price}} FCFA</span>
+                    </span>
+                    <span>
+                        <strong>Total: </strong> <span>{{$product->total}}</span>
+                    </span>
+                    <span>
+                        <strong>vendus: </strong> <span>{{$product->sells}}</span>
+                    </span>
+                    <span>
+                        <strong>Reduction: </strong> <span>{{$product->reduction}}</span> <span>%</span>
+                    </span>
+                </div>
+                <div class="d-flex justify-content-end w-100 text-danger">
+                    <strong>
+                        <strong class="mt-1"> {{$product->likes->count()}}</strong>
+                        <strong class="fa fa-heart mt-1"></strong>
+                    </strong>
+                    <strong class="mx-3">
+                        <strong class="mt-1"> {{$product->comments->count()}} </strong>
+                        <strong class="fa fa-comments mt-1"></strong>
+                    </strong>
+                    <strong class="">
+                        <strong class="mt-1"> {{$product->seen}} </strong>
+                        <strong class="fa fa-eye mt-1"></strong>
+                    </strong>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-end">
+                        @isAdmin()
+                        <span wire:click="editAProduct({{$product->id}})"  class="z-scale py-1 cursor-pointer btn-secondary mr-2 py-0 px-3 border border-white">
+                            <span class="fa fa-edit p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Editer</small>
+                        </span>
+                        @endisAdmin
+                        @auth
+                            <span class="z-scale py-1 cursor-pointer btn-primary py-0 px-3 border border-white">
+                                <span wire:click="bought({{$product->id}})" class="bi-download p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Acheter</small>
+                            </span>
+                            @if(Auth::user()->alreadyIntoCart($product->id))
+                                <span wire:click="deleteFromCart({{$product->id}})" class="z-scale py-1 cursor-pointer btn-danger mx-2 px-3 border border-white">
+                                    <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Retirer du panier</small>
+                                </span>
+                            @else
+                                <span wire:click="addToCart({{$product->id}})" class="z-scale py-1 cursor-pointer btn-primary mx-2 px-3 border border-white">
+                                    <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Panier</small>
+                                </span>
+                            @endif
+                        @endauth
+                        @guest
+                        <span class="z-scale py-1 cursor-pointer btn-primary py-0 px-3 border border-white">
+                            <span wire:click="bought({{$product->id}})" class="bi-download p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Acheter</small>
+                        </span>
+                        <span wire:click="addToCart({{$product->id}})" class="z-scale py-1 cursor-pointer btn-primary mx-2 px-3 border border-white">
+                            <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Panier</small>
+                        </span>
+                        @endguest
+                        @isAdmin()
+                        <span wire:click="updategalery({{$product->id}})" class="z-scale cursor-pointer py-1 btn-primary px-3 border border-white">
+                            <span class="bi-image"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Ajouter une image</small>
+                        </span>
+                        @endisAdmin
+                        @auth
+                            <span wire:click="liked({{ $product->id }})" class="cursor-pointer mx-2 mt-1 z-scale" title="Liker cet article">
+                                <span class="fa fa-2x fa-heart text-danger"></span>
+                            </span>
+                        @endauth
                     </div>
                 </div>
+                <div class="d-flex justify-content-center mx-auto w-auto mt-2">
+                    <h4 class="text-center p-2 text-uppercase">
+                        <span class="text-white">Catégorie:</span> 
+                        <span class="text-white">
+                            <a class="text-primary" href="{{route('category', ['id' => $product->category_id])}}">
+                                {{ $product_category->name }}
+                            </a>
+                        </span>
+                    </h4>
+                </div>
+                <div class="d-flex justify-content-end m-0 w-auto">
+                    <small class="text-muted py-1">
+                        Article édité {{ $product->getDateAgoFormated() }}
+                    </small>
+                </div>
+
             </div>
-            @else
-                @include('components.mycomponents.product-profil-loader')
-            @endif
         </div>
     </div>
- </div>
+    <div class="w-75 mx-auto p-0 border shadow mb-2 p-2 mb-2">
+        <div class="d-flex justify-content-between">
+            <h4 class="py-1"> <span class="fa fa-comment-o"></span> Les commentaires </h4>
+            <span wire:click="addNewComment" class="btn btn-primary border border-white mb-1">
+                <span>Poster un commentaire</span>
+                <span class="fa bi-pen"></span>
+            </span>
+        </div>
+        <hr class="m-0 p-0 bg-dark">
+        <div class="py-1 mx-auto w-100" style="max-height: 280px; overflow: auto">
+            @livewire('product-comments-lister')
+        </div>
+    </div>
+</div>

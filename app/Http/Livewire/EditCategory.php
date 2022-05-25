@@ -2,8 +2,10 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
 use App\Models\Category;
+use App\Models\MyNotifications;
 use Illuminate\Support\Facades\Auth;
 
 class EditCategory extends Component
@@ -26,17 +28,30 @@ class EditCategory extends Component
         $user = Auth::user();
         if($user && ($user->role == 'admin' || $user->id == 1)){
             if($this->validate()){
+                $cat = Category::withTrashed('deleted_at')->whereId($this->category->id)->firstOrFail();
                 $validateName = Category::withTrashed('deleted_at')->whereName($this->name)->pluck('id')->first();
                 if($validateName){
                     if($validateName == $this->category->id){
-                        $upadte = $this->category->update([
+                        $updated = $this->category->update([
                             'description' => $this->description,
                         ]);
-                        if($upadte){
+                        if($updated){
                             $this->reset('name', 'description');
                             $this->emit('categoriesUpdated');
                             $this->dispatchBrowserEvent('hide-form');
-                            $this->dispatchBrowserEvent('FireAlert', ['title' => 'Mise à jour de la catégorie', 'message' => "La mise à jourde la catégorie s'est bien déroulée", 'type' => 'success']);
+                            $this->dispatchBrowserEvent('FireAlert', ['title' => "Mise à jour d'une catégorie", 'message' => "La mise à jour de la catégorie s'est bien déroulée", 'type' => 'success']);
+                            
+                            $users = User::all()->except($user->id);
+                            if($users->count() > 0 && !$this->category->deleted_at){
+                                foreach ($users as $u){
+                                    MyNotifications::create([
+                                        'content' => "Du NOUVEAU sur Ztwen.Com. La catégorie "  . mb_strtoupper($this->category->name) . " a été éditée :) ",
+                                        'user_id' => $u->id,
+                                        'target' => "Catégorie Editée",
+                                        'target_id' =>$this->category->id
+                                    ]);
+                                }
+                            }
                         }
                     }
                     else{
@@ -44,15 +59,29 @@ class EditCategory extends Component
                     }
                 }
                 else{
-                    $upadte = $this->category->update([
+                    $updated = $this->category->update([
                         'name' => $this->name,
                         'description' => $this->description,
                     ]);
-                    if($upadte){
+                    if($updated){
+                        $new  = Category::withTrashed('deleted_at')->whereId($this->category->id)->firstOrFail();
                         $this->reset('name', 'description');
                         $this->emit('categoriesUpdated');
                         $this->dispatchBrowserEvent('hide-form');
-                        $this->dispatchBrowserEvent('FireAlert', ['title' => 'Mise à jour de la catégorie', 'message' => "La mise à jourde la catégorie s'est bien déroulée", 'type' => 'success']);
+                        $this->dispatchBrowserEvent('FireAlert', ['title' => "Mise à jour d'une catégorie", 'message' => "La mise à jour de la catégorie s'est bien déroulée", 'type' => 'success']);
+
+                        $users = User::all()->except($user->id);
+                        if($users->count() > 0 && !$this->category->deleted_at){
+                            foreach ($users as $u){
+                                MyNotifications::create([
+                                    'content' => "Du NOUVEAU sur Ztwen.Com. La catégorie "  . mb_strtoupper($cat->name) . " a été éditée. Elle est désormais nommée " . mb_strtoupper($new->name) . ":) ",
+                                    'user_id' => $u->id,
+                                    'target' => "Catégorie Editée",
+                                    'target_id' => $this->category->id
+                                ]);
+                            }
+                        }
+                            
                     }
                 }
             }

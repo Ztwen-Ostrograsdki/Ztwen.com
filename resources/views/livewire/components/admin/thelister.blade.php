@@ -1,4 +1,4 @@
-<div>
+<div class="" style="height: 565px; overflow: auto">
     @if ($tag == 'users')
         @include('livewire.components.admin.theUsers', 
         [
@@ -20,9 +20,10 @@
        'products' => $products
     ])
     @elseif ($tag == "comments")
-    @include('livewire.components.admin.theLastComments', 
-    [
-       'comments' => $comments
-    ])
+    @include('livewire.comments-lister', 
+        [
+            'comments' => $comments
+        ]
+    )
     @endif
 </div>

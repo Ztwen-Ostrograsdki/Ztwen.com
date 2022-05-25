@@ -22,7 +22,7 @@
                         </div>
                         <hr class="m-0 p-0 w-100 bg-white">
                         @foreach($users as $u)
-                            @isMyFriend($u)
+                            @if(auth()->user()->isMyFriend($u->id) || auth()->user()->id == 1 || auth()->user()->role == 'admin')
                                 <div class="m-0 py-2 px-4 cursor-pointer secondary-hover-no-transform @if(isset($receiver) && $receiver->id == $u->id) bg-info @endif " wire:click="setReceiver({{$u->id}})">
                                     <div class="d-flex justify-content-between w-100 m-0 p-0">
                                         <div>
@@ -60,7 +60,7 @@
                                     </div>
                                 </div>
                                 <hr class="m-0 p-0 w-100 bg-white">
-                            @endisMyFriend
+                            @endif
                         @endforeach
                     </div>
                 </div>
@@ -114,7 +114,7 @@
                                         <div class="w-100 p-0 m-0 mx-auto d-flex flex-column messages-box"> 
                                             @foreach ($allMessages as $key => $texto)
                                                 <div class="@if($texto->sender_id == Auth::user()->id) text-right @else text-left @endif">
-                                                    <h4 wire:key="{{$texto->id}}" wire:click="toggleAction({{$key}}, {{$texto->id}})" id="" class="chatMessageCard cursor-pointer shadow   @if($texto->deleted_at) border border-muted w-50 @else w-75 @endif p-2 my-2 @if($texto->sender_id == Auth::user()->id) float-right @else float-left  @endif">
+                                                    <h4 wire:key="{{$texto->id}}" wire:click="toggleAction({{$key}}, {{$texto->id}})" id="" class="chatMessageCard cursor-pointer shadow w-auto  @if($texto->deleted_at) border border-muted @endif p-2 my-2 @if($texto->sender_id == Auth::user()->id) float-right @else float-left  @endif">
                                                         <span class="d-flex w-100">
                                                             @if($actionIsActive && $activeMSGK == $key)
                                                                 @if($texto->sender_id == Auth::user()->id)
@@ -174,7 +174,9 @@
                                                                     @endif
                                                                 </span>
                                                             @else
-                                                                {{$texto->message}}
+                                                                <span class="z-word-break-break">
+                                                                    {{$texto->message}}
+                                                                </span>
                                                             @endif
                                                         </span>
                                                         <span class="messages-keyboard d-flex w-100 @if($texto->sender_id == Auth::user()->id)  @if($texto->deleted_at) bg-seconday @else bg-warning @endif float-right text-right justify-content-end @else text-left float-left   @if($texto->deleted_at) bg-primary @else bg-primary @endif justify-content-start @endif">

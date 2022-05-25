@@ -1,30 +1,34 @@
 <div class="m-0 p-0 w-100">
     <div class="z-justify-relative-top-80 w-100" style="width: 90%;">
         <div class="w-100 border m-0 p-0">
-            <div class="m-0 p-0 w-100 z-banner text-center" style="font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif; word-spacing: 5px; letter-spacing: 2px;">
-                <h2 class="text-uppercase pt-3">nouvel arrivage</h2>
-                <h1 class="text-capitalize">Les catégories à la une</h1>                           
+            <div class="m-0 p-0 w-100 text-center pb-3" style="font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif; word-spacing: 5px; letter-spacing: 2px;">
+                <h2 class="text-uppercase pt-3">nouvel arrivage :
+                    <span class="text-capitalize">Les catégories à la une</span>
+                </h2>
+                                           
             </div>
             <div class=" d-flex w-100 mx-auto justify-content-center mt-1">
                 <div class="d-flex justify-content-between w-100" >
-                    <div class="w-25 bg-secondary border border-primary" style="max-height: 400px; overflow: auto">
+                    <div class="w-25 bg-secondary border border-primary" style="max-height: 550px; overflow: auto">
                         <h4 class="w-100 py-2 bg-secondary text-center text-white">Les catégories</h4>   
                         <div class="w-100 d-flex flex-column">
                             @foreach ($categories as $cat)
-                                <h4 wire:click="changeCategory({{$cat->id}})" class="cursor-pointer z-hover-secondary py-2 border border-bottom px-2">
+                                <h4 wire:click="changeCategory({{$cat->id}})" class="cursor-pointer @if($category && $cat->id == $category->id) bg-info @else z-hover-secondary @endif py-2 border border-bottom px-2">
                                     <span>{{$cat->name}} </span> <span class="text-right float-right">({{$cat->products->count()}})</span>
                                 </h4>
                             @endforeach
                         </div>
                         <span class="my-2"></span>
                     </div>
-                    <div class="w-75 p-2" style="max-height: 400px; overflow: auto">
+                    <div class="w-75 p-2" style="max-height: 550px; overflow: auto">
                         @if($category)
                             <div class="z-secondary w-100">
                                 <h4 class="d-flex justify-content-between cursor-pointer text-center text-white py-2 border border-bottom px-2">
                                     <span class="text-center pt-2">
                                         <span>{{$category->name}} </span> <span class="">({{$category->products->count()}})</span>
+                                    @isAdmin()
                                         <span wire:click="editACategory({{$category->id}})" title="Editer cette catégorie" class="fa fa-edit text-white-50 float-right mt-1 ml-3 cursor-pointer"></span>
+                                    @endisAdmin
                                     </span>
                                    @if($category->products->count() > 0)
                                         @isAdmin()
@@ -65,7 +69,7 @@
                                                     <div class="w-100 mx-auto d-flex flex-column">
                                                         <span class="d-flex justify-content-between">
                                                             <strong class="text-bold">Description :</strong>
-                                                            <small class="text-secondary">Posté {{ $p->dateAgoToString }}</small>
+                                                            <small class="text-secondary">Posté {{ $p->getDateAgoFormated(true) }}</small>
                                                         </span>
                                                         <span>
                                                             {{$p->description}}
@@ -75,7 +79,7 @@
 
                                                     <div class="d-flex w-100 justify-content-between">
                                                         <span>
-                                                            <strong>Prix: </strong> <span>{{$p->price}}</span>
+                                                            <strong>Prix: </strong> <span>{{$p->price}} FCFA</span>
                                                         </span>
                                                         <span>
                                                             <strong>Total: </strong> <span>{{$p->total}}</span>
@@ -143,7 +147,7 @@
                                                             @endauth
                                                         </div>
                                                         <small class="text-muted mt-2">
-                                                            Editée le {{ $p->dateAgoToStringForUpdated }}
+                                                            Editée le {{ $p->getDateAgoFormated() }}
                                                         </small>
                                                     </div>
 

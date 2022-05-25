@@ -18,6 +18,21 @@ window.addEventListener('modal-editProduct', event => {
 window.addEventListener('modal-editCategory', event => {
     $('#editCategoryModal').modal();
 });
+window.addEventListener('modal-addNewComment', event => {
+    $("#addNewCommentModal form textarea").focus();
+    $('#addNewCommentModal').modal();
+});
+window.addEventListener('modal-displayMyNotifications', event => {
+    $('#displayMyNotificationsModal').modal();
+});
+window.addEventListener('modal-openSingleChatModal', event => {
+    $('#singleChatModal').modal();
+    $("#singleChatModal .chat-input").focus();
+});
+window.addEventListener('modal-adminAuthenticationModal', event => {
+    $('#adminAuthenticationModal').modal();
+    $("#adminAuthenticationModal input").focus();
+});
 
 
 $(function() {
@@ -154,6 +169,7 @@ $(function() {
 
     });
 });
+
 
 
 // $(function() {

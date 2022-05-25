@@ -111,9 +111,12 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function getDateAgoFormated()
+    public function getDateAgoFormated($created_at = false)
     {
         $this->__setDateAgo();
+        if($created_at){
+            return $this->dateAgoToString;
+        }
         return $this->dateAgoToStringForUpdated;
     }
 

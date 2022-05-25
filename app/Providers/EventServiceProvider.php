@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Events\PaymentSystemEvent;
+use Illuminate\Support\Facades\Event;
+use App\Events\NewProductCreatedEvent;
 use Illuminate\Auth\Events\Registered;
+use App\Listeners\PaymentSystemListener;
+use App\Listeners\NewProductCreatedListener;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -17,6 +21,12 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        NewProductCreatedEvent::class => [
+            NewProductCreatedListener::class,
+        ],
+        PaymentSystemEvent::class => [
+            PaymentSystemListener::class,
         ],
     ];
 

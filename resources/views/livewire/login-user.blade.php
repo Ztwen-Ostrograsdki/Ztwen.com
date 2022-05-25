@@ -50,11 +50,19 @@
                                         @enderror
                                     </div>
                                     <div class="p-0 m-0 mx-auto d-flex justify-content-center pb-1 pt-1">
-                                        <button class="w-50 border border-white btn btn--pill btn--green" type="submit">Connexion</button>
+                                        @if($userNoConfirm)
+                                            <span class="w-50 border cursor-pointer border-white btn btn--pill btn--green">
+                                                <a class="text-white" href="{{route('force-email-verification-notify')}}">Confirmer mon compte</a>
+                                            </span>
+                                        @else
+                                            <button class="w-50 border border-white btn btn--pill btn--green" type="submit">Connexion</button>
+                                        @endif
                                     </div>
+                                    @if(!$userNoConfirm)
                                     <div class="m-0 p-0 w-50 text-center mx-auto pr-3 pb-2">
 			                           <span data-toggle="modal" data-dismiss="modal" data-target="#forgotPasswordModal" class="text-white-50" style="cursor: pointer">Mot de passe oublié</span>
 			                        </div>
+                                    @endif
 			                    </form>
                          </div>
                      </div>

@@ -26,9 +26,17 @@ class Home extends Component
 
     public function mount()
     {
-        $this->lastComments = Comment::where('blocked', 0)->where('approved', 1)->take(3)->get();
-        $this->lastComments = Comment::all()->take(3);
+        $this->lastComments = Comment::where('blocked', 0)->where('approved', 1)->orderBy('created_at', 'desc')->take(3)->get();
         $this->lastPosted(); 
+    }
+
+    public function refreshThePosts()
+    {
+        $this->lastPosted(); 
+    }
+    public function refreshCommentsData()
+    {
+        $this->lastComments = Comment::where('blocked', 0)->where('approved', 1)->orderBy('created_at', 'desc')->take(3)->get();
     }
 
     public function render()
@@ -136,6 +144,8 @@ class Home extends Component
         session()->put('sectionSelected', 'mostSeen');
         $this->getProducts($all, $products);
     }
+
+    
 
 
 }

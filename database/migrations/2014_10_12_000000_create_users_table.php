@@ -17,9 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('role')->enum('user', ['admin', 'simple', 'refused', 'authorized'])->default('user');
+            $table->string('role')->enum('user', ['admin', 'simple', 'refused', 'authorized', 'master'])->default('user');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('current_photo')->nullable();
+            $table->string('token')->nullable()->default(null);
+            $table->boolean('blocked')->nullable()->default(false);
+            $table->string('email_verified_token')->nullable()->default(null);
             $table->string('password');
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();

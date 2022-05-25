@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Header extends Component
 {
-    protected $listeners = ['newUserConnected', 'targetedProduct', 'cartEdited'];
+    protected $listeners = ['newUserConnected', 'targetedProduct', 'cartEdited', 'userDataEdited'];
     public $user;
     public $username;
     public $carts;
@@ -42,6 +42,14 @@ class Header extends Component
         }
     }
 
+    public function userDataEdited($user_id)
+    {
+        if(Auth::user() && $user_id == Auth::user()->id){
+            return $this->user = Auth::user();
+        }
+    }
+
+
     public function cartEdited($user_id)
     {
         if(Auth::user() && $user_id == Auth::user()->id){
@@ -57,5 +65,10 @@ class Header extends Component
     public function createNewProduct()
     {
         $this->emit('createAProduct');
+    }
+
+    public function openModalForMyNotifications()
+    {
+        $this->emit('openModalForMyNotifications');
     }
 }

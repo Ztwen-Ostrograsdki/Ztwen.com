@@ -33,6 +33,10 @@
         @livewire('product-editor')
         @livewire('edit-product-data')
         @livewire('create-new-product')
+        @livewire('comment-manager')
+        @livewire('display-my-notifications')
+        @livewire('single-chat-inbox')
+        @livewire('admin-master-authentication')
         {{-- chargement des modals --}}
 
         <div class="min-h-screen bg-gray-100" style="background-color: rgb(167, 193, 219);">
@@ -49,7 +53,7 @@
             </div>
         </div>
         @include('sweetalert::alert')
-        @if(Route::currentRouteName() !== 'chat' && Route::currentRouteName() !== 'messenger' && Route::currentRouteName() !== 'product-profil')
+        @if(Route::currentRouteName() !== 'chat' && Route::currentRouteName() !== 'email-verification-notify' && Route::currentRouteName() !== 'force-email-verification-notify' && Route::currentRouteName() !== 'messenger')
             @livewire("footer") {{-- chargement du footer --}}
         @endif
         @include("components.mycomponents.scripts") {{-- chargement des scripts js --}}

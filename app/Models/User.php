@@ -7,23 +7,28 @@ use App\Models\Photo;
 use App\Models\Comment;
 use App\Models\History;
 use App\Models\Product;
+use App\Models\Reported;
 use App\Models\MyRequest;
 use App\Models\ShoppingBag;
 use Hamcrest\Type\IsInteger;
 use App\Helpers\DateFormattor;
 use App\Helpers\ProductManager;
+use App\Models\MyNotifications;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\User as ModelsUser;
+use App\Models\ResetEmailConfirmation;
 use Laravel\Jetstream\HasProfilePhoto;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Helpers\ActionsTraits\ModelActionTrait;
+use App\Helpers\ActionsTraits\FollowSystemTrait;
+use App\Helpers\ActionsTraits\MustVerifyEmailTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
+
 {
     use HasApiTokens;
     use HasFactory;
@@ -34,7 +39,8 @@ class User extends Authenticatable
     use ProductManager;
     use DateFormattor;
     use ModelActionTrait;
-
+    use FollowSystemTrait;
+    use MustVerifyEmailTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -47,6 +53,9 @@ class User extends Authenticatable
         'password',
         'role',
         'current_photo',
+        'email_verified_token',
+        'blocked',
+        'token',
     ];
 
     /**
@@ -124,9 +133,6 @@ class User extends Authenticatable
 
     public function isMyFriend($user)
     {
-        if($this->role == 'admin' || $this->id == 1){
-            return true;
-        }
         if(is_int($user)){
             $user = User::find($user);
             if(!$user){
@@ -135,11 +141,66 @@ class User extends Authenticatable
         }
         $he_follow_me = FollowingSystem::where('follower_id', $user->id)->where('followed_id', $this->id)->where('accepted', true)->first();
         $i_follow_him = FollowingSystem::where('followed_id', $user->id)->where('follower_id', $this->id)->where('accepted', true)->first();
-        if($i_follow_him && $he_follow_me){
+        if($i_follow_him || $he_follow_me){
             return true;
         }
         return false;
     }
+    public function friendlySince($user)
+    {
+        $a = FollowingSystem::where('follower_id', $this->id)
+                                        ->orWhere('followed_id', $user)
+                                        ->where('accepted', true)
+                                        ->first();
+        $b = FollowingSystem::where('follower_id', $user)
+                                        ->orWhere('followed_id', $this->id)
+                                        ->where('accepted', true)
+                                        ->first();
+        if($a){
+            return $a;
+        }
+        elseif($b){
+            return $b;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public function getMyFriends()
+    {
+        $myfriends = [];
+        $sendByMe = FollowingSystem::where('follower_id', $this->id)
+                                    ->where('accepted', true)
+                                    ->get();
+        $sendToMe = FollowingSystem::where('followed_id', $this->id)
+                                    ->where('accepted', true)
+                                    ->get();
+
+        if(($sendByMe->count() + $sendToMe->count()) > 0){
+            if($sendByMe->count() > 0){
+                foreach ($sendByMe as $req) {
+                    $user = User::find($req->followed_id);
+                    if($user){
+                        $myfriends[$req->followed_id] = $user;
+                    }
+                }
+            }
+
+            if($sendToMe->count() > 0){
+                foreach ($sendToMe as $req) {
+                    $user = User::find($req->follower_id);
+                    if($user){
+                        $myfriends[$req->follower_id] = $user;
+                    }
+                }
+            }
+        }
+        return $myfriends;
+    }
+
+
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
@@ -201,7 +262,7 @@ class User extends Authenticatable
     public function getMyFollowers()
     {
         $myfollowers = [];
-        $followers = FollowingSystem::where('followed_id', $this->id)->where('accepted', true)->get();
+        $followers = FollowingSystem::where('followed_id', $this->id)->where('accepted', false)->get();
         if($followers->count() > 0){
             foreach ($followers as $f) {
                 $myfollowers[] = User::find($f->follower_id);
@@ -221,12 +282,12 @@ class User extends Authenticatable
         }
     }
 
-    public function myFollowedsRequests()
+    public function myFriendsRequestsSent()
     {
         $tabs = [];
-        $all = FollowingSystem::where('followed_id', $this->id)->where('accepted', false)->get();
+        $all = FollowingSystem::where('follower_id', $this->id)->where('accepted', false)->get();
         foreach ($all as $d) {
-            $u = User::find($d->follower_id);
+            $u = User::find($d->followed_id);
             if($u){
                 $tabs[] = ['user' => $u, 'request' => $d];
             }
@@ -258,12 +319,30 @@ class User extends Authenticatable
         }
     }
 
-
-    public function getDateAgoFormated()
+    public function getDateAgoFormated($created_at = false)
     {
         $this->__setDateAgo();
+        if($created_at){
+            return $this->dateAgoToString;
+        }
         return $this->dateAgoToStringForUpdated;
     }
 
+    
+    public function myNotifications()
+    {
+        return $this->hasMany(MyNotifications::class);
+    }
+
+
+    public function reporteds()
+    {
+        return $this->hasMany(Reported::class);
+    }
+
+    public function emailConfirmation()
+    {
+        return $this->hasOne(ResetEmailConfirmation::class);
+    }
 
 }

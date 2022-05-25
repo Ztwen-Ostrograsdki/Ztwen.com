@@ -42,13 +42,17 @@ class FollowingSystem extends Component
 
     public function followThisUser($user_id)
     {
+        $auth = auth()->user()->id;
         $user = User::find($user_id);
-        if($user){
-            \App\Models\FollowingSystem::create(
-                [
-                    'follower_id' => Auth::user()->id,
-                    'followed_id' => $user->id
-                ]);
+        if(!$user || !$auth){
+            return abort(403, "Vous n'êtes pas authorisé");
         }
+        if(User::find($auth)->__followThisUser($user->id)){
+            $this->emit('updateRequests');
+        }
+        else{
+            $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'warning', 'message' => "Vous ne pouvez pas effectuer cette requête"]);
+        }
+        
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
-use App\Models\UserOnlineSession;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
@@ -22,14 +22,13 @@ class RegisteringNewUser extends Component
     protected $rules = [
         'name' => 'required|string|unique:users|between:5,255',
         'email' => 'required|email|unique:users|between:5,255',
-        'password' => 'required|string|confirmed',
+        'password' => 'required|string|confirmed|between:5, 255',
     ];
 
 
     public function render()
     {
         return view('livewire.registering-new-user');
-        
     }
 
     public function submit()
@@ -44,23 +43,30 @@ class RegisteringNewUser extends Component
                 'name' => $this->name,
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
+                'token' => Str::random(6),
+                'email_verified_token' => Hash::make(Str::random(16)),
             ]);
             if($this->user->id == 1){
-                $this->user->update(['role' => 'admin']);
+                $this->user->markEmailAsVerified();
             }
-
-            event(new Registered($this->user));
-            if(!$this->auth){
-                $this->dispatchBrowserEvent('RegistredSelf');
-                Auth::login($this->user);
-                $connected = Auth::user();
-                if($connected){
-                    UserOnlineSession::create(['user_id' => $connected->id]);
-                    $this->emit("newUserConnected");
+            else{
+                $masterAdmin = User::find(1);
+                if($masterAdmin){
+                    $masterAdmin->__followThisUser($this->user->id, true);
                 }
             }
+            if(!$this->auth && $this->user->id == 1){
+                $this->dispatchBrowserEvent('RegistredSelf');
+                Auth::login($this->user);
+            }
+            else{
+                $this->resetErrorBag();
+                $this->dispatchBrowserEvent('hide-form');
+                $this->user->sendEmailVerificationNotification();
+                session()->put('user_email_to_verify', $this->user->id);
+                return redirect()->route('email-verification-notify', ['id' => $this->user->id]);
+            }
             $this->resetErrorBag();
-            $this->emit("newUserAdded", $this->name);
             $this->dispatchBrowserEvent('RegistredNewUser', ['username' => $this->name]);
             $this->emit("refreshUsersList");
             $this->dispatchBrowserEvent('hide-form');

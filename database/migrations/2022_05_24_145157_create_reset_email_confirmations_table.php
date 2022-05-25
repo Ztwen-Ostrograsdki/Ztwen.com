@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMyRequestsTable extends Migration
+class CreateResetEmailConfirmationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class CreateMyRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::create('my_requests', function (Blueprint $table) {
+        Schema::create('reset_email_confirmations', function (Blueprint $table) {
             $table->id();
+            $table->text('new_email')->nullable();
+            $table->text('token')->nullable();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('target_id');
             $table->foreign('user_id')
                   ->references('id')
                   ->on('users')
                   ->onDelete('cascade')
-                  ->onUpdate('cascade');
-            $table->string('request_object');
-            $table->boolean('status')->default(false);
+                  ->onUpdate('cascade');    
             $table->timestamps();
         });
     }
@@ -35,6 +34,6 @@ class CreateMyRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('my_requests');
+        Schema::dropIfExists('reset_email_confirmations');
     }
 }

@@ -2,9 +2,12 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\NewProductCreatedEvent;
+use App\Models\User;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
+use App\Models\MyNotifications;
 use Illuminate\Support\Facades\Auth;
 
 class CreateNewProduct extends Component
@@ -38,9 +41,9 @@ class CreateNewProduct extends Component
         $this->categories = Category::all();
     }
 
-
     public function create()
     {
+
         $user = Auth::user();
         if($user){
             $this->slug = str_replace(' ', '-', $this->slug);
@@ -60,6 +63,19 @@ class CreateNewProduct extends Component
                     $this->reset('slug', 'description', 'total', 'price', 'reduction', 'category_id');
                     $this->dispatchBrowserEvent('hide-form');
                     $this->dispatchBrowserEvent('FireAlert', ['title' => 'Ajout du nouvel article', 'message' => "La création de l'article s'est bien déroulée", 'type' => 'success']);
+                    
+                    $users = User::all()->except($user->id);
+                    if($users->count() > 0){
+                        foreach ($users as $u){
+                            MyNotifications::create([
+                                'content' => "Un nouvel article a été posté dans la catégorie => :) " . mb_strtoupper($product->category->name),
+                                'user_id' => $u->id,
+                                'target' => "Nouvel Article",
+                                'target_id' => $product->id
+                            ]);
+                        }
+                    }
+
                 }
                 else{
                     $this->dispatchBrowserEvent('FireAlert', ['title' => 'Echec ', 'message' => "La création de l'article a échoué", 'type' => 'error']);

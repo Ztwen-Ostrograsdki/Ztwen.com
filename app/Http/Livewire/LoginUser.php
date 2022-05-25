@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
 use App\Models\UserOnlineSession;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,11 @@ use Illuminate\Support\Facades\Redirect;
 
 class LoginUser extends Component
 {
+
+    public $unverifiedUser = false;
+    public $user;
+    public $userNoConfirm = false;
+
     public function render()
     {
         return view('livewire.login-user');
@@ -19,7 +25,6 @@ class LoginUser extends Component
 
     public $email;
     public $password;
-    // protected $listeners = ['newUserAdded'];
     protected $rules = [
         'email' => 'required|email|between:5,255',
         'password' => 'required|string',
@@ -28,39 +33,31 @@ class LoginUser extends Component
 
     public function login()
     {
-       $this->validate();
-       $credentials = ['email' => $this->email, 'password' => $this->password];
-       if(Auth::attempt($credentials)){
-            
-            $this->dispatchBrowserEvent('Login');
-            $this->emit("newUserConnected");
-            $this->emit("connected", Auth::user()->id);
-            $this->dispatchBrowserEvent('hide-form');
-            Session::put('user-'.Auth::user()->id, Auth::user()->id);
-            return redirect()->back();
-            if(Auth::user()->id == 1){
-                
+        $this->reset('userNoConfirm');
+        $this->validate();
+        $credentials = ['email' => $this->email, 'password' => $this->password];
+        $u = User::where('email', $this->email)->first();
+        if($u && !$u->hasVerifiedEmail()){
+            $this->addError('email', "Ce compte n'a pas été confirmé!");
+            $this->userNoConfirm = true;
+        }
+        else{
+            if(Auth::attempt($credentials)){
+                $this->dispatchBrowserEvent('Login');
+                $this->dispatchBrowserEvent('hide-form');
+                if(auth()->user()->role == 'master'){
+                    Redirect::route('admin');
+                }
+                elseif(auth()->user()->role == 'user'){
+                    Redirect::route('user-profil', ['id' => auth()->user()->id]);
+                }
             }
-
-       }
-       else{
-            session()->flash('message', 'Aucune correspondance trouvée');
-            session()->flash('type', 'danger');
-            $this->addError('email', "Vos renseignements ne sont pas correctes!");
-            $this->addError('password', "Vos renseignements ne sont pas correctes!");
-       }
-
-
-    }
-
-    public function newUserAdded($user)
-    {
-
-    }
-
-
-    public function loginNewUser($n)
-    {
-        $this->name = $n;
+            else{
+                session()->flash('message', 'Aucune correspondance trouvée');
+                session()->flash('type', 'danger');
+                $this->addError('email', "Vos renseignements ne sont pas correctes!");
+                $this->addError('password', "Vos renseignements ne sont pas correctes!");
+            }
+        }
     }
 }

@@ -18,7 +18,7 @@ class UserMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user() && $request->user()->id == Auth::user()->id){
+        if(Auth::user() && $request->user() && $request->user()->id == Auth::user()->id){
             return $next($request);
         }
         return abort(403, "Vous n'êtes pas authorisé");

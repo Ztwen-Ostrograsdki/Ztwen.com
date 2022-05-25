@@ -66,8 +66,9 @@
                     <div class=" sm:flex sm:items-center sm:ml-6">
                         <x-dropdown align="right" width="48" class="text-bold text-dark">
                             <x-slot name="trigger">
-                                <x-responsive-nav-link class="text-dark cursor-pointer">
-                                    <span class="fa fa-user text-success"></span> {{  mb_substr(Auth::user()->name, 0, 7) }}
+                                <x-responsive-nav-link class="text-white-50 cursor-pointer z-color-hover-orange">
+                                    <span class="fa fa-user text-success pt-3 pb-2"></span> {{  mb_substr(Auth::user()->name, 0, 7) }}
+                                    @livewire('notifications-center')
                                 </x-responsive-nav-link>
                             </x-slot>
                             <x-slot name="content" :class="'text-left'">
@@ -77,15 +78,27 @@
                                     <span class="fa mr-3 d-flex">
                                         @if(Auth::user()->current_photo)
                                             <img width="30" class="border rounded-circle" src="/storage/profilPhotos/{{Auth::user()->currentPhoto()}}" alt="mon profil">
-                                            <span class="mt-1 ml-2">Profil</span>
+                                            <span class="mt-1 mx-2 fa">
+                                                {{ __('Profil') }}
+                                            </span>
                                         @else
-                                        <img width="30" class="border rounded-circle" src="{{Auth::user()->currentPhoto()}}" alt="mon profil">
-                                            <span>Profil</span>
+                                            <img width="30" class="border rounded-circle" src="{{Auth::user()->currentPhoto()}}" alt="mon profil">
+                                            <span class="mt-1 mx-2 fa">
+                                                {{ __('Profil') }}
+                                            </span>
                                         @endif
                                     </span>
                                     
                                 </x-dropdown-link>
                                 @endisNotRoute
+                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold"  href="#">
+                                    <span wire:click="openModalForMyNotifications">
+                                        <span class="fa bi-envelope-open mr-3"></span> 
+                                        <span>
+                                            @livewire('my-notifications-counter')
+                                        </span>
+                                    </span>
+                                </x-dropdown-link>
                                 <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold"  href="{{ route('chat')}}">
                                     <span class="fa fa-wechat mr-3"></span>{{ __('Messenger') }}
                                 </x-dropdown-link>

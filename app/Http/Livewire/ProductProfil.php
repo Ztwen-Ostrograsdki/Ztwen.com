@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Comment;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\ShoppingBag;
@@ -13,7 +14,13 @@ use Illuminate\Support\Facades\Session;
 class ProductProfil extends Component
 {
 
-    protected $listeners = ['connected', 'targetedProduct', 'resetTargetedProduct', 'productUpdated', 'updatingFinish'];
+    protected $listeners = [
+        'connected', 
+        'targetedProduct', 
+        'resetTargetedProduct',
+        'productUpdated', 
+        'updatingFinish',
+    ];
     public $galery;
     public $product;
     public $product_category;
@@ -29,7 +36,6 @@ class ProductProfil extends Component
                 $this->product_category = $this->product->category;
                 $this->galery = $this->product->productGalery();
                 $this->emit('targetedProduct', $this->product->id);
-                $this->product->__setDateAgo();
             }
             else{
                 $product = Product::withTrashed('deleted_at')->whereId($id)->firstOrFail();
@@ -60,7 +66,6 @@ class ProductProfil extends Component
         $product = Product::find($p);
         $this->product = $product;
         $this->galery = $this->product->productGalery();
-        $this->product->__setDateAgo();
     }
 
     
@@ -69,13 +74,16 @@ class ProductProfil extends Component
         return view('livewire.product-profil');
     }
 
-    public function booted()
+    public function addNewComment()
     {
-        // $this->product->__setDateAgo();
+        $this->emit('addNewComment', $this->product->id);
     }
 
 
+    public function booted()
+    {
 
+    }
 
     public function liked()
     {
@@ -89,7 +97,6 @@ class ProductProfil extends Component
         else{
             return abort(403, "Votre requête ne peut aboutir");
         }
-        $this->product->__setDateAgo();
     }
 
     public function productUpdated($product_id)
@@ -105,7 +112,7 @@ class ProductProfil extends Component
     public function updatingFinish($asset = true)
     {
         $this->updating = false;
-        $this->getProduct();
+        $this->mount();
     }
 
 
@@ -127,6 +134,7 @@ class ProductProfil extends Component
     {
 
     }
+
 
 
     public function addToCart()

@@ -32,7 +32,7 @@
         </div>
       </div>
       <!-- Banner Ends Here -->
-  
+      @if($allProducts->count() > 0)
       <div class="latest-products">
         <div class="container">
           <div class="row">
@@ -41,8 +41,7 @@
                 <h2 class="m-0 p-0 my-1">Les articles récents</h2>
                 <a href="{{route('products')}}">Voir tous les articles <i class="fa fa-angle-right"></i></a>
               </div>
-              @if($allProducts->count() > 0)
-                <div class="col-md-12">
+                <div class="col-md-12" wire:poll="refreshThePosts">
                     <div class="filters-content m-0 p-0">
                         <div class="row grid m-0 p-0">
                             @foreach($products as $product)
@@ -151,16 +150,13 @@
                         </div>
                     </div>
                 </div>
-                @else
-                <div class="d-flex flex-column mx-auto text-center border border-danger p-3 my-2">
-                    <span class="fa fa-warning text-danger fa-4x"></span>
-                    <h4 class="text-danger fa fa-2x">Ouups aucun article n'a encore été posté !!!</h4>
-                </div>
-                @endif
             </div>
           </div>
         </div>
       </div>
+      @elseif(auth()->user() && auth()->user()->role == "master")
+        <h3 class="z-color-orange z-bg-secondary p-2 py-3 mt-2 text-center w-75 mx-auto border">Veuillez ajouter des articles...</h3>
+      @endif
       <div class="pb-0">
         {{-- THE LAST COMMENTS --}}
         @if($lastComments->count() > 0)
@@ -173,7 +169,7 @@
             </div>
             <div class="col-12">
                 <div>
-                    @include('livewire.components.commentsCardsComponents', 
+                    @include('livewire.comments-lister', 
                     [
                     'comments' => $lastComments
                     ])
@@ -184,7 +180,7 @@
         @endif
         {{-- THE END OF LAST COMMENTS --}}
         <div class="container">
-          <div class="row mb-0 p-0 py-2 mb-2">
+          <div class="row mb-0 mt-2 p-0 py-2 mb-2">
             <div class="col-md-12">
               <div class="section-heading">
                 A propos <h2  class="" >ZtweN <em>Oströgrasdki</em> <small class="text-lowercase text-muted"><sup>market</sup></small> </h2>
