@@ -123,12 +123,12 @@
             @endauth
             @guest
             <li class="nav-item cursor-pointer">
-                <a class="nav-link registerModalOpen" data-toggle="modal" data-dismiss="modal" data-target="#registerModal">S'inscrire
+                <a class="nav-link registerModalOpen @isRoute('registration') active @endisRoute " data-toggle="modal" data-dismiss="modal" data-target="#registerModal">S'inscrire
                 <span class="sr-only">(current)</span>
                 </a>
             </li> 
             <li class="nav-item cursor-pointer">
-                <a class="nav-link loginOpen" data-toggle="modal" data-dismiss="modal" data-target="#loginModal">Connexion
+                <a class="nav-link loginOpen @isRoute('login') active @endisRoute " data-toggle="modal" data-dismiss="modal" data-target="#loginModal">Connexion
                     <span class="sr-only">(current)</span>
                 </a>
             </li> 

@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Reported;
 use App\Models\MyRequest;
 use App\Models\ShoppingBag;
+use App\Models\UserAdminKey;
 use Hamcrest\Type\IsInteger;
 use App\Helpers\DateFormattor;
 use App\Helpers\ProductManager;
@@ -18,12 +19,15 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\User as ModelsUser;
 use App\Models\ResetEmailConfirmation;
 use Laravel\Jetstream\HasProfilePhoto;
+use App\Helpers\AdminTraits\AdminTrait;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use App\Helpers\ActionsTraits\ModelActionTrait;
 use App\Helpers\ActionsTraits\FollowSystemTrait;
 use App\Helpers\ActionsTraits\MustVerifyEmailTrait;
+use App\Helpers\UserTraits\UserPasswordManagerTrait;
+use App\Helpers\UserTraits\UserTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -41,6 +45,9 @@ class User extends Authenticatable
     use ModelActionTrait;
     use FollowSystemTrait;
     use MustVerifyEmailTrait;
+    use AdminTrait;
+    use UserPasswordManagerTrait;
+    use UserTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -54,6 +61,7 @@ class User extends Authenticatable
         'role',
         'current_photo',
         'email_verified_token',
+        'reset_password_token',
         'blocked',
         'token',
     ];
@@ -89,6 +97,11 @@ class User extends Authenticatable
     ];
 
 
+    public function userAdminKey()
+    {
+        return $this->hasOne(UserAdminKey::class);
+    }
+    
     public function images()
     {
         return $this->hasMany(Image::class);

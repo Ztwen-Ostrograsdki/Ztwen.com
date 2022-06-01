@@ -29,7 +29,7 @@
                             <hr class="m-0 p-0 bg-white">
                             <hr class="m-0 p-0 bg-warning">
                             <hr class="m-0 p-0 bg-info">
-                                <form autocomplete="false" method="post" class="mt-3" wire:submit.prevent="submit()" >
+                                <form autocomplete="false" method="post" class="mt-3" wire:submit.prevent="submit" >
                                     <div class="input-group mt-0 mb-2">
                                         <label class="text-white @error('email') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="email_fgt">Votre adresse mail</label>
                                         <hr class="m-0 p-0 bg-info w-100 mb-1">

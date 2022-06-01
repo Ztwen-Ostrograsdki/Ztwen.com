@@ -9,7 +9,7 @@ class NotificationsCenter extends Component
 {
     public $myNotifications;
     public $user;
-    protected $listeners = ['newCommentAdd'];
+    protected $listeners = ['newCommentAdd', 'adminKeyGenerated'];
     
 
     public function mount()
@@ -28,6 +28,10 @@ class NotificationsCenter extends Component
         return view('livewire.notifications-center');
     }
 
+    public function adminKeyGenerated($product_id)
+    {
+        $this->mount();
+    }
     public function newCommentAdd($product_id)
     {
         $this->mount();

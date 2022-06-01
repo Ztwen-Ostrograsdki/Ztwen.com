@@ -286,6 +286,18 @@
     color: #bbb !important;
 }
 
+.z-bg-secondary-dark {
+    background-color: #334 !important;
+}
+
+.z-bg-secondary-light {
+    background-color: #335 !important;
+}
+
+.z-bg-secondary-light-opac {
+    background-color: rgba(10, 10, 40, 0.7) !important;
+}
+
 .z-bg-secondary {
     background-color: #334 !important;
 }
@@ -304,6 +316,10 @@
 
 .z-word-break-break {
     word-break: break-all !important;
+}
+
+.z-bg-orange {
+    background-color: #f33f3f !important;
 }
 
 .z-color-orange {
@@ -363,15 +379,17 @@ header .navbar {
     color: #fff !important;
 }
 
-color: #fff !important;
-
-}
 #navbarResponsive {
     background-color: #334 !important;
 }
+
 #navbarResponsive a.pl-3.pr-4.border-l-4.border-transparent.text-base.font-medium.text-gray-600.ease-in-out {
     border-style: none !important;
     padding-bottom: 14px !important;
     padding-top: 6px !important;
     border-bottom: solid thin white !important;
+}
+
+border-bottom: solid thin white !important;
+
 }

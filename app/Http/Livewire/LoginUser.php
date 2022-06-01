@@ -4,11 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
-use App\Models\UserOnlineSession;
 use Illuminate\Support\Facades\Auth;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Redirect;
 
 class LoginUser extends Component
 {
@@ -21,7 +17,6 @@ class LoginUser extends Component
     {
         return view('livewire.login-user');
     }
-
 
     public $email;
     public $password;
@@ -43,14 +38,19 @@ class LoginUser extends Component
         }
         else{
             if(Auth::attempt($credentials)){
+                session()->flush();
+                if($u->reset_password_token){
+                    $u->forceFill([
+                        'reset_password_token' => null,
+                    ])->save();
+                }
+                $user = User::find(auth()->user()->id);
+                if($user->id == 1 || $user->role == 'admin' || $user->role == 'master'){
+                    $user->__generateAdminKey();
+                }
                 $this->dispatchBrowserEvent('Login');
                 $this->dispatchBrowserEvent('hide-form');
-                if(auth()->user()->role == 'master'){
-                    Redirect::route('admin');
-                }
-                elseif(auth()->user()->role == 'user'){
-                    Redirect::route('user-profil', ['id' => auth()->user()->id]);
-                }
+                $user->__backToUserProfilRoute();
             }
             else{
                 session()->flash('message', 'Aucune correspondance trouvée');

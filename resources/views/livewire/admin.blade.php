@@ -5,6 +5,15 @@
             <div class="row w-100 m-0">
                <div class="col-2 m-0 text-capitalize border border-dark bg-dark p-0  @if($adminTrashedData) text-danger @else text-white @endif" style="min-height: 650px;">
                   <div class="d-fex flex-column w-100 mb-3">
+                     <div class="m-0 py-2 px-2">
+                        <div class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
+                           <span class="bi-search mr-2"></span>
+                           <h5 class="w-100 m-0 p-0 d-none d-xl-inline">
+                              <input wire:model="search" name="search" class="form-control py-1 bg-transparent text-white border border-secondary" placeholder="Rechercher dans {{$adminTagTitle}}" type="text">
+                           </h5>
+                        </div>
+                     </div>
+                     <hr class="m-0 p-0 w-100 bg-white">
                      <div class="m-0 py-2 @if($adminTagName == 'notifications') z-admin-active @endif px-2">
                         <div wire:click="setActiveTag('notifications', 'Notifications')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="bi-envelope-fill mr-2"></span>
@@ -53,6 +62,19 @@
                         </div>
                      </div>
                      <hr class="m-0 p-0 w-100 bg-white">
+                     <div class="m-0 py-2 px-2 @if($adminTagName == 'unconfirmed') z-admin-active @endif">
+                        <div wire:click="setActiveTag('unconfirmed', 'Email non confirmé')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
+                           <span class="mr-2 bi-person-x-fill  "></span>
+                           <h5 class="w-100 m-0 d-none d-xl-inline">Email non confirmé</h5>
+                           @if ($unconfirmed->count() > 9)
+                              <span class="">{{$unconfirmed->count()}}</span>
+                           @else
+                              <span class="">0{{$unconfirmed->count()}}</span>
+                           @endif
+                           <span class="@if($adminTagName == 'unconfirmed') bi-chevron-down @else bi-chevron-right @endif "></span>
+                        </div>
+                     </div>
+                     <hr class="m-0 p-0 w-100 bg-white">
                      <div class="m-0 py-2 px-2 @if($adminTagName == 'categories') z-admin-active @endif">
                         <div wire:click="setActiveTag('categories', 'Catégories')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-list-check"></span>
@@ -76,6 +98,13 @@
                               <span class="">0{{$products->count()}}</span>
                            @endif
                            <span class="@if($adminTagName == 'products') bi-chevron-down @else bi-chevron-right @endif "></span>
+                        </div>
+                     </div>
+                     <hr class="m-0 p-0 w-100 bg-white">
+                     <div class="m-0 py-2 px-2">
+                        <div class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-start">
+                           <span title="Détruire la clé de session d'administration" wire:click="destroyAdminSessionKey" class="bi-reply cursor-pointer py-1 border rounded px-2"></span>
+                           <span title="Regénérer une clé de session d'administration" wire:click="regenerateAdminKey" class="mx-2 bi-key cursor-pointer py-1 border rounded px-2"></span>
                         </div>
                      </div>
                      <hr class="m-0 p-0 w-100 bg-white">
@@ -147,12 +176,31 @@
                                 </div>
                            @endif
                         @endisAdmin
-                    </div>
+                     </div>
                   </div>
+                  @if($showSearch)
+                  <div class="m-0 p-0 mx-auto w-100 d-flex justify-content-between">
+                     <div class="input-group my-3 w-75">
+                        <input type="text" wire:model="search" class="form-control bg-transparent border border-white text-white" placeholder="Taper un mot ou groupe de mots clé à rechercher dans {{$adminTagTitle}}" aria-label="Chercher" aria-describedby="basic-addon2">
+                        <div class=" cursor-pointer bg-primary">
+                            <span class="input-group-text bg-primary text-white" >
+                                <span class="fa fa-search mx-2"></span>
+                                <span>Rechercher</span>
+                            </span>
+                        </div>
+                     </div>
+                     <span wire:click="toogleSearchBanner" class="bi-x-octagon cursor-pointer p-2 float-end text-white"></span>
+                  </div>
+                  @else
+                  <div class="py-2 mx-1">
+                     <span wire:click="toogleSearchBanner" class="bi-search cursor-pointer p-2 float-start text-white"></span>
+                  </div>
+                  @endif
                   @include('livewire.components.admin.thelister', 
                         [
                            'tag' => $adminTagName, 
                            'users' => $users,
+                           'unconfirmed' => $unconfirmed,
                            'categories' => $categories
                         ])
                </div>

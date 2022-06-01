@@ -8,7 +8,7 @@
              <div class="d-flex justify-content-between w-100">
                 <h4 class="text-uppercase mr-2 mt-1">
                     Edition de la photo de profil 
-                    <span class="ml-3 text-warning text-capitalize text-italic" wire:loading wire:target="user_profil" >Chargement de l'image den cours, veuillez patienter...</span>
+                    <span class="ml-3 text-warning text-italic" wire:loading wire:target="user_profil" >Chargement de l'image en cours, veuillez patienter...</span>
                 </h4>
                 <div class="d-flex justify-content-end w-20">
                    <div class="w-15 mx-0 px-0">

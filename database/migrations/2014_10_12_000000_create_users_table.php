@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('token')->nullable()->default(null);
             $table->boolean('blocked')->nullable()->default(false);
             $table->string('email_verified_token')->nullable()->default(null);
+            $table->string('reset_password_token')->nullable()->default(null);
             $table->string('password');
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();

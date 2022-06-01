@@ -27,10 +27,16 @@ class Admin extends Component
         'thisAuthenticationIs'
     ];
     public $active = 'active';
+    public $search;
+    public $showSearch = false;
     public $user;
+    public $u_u_id;
+    public $u_u_key;
+    public $show_token = false;
     public $adminTagName;
     public $adminTagTitle;
     public $users;
+    public $unconfirmed;
     public $adminTrashedData = false;
     public $admins;
     public $comments;
@@ -42,6 +48,7 @@ class Admin extends Component
 
     public function mount()
     {
+        $this->user = auth()->user();
         if(session()->has('adminTagName') && session()->has('adminTagTitle')){
             $this->adminTagName = session('adminTagName');
             $this->adminTagTitle = session('adminTagTitle');
@@ -56,9 +63,11 @@ class Admin extends Component
             $this->categories = Category::onlyTrashed()->orderBy('name', 'asc')->get();
             $this->admins = User::onlyTrashed()->where('role', 'admin')->orderBy('name', 'asc')->get();
             $this->users = User::onlyTrashed()->orderBy('name', 'asc')->get();
+            $this->unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->get();
         }
         else{
             $this->users = User::orderBy('name', 'asc')->get();
+            $this->unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->get();
             $this->categories = Category::orderBy('name', 'asc')->get();
             $this->admins = User::where('role', 'admin')->orderBy('name', 'asc')->get();
             $this->products = Product::orderBy('slug', 'asc')->get();
@@ -68,9 +77,66 @@ class Admin extends Component
         $this->getUsers();
     }
 
+    public function toogleSearchBanner()
+    {
+        $this->showSearch = !$this->showSearch;
+    }
+
+    public function updatedSearch($v)
+    {
+        if($v && strlen($v) >= 3){
+            $searchTerm = '%'.$v.'%';
+            if(in_array($this->adminTagName, ['users', 'unconfirmed', 'admins'])){
+                if(session()->has('adminTrashedData') && session('adminTrashedData')){
+                    $this->adminTrashedData = session('adminTrashedData');
+                    $based = User::onlyTrashed()->orderBy('name', 'asc')->where('name','like', $searchTerm)->orWhere('email','like', $searchTerm);
+                }
+                else{
+                    $based = User::orderBy('name', 'asc')->where('name','like', $searchTerm)->orWhere('email','like', $searchTerm);
+                }
+                
+                $this->unconfirmed = $based->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->get();
+                $this->admins = $based->where('role', 'admin')->get();
+                $this->users = $based->get();
+            }
+            else{
+                if(session()->has('adminTrashedData') && session('adminTrashedData')){
+                    $this->adminTrashedData = session('adminTrashedData');
+                    if($this->adminTagName == 'products'){
+                        $this->products = Product::onlyTrashed()->orderBy('slug', 'asc')->where('slug','like', $searchTerm)->orWhere('description','like', $searchTerm)->get();
+                    }
+                    elseif($this->adminTagName == 'categories'){
+                        $this->categories = Category::onlyTrashed()->orderBy('name', 'asc')->where('name','like', $searchTerm)->orWhere('description','like', $searchTerm)->get();
+                    }
+                }
+                else{
+                    if($this->adminTagName == 'products'){
+                        $this->products = Product::orderBy('slug', 'asc')->where('slug','like', $searchTerm)->orWhere('description','like', $searchTerm)->get();
+                    }
+                    elseif($this->adminTagName == 'categories'){
+                        $this->categories = Category::orderBy('name', 'asc')->where('name','like', $searchTerm)->orWhere('description','like', $searchTerm)->get();
+                    }
+                }
+                
+            }
+        }
+        else{
+            $this->mount();
+        }
+    }
+
     public function render()
     {
         return view('livewire.admin');
+    }
+
+    public function regenerateAdminKey()
+    {
+        return $this->user->__regenerateAdminKey();
+    }
+    public function destroyAdminSessionKey()
+    {
+        return $this->user->__destroyAdminKey();
     }
 
     public function newUserAdded($user)
@@ -114,6 +180,12 @@ class Admin extends Component
         $this->mount();
     }
 
+    public function toogle_u_u($key)
+    {
+        $this->show_token = !$this->show_token;
+        $this->u_u_key = $key;
+    }
+
 
     public function refreshUsersList()
     {
@@ -148,6 +220,25 @@ class Admin extends Component
         $this->mount();
     }
 
+    public function verifiedThisUserMail($user_id)
+    {
+        $user = User::find($user_id);
+        if($user){
+            if(!$user->hasVerifiedEmail()){
+                $user->markEmailAsVerified();
+                $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'utilisateur {$user->name} a été confirmé avec succès",  'title' => 'Email confirmé']);
+                $this->mount();
+            }
+            else{
+                $this->dispatchBrowserEvent('FireAlert', ['type' => 'warning', 'message' => "L'utilisateur {$user->name} a déjà confirmé son adresse mail",  'title' => 'Echec']);
+            }
+        }
+        else{
+            $this->dispatchBrowserEvent('FireAlert', ['type' => 'error', 'message' => "Votre requête semble être corrompue",  'title' => 'Erreur serveur']);
+        }
+    }
+
+    
     public function deleteAUser($user_id)
     {
         $user = User::find($user_id);

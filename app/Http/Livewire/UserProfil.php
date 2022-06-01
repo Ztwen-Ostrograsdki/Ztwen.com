@@ -5,8 +5,10 @@ namespace App\Http\Livewire;
 use App\Models\User;
 use App\Models\Product;
 use Livewire\Component;
+use App\Models\UserAdminKey;
 use Livewire\WithFileUploads;
 use App\Helpers\ProfilManager;
+use App\Models\MyNotifications;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -43,7 +45,7 @@ class UserProfil extends Component
         'email' => 'required|email',
         'code' => 'required|string',
         'new_password_confirmation' => 'required|string|between:4,40',
-        'new_password' => 'required|string|between:4,40',
+        'new_password' => 'required|string|confirmed|between:4,40',
         'old_pwd' => 'required|string|between:4,40',
     ];
 
@@ -84,6 +86,15 @@ class UserProfil extends Component
         
         $this->getUserCart();
 
+    }
+
+    public function regenerateAdminKey()
+    {
+        return $this->user->__regenerateAdminKey();
+    }
+    public function destroyAdminSessionKey()
+    {
+        return $this->user->__destroyAdminKey();
     }
 
     public function getUserCart()
@@ -220,6 +231,7 @@ class UserProfil extends Component
 
     public function editMyName()
     {
+        dd(['u' => $this->user->myNotifications, 'a_n' => MyNotifications::all()], $this->user->userAdminKey, UserAdminKey::all());
         $this->edit_email = false;
         $this->edit_password = false;
         $this->edit_name = !$this->edit_name;
@@ -324,9 +336,20 @@ class UserProfil extends Component
             'new_password' => 'required|string|confirmed|between:4,40',
             'new_password_confirmation' => 'required|string|between:4, 40'
         ]);
-        // $this->user->update(['password' => Hash::make($this->new_password)]);
-        $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success', 'message' => "La mise à jour de votre mot de passe s'est bien déroulée!"]);
-        $this->reset('edit_password', 'new_password', 'new_password_confirmation', 'old_pwd', 'psw_step_1', 'psw_step_2');
+        if(Hash::check($this->new_password, $this->user->password)){
+            $this->addError('new_password', "Vous ne pouvez pas utiliser ce mot de passe");
+            $this->addError('new_password_confirmation', "Vous ne pouvez pas utiliser ce mot de passe");
+        }
+        else{
+            $this->user->forceFill([
+                'password' => Hash::make($this->new_password),
+            ])->save();
+            $this->user->sendEmailForPasswordHaveBeenResetNotification();
+            $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success', 'message' => "La mise à jour de votre mot de passe s'est bien déroulée!"]);
+            $this->reset('edit_password', 'new_password', 'new_password_confirmation', 'old_pwd', 'psw_step_1', 'psw_step_2');
+            return redirect()->route('login');
+            
+        }
     }
 
     public function cancelPasswordEdit()

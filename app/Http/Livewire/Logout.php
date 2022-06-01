@@ -2,10 +2,8 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\UserOnlineSession;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Session;
 
 class Logout extends Component
@@ -25,12 +23,13 @@ class Logout extends Component
 
     public function logout()
     {
-        Session::forget('user-' . Auth::user()->id);
+
         Auth::guard('web')->logout();
         $this->emit("newUserConnected");
         $this->dispatchBrowserEvent('hide-form');
         $this->dispatchBrowserEvent('Logout');
-        return redirect(RouteServiceProvider::HOME);
+        Session::flush();
+        return redirect()->route('login');
     }
 
     public function cancel()

@@ -1,150 +1,185 @@
-
 @if($target == 'login')
-<div class="modal-content w-75 mx-auto @if(session()->has('message')) border border-{{session('type')}} @endif" style="top:100px;">
-    <div class="modal-header">
-        <div class="d-flex justify-content-between w-100">
-            <h4 class="text-uppercase mr-2 mt-2">
-                Connexion 
-                @if (session()->has('message'))
-                    <b class="text-capitalize text-{{session('type')}} ml-4">
-                        <span class="fa fa-warning"></span>
-                        {{session('message')}}
-                    </b>
-                @endif
-            </h4>
-            <div class="d-flex justify-content-end w-20">
-                <div class="w-15 mx-0 px-0">
-                    <ul class="d-flex mx-0 px-0 mt-1 justify-content-between w-100">
-                        <li class=" mx-1"><a href="#"><img src="images/flag-up-1.png" width="70" alt="" /> </a></li>
-                        <li><a href="#"><img src="images/flag-up-2.png" width="70" alt="" /></a></li>
-                    </ul>
-                </div>
-                <div class="w-25"></div>
+<div class="zw-90 row mx-auto" style="position: relative; top:200px;">
+    <div class="col-12 col-lg-6 col-xl-6 col-md-6 mx-auto z-bg-secondary-light-opac border rounded z-border-orange" style="opacity: 0.8;">
+        <div class="w-100 mx-auto p-3">
+            <div class="w-100 z-color-orange">
+                <h5 class="text-center w-100">
+                    <span class="fa fa-user-secret fa-3x "></span>
+                    <h4 class="w-100 text-uppercase text-center">Authentification</h4>
+                </h5>
+                <hr class="w-100 z-border-orange mx-auto my-2">
             </div>
-        </div>
-    </div>
-    <div class="modal-body m-0 p-0 border border-warning">
-        <div class="page-wrapper bg-gra-01 font-poppins">
-            <div class="wrapper wrapper--w780 ">
-                <div class="card card-3 border border-danger row w-100 p-0 m-0">
-                    <div class="bg-image-reg m-0 p-0 border border-info col-6"></div>
-                    <div class="card-body border p-0 border-success col-12 col-lg-6 col-xl-6">
-                    <h3 class="z-title text-white text-center p-1 m-0 ">Vos Coordonnées</h3>
-                    <hr class="m-0 p-0 bg-white">
-                    <hr class="m-0 p-0 bg-warning">
-                    <hr class="m-0 p-0 bg-info">
-                        <form  class="mt-3" wire:submit.prevent="login" >
-                            @csrf
-                            <div class="input-group mt-0 mb-2">
-                                <label class="z-text-cyan @error('email_auth') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="email_log_auth">Votre adresse mail</label>
-                                <hr class="m-0 p-0 bg-info w-100 mb-1">
-                                <input class="input--style-3 @error('email_auth') text-danger border border-danger @enderror" wire:model.defer="email_auth" id="email_log_auth" type="email" placeholder="Votre adresse mail..." name="email_auth">
-                                @error('email_auth')
-                                    <small class="py-1 text-warning">{{$message}}</small>
-                                @enderror
-                            </div>
-                            <div class="input-group mt-0 mb-2">
-                                <label class="z-text-cyan @error('password_auth') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="password_log_auth">Votre mot de passe</label>
-                                <hr class="m-0 p-0 bg-info w-100 mb-1">
-                                <input class="input--style-3 @error('password_auth') text-danger border border-danger @enderror" wire:model.defer="password_auth" id="password_log_auth" type="password" placeholder="Votre mot de passe..." name="password_auth">
-                                @error('password_auth')
-                                    <small class="py-1 text-warning">{{$message}}</small>
-                                @enderror
-                            </div>
-                            <div class="p-0 m-0 mx-auto d-flex justify-content-center pb-1 pt-1">
-                                <button class="w-50 border border-white btn btn--pill btn--green" type="submit">Connexion</button>
-                            </div>
-                            <div class="m-0 p-0 w-50 text-center mx-auto pr-3 pb-2">
-                                <span data-toggle="modal" data-dismiss="modal" data-target="#forgotPasswordModal" class="text-white-50" style="cursor: pointer">Mot de passe oublié</span>
-                            </div>
-                        </form>
+            <div class="w-100">
+                <form autocomplete="false" method="post" class="mt-3 mx-auto" wire:submit.prevent="login" >
+                    @csrf
+                    <div class="w-100">
+                        <div class="w-100 d-flex justify-content-between border rounded">
+                            <strong class="bi-person zw-15 text-center z-color-orange" style="font-size: 1.5rem"></strong>
+                            <input name="email_auth" wire:model.defer="email_auth"  type="email" class="form-control  @error('email_auth') text-danger border border-danger @enderror text-white zw-85 p-3 z-bg-secondary-dark border-left" placeholder="Veuillez renseigner votre adresse mail...">
+                        </div>
+                        @error('email_auth')
+                            <span class="py-1 mb-3 z-color-orange">{{$message}}</span>
+                        @enderror
+                    </div>  
+
+                    <div class="w-100 mt-2">
+                        <div class="w-100 d-flex justify-content-between border rounded">
+                            <strong class="bi-unlock zw-15 text-center z-color-orange" style="font-size: 1.5rem"></strong>
+                            <input name="password_auth" wire:model.defer="password_auth"  type="password" class="form-control  @error('password_auth') text-danger border border-danger @enderror text-white zw-85 p-3 z-bg-secondary-dark border-left" placeholder="Veuillez renseigner votre mot de passe...">
+                        </div>
+                        @error('password_auth')
+                            <span class="py-1 mb-3 z-color-orange">{{$message}}</span>
+                        @enderror
                     </div>
-                </div>
+
+                    @if(!$userNoConfirm)
+                    <div class="w-100 mt-3 d-flex justify-center">
+                        <button type="submit" class="z-bg-orange border rounded px-3 py-2 w-75">Se connecter</button>
+                    </div>
+                    <div class="w-100 mt-3 d-flex justify-center">
+                        <a class="text-warning text-center px-3 py-2 w-75" href="{{route('password-forgot')}}">
+                            <strong class="">Mot de passe oublié ?</strong>
+                        </a>
+                    </div>
+                    @else
+                    <div class="w-100 mt-3 d-flex justify-center">
+                        <span wire:click="forcedEmailVerification" class="text-white cursor-pointer text-center bg-success border rounded px-3 py-2 w-75" >
+                            <span class="bi-key mx-2"></span>
+                            <span>Confirmer mon compte</span>
+                        </span>
+                    </div>
+                    @endif
+                </form>
             </div>
         </div>
     </div>
 </div>
-@elseif($target == 'registration')
-<div class="modal-content w-75 mx-auto @if(session()->has('message')) border border-{{session('type')}} @endif" style="top:100px;">
-    <div class="modal-header">
-       <div class="d-flex justify-content-between w-100">
-          <h4 class="text-uppercase mr-2 mt-1">
-                @guest
-                    Inscription
-                @endguest
-                @auth
-                    Ajout d'un utilisateur
-                @endauth
-          </h4>
-          <div class="d-flex justify-content-end w-20">
-             <div class="w-15 mx-0 px-0">
-                <ul class="d-flex mx-0 px-0 mt-1 justify-content-between w-100">
-                   <li class=" mx-1"><a href="#"><img src="images/flag-up-1.png" width="100" alt="" /> </a></li>
-                   <li><a href="#"><img src="images/flag-up-2.png" width="100" alt="" /></a></li>
-                </ul>
-             </div>
-             <div class="w-25"></div>
-             <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
-          </div>
-       </div>
-    </div>
-    <div class="modal-body m-0 p-0 border border-warning">
-       <div class="page-wrapper bg-gra-01 font-poppins">
-           <div class="wrapper wrapper--w780 ">
-               <div class="card card-3 border border-danger row w-100 p-0 m-0">
-                   <div class="bg-image-reg m-0 p-0 border border-info col-6"></div>
-                   <div class="card-body border p-0 border-success col-12 col-lg-6 col-xl-6">
-                      <h3 class="z-title text-white text-center p-1 m-0 ">Les informations</h3>
-                      <hr class="m-0 p-0 bg-white">
-                      <hr class="m-0 p-0 bg-warning">
-                      <hr class="m-0 p-0 bg-info">
-                          <form autocomplete="false" method="post" class="mt-3" wire:submit.prevent="register()" >
-                              <div class="input-group mt-0 mb-2">
-                                  <label class="z-text-cyan @error('name') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="name_reg_auth">@auth Le @endauth @guest Votre @endguest nom et prénoms</label>
-                                  <hr class="m-0 p-0 bg-info w-100 mb-1">
-                                  <input class="input--style-3 @error('name') text-danger border border-danger @enderror" wire:model.defer="name" id="name_reg_auth" type="text" placeholder="@auth Le @endauth @guest Votre @endguest nom et prénoms..." name="name">
-                                  @error('name')
-                                      <small class="py-1 text-warning">{{$message}}</small>
-                                  @enderror
-                              </div>
-                              <div class="input-group mt-0 mb-2">
-                                  <label class="z-text-cyan @error('email') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="email_reg_auth">@auth L'@endauth @guest Votre @endguest adresse mail</label>
-                                  <hr class="m-0 p-0 bg-info w-100 mb-1">
-                                  <input class="input--style-3 @error('email') text-danger border border-danger @enderror" wire:model.defer="email" id="email_reg_auth" type="email" placeholder="@auth L'@endauth @guest Votre @endguest adresse mail..." name="email">
-                                  @error('email')
-                                      <small class="py-1 text-warning">{{$message}}</small>
-                                  @enderror
-                              </div>
-                              @guest
-                                  <div class="input-group mt-0 mb-2">
-                                      <label class="z-text-cyan @error('password') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="password_reg_auth">Votre mot de passe</label>
-                                      <hr class="m-0 p-0 bg-info w-100 mb-1">
-                                      <input class="input--style-3 @error('password') text-danger border border-danger @enderror" wire:model.defer="password" id="password_reg_auth" type="password" placeholder="Votre mot de passe..." name="password">
-                                      @error('password')
-                                          <small class="py-1 text-warning">{{$message}}</small>
-                                      @enderror
-                                  </div>
-                                  <div class="input-group mt-0 mb-2">
-                                      <label class="z-text-cyan @error('password_confirmation') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="password_confirmation_reg_auth">Confirmez mot de passe</label>
-                                      <hr class="m-0 p-0 bg-info w-100 mb-1">
-                                      <input class="input--style-3 @error('password') text-danger border border-danger @enderror" wire:model.defer="password_confirmation" id="password_confirmation_reg_auth" type="password" placeholder="Votre mot de passe..." name="password_confirmation">
-                                      @error('password')
-                                          <small class="py-1 text-warning">{{$message}}</small>
-                                      @enderror
-                                  </div>
-                              @endguest
-                              <div class="p-0 m-0 mx-auto d-flex justify-content-center pb-1 pt-1">
-                                  <button class="w-50 border border-white btn btn--pill btn--green" type="submit">Valider</button>
-                              </div>
-                              <div class="m-0 p-0 w-50 text-center mx-auto pr-3 pb-2">
-                                  <span data-toggle="modal" data-dismiss="modal" data-target="#loginModal" class="text-white-50" style="cursor: pointer">J'ai déja un compte</span>
-                              </div>
-                          </form>
-                   </div>
-               </div>
-           </div>
-       </div>
-    </div>
- </div>
 
+@elseif($target == 'registration')
+
+<div class="zw-90 row mx-auto" style="position: relative; top:150px;">
+    <div class="col-12 col-lg-6 col-xl-6 col-md-6 mx-auto z-bg-secondary-light-opac border rounded z-border-orange" style="opacity: 0.8;">
+        <div class="w-100 mx-auto p-3">
+            <div class="w-100 z-color-orange">
+                <h5 class="text-center w-100">
+                    <span class="fa fa-user-plus fa-3x "></span>
+                    <h4 class="w-100 text-uppercase text-center">Inscription</h4>
+                </h5>
+                <hr class="w-100 z-border-orange mx-auto my-2">
+            </div>
+            <div class="w-100">
+                <form autocomplete="false" method="post" class="mt-3 mx-auto" wire:submit.prevent="register" >
+                    @csrf
+                    <div class="w-100">
+                        <div class="w-100 d-flex justify-content-between border rounded">
+                            <strong class="bi-person zw-15 text-center z-color-orange" style="font-size: 1.5rem"></strong>
+                            <input name="name" wire:model.defer="name"  type="text" class="form-control  @error('name') text-danger border border-danger @enderror text-white zw-85 p-3 z-bg-secondary-dark border-left" placeholder="Veuillez renseigner votre nom...">
+                        </div>
+                        @error('name')
+                            <span class="py-1 mb-3 z-color-orange">{{$message}}</span>
+                        @enderror
+                    </div>  
+                    <div class="w-100 mt-2">
+                        <div class="w-100 d-flex justify-content-between border rounded">
+                            <strong class="bi-envelope-check zw-15 text-center z-color-orange" style="font-size: 1.5rem"></strong>
+                            <input name="email" wire:model.defer="email"  type="email" class="form-control  @error('email') text-danger border border-danger @enderror text-white zw-85 p-3 z-bg-secondary-dark border-left" placeholder="Veuillez renseigner votre adresse mail...">
+                        </div>
+                        @error('email')
+                            <span class="py-1 mb-3 z-color-orange">{{$message}}</span>
+                        @enderror
+                    </div>  
+
+                    <div class="w-100 mt-2">
+                        <div class="w-100 d-flex justify-content-between border rounded">
+                            <strong class="bi-unlock zw-15 text-center z-color-orange" style="font-size: 1.5rem"></strong>
+                            @if ($showPassword)
+                            <input name="password" wire:model.defer="password"  type="text" class="form-control  @error('password') text-danger border border-danger @enderror text-white zw-85 p-3 z-bg-secondary-dark border-left" placeholder="Veuillez renseigner votre mot de passe...">
+                            @else
+                            <input name="password" wire:model.defer="password"  type="password" class="form-control  @error('password') text-danger border border-danger @enderror text-white zw-85 p-3 z-bg-secondary-dark border-left" placeholder="Veuillez renseigner votre mot de passe...">
+                            @endif
+                        </div>
+                        @error('password')
+                            <span class="py-1 mb-3 z-color-orange">{{$message}}</span>
+                        @enderror
+                    </div>
+                    <div class="w-100 mt-2">
+                        <div class="w-100 d-flex justify-content-between border rounded">
+                            <strong class="bi-unlock-fill zw-15 text-center z-color-orange" style="font-size: 1.5rem"></strong>
+                            @if ($showPassword)
+                            <input name="password_confirmation" wire:model.defer="password_confirmation"  type="text" class="form-control  @error('password_confirmation') text-danger border border-danger @enderror text-white zw-80 p-3 z-bg-secondary-dark border-left" placeholder="Veuillez confirmer votre mot de passe...">
+                            @else
+                            <input name="password_confirmation" wire:model.defer="password_confirmation"  type="password" class="form-control  @error('password_confirmation') text-danger border border-danger @enderror text-white zw-80 p-3 z-bg-secondary-dark border-left" placeholder="Veuillez confirmer votre mot de passe...">
+                            @endif
+                            @if ($showPassword)
+                                <span title="Masquer le mot de passe" wire:click="toogleShowPassword" class="bi-eye-slash z-bg-secondary-dark text-white p-2 cursor-pointer"></span>
+                            @else
+                                <span title="Afficher le mot de passe" wire:click="toogleShowPassword" class="bi-eye z-bg-secondary-dark text-white p-2 cursor-pointer"></span>
+                            @endif
+                        </div>
+                        @error('password_confirmation')
+                            <span class="py-1 mb-3 z-color-orange">{{$message}}</span>
+                        @enderror
+                    </div>
+                    <div class="w-100 mt-3 d-flex justify-center">
+                        <button type="submit" class="z-bg-orange border rounded px-3 py-2 w-75">S'inscrire</button>
+                    </div>
+                    <div class="w-100 mt-3 d-flex justify-center">
+                        <a class="text-white text-center px-3 py-2 w-75" href="{{route('login')}}">
+                            <span class="bi-user mx-2"></span>
+                            <strong class="text-warning text-center w-100">J'ai déjà un compte</strong>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- PASSWORD FORGOT --}}
+
+@elseif($target == 'reset_password')
+<div class="zw-90 row mx-auto" style="position: relative; top:200px;">
+    <div class="col-12 col-lg-6 col-xl-6 col-md-6 mx-auto z-bg-secondary-light-opac border rounded z-border-orange" style="opacity: 0.8;">
+        <div class="w-100 mx-auto p-3">
+            <div class="w-100 z-color-orange">
+                <h5 class="text-center w-100">
+                    <span class="fa fa-user-secret fa-3x "></span>
+                    <h4 class="w-100 text-uppercase text-center">Reccupération de compte</h4>
+                </h5>
+                <hr class="w-100 z-border-orange mx-auto my-2">
+            </div>
+            <div class="w-100">
+                <form autocomplete="false" method="post" class="mt-3 mx-auto" wire:submit.prevent="sendCode" >
+                    @csrf
+                    <div class="w-100">
+                        <div class="w-100 d-flex justify-content-between border rounded">
+                            <strong class="bi-person zw-15 text-center z-color-orange" style="font-size: 1.5rem"></strong>
+                            <input name="email_for_reset" wire:model.defer="email_for_reset"  type="email" class="form-control  @error('email_for_reset') text-danger border border-danger @enderror text-white zw-85 p-3 z-bg-secondary-dark border-left" placeholder="Veuillez renseigner votre adresse mail...">
+                        </div>
+                        @error('email_for_reset')
+                            <span class="py-1 mb-3 z-color-orange">{{$message}}</span>
+                        @enderror
+                    </div> 
+                    @if(!$userNoConfirm)
+                    <div class="w-100 mt-3 d-flex justify-center">
+                        <button type="submit" class="z-bg-orange border rounded px-3 py-2 w-75">Lancer</button>
+                    </div> 
+                    <div class="w-100 mt-3 d-flex justify-center">
+                        <a href="{{route('login')}}" class="text-warning text-center px-3 py-2 w-75">
+                            <strong class="">Annuler le processus ?</strong>
+                        </a>
+                    </div>
+                    @else
+                    <div class="w-100 mt-3 d-flex justify-center">
+                        <span wire:click="forcedEmailVerification" class="text-white text-center bg-success border rounded px-3 py-2 w-75" >
+                            <span class="bi-key mx-2"></span>
+                            <span>Confirmer mon compte</span>
+                        </span>
+                    </div>
+                    @endif
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endif

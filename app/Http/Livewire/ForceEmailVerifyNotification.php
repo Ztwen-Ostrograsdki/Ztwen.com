@@ -8,19 +8,31 @@ use Illuminate\Support\Facades\Auth;
 
 class ForceEmailVerifyNotification extends Component
 {
-    protected $listeners = ['sendNewEmailVerificationNotification'];
+    protected $listeners = ['sendNewEmailVerificationNotification', 'newEmailToShouldBeConfirmed'];
     public $error = null;
     public $resentToken = false;
-    public $token;
+    public $code;
     public $key;
     public $email;
     public $email_for_resent;
     public $confirmed = false;
     public $user;
     protected $rules = [
-        'token' => 'required|string|min:5|max:16',
+        'code' => 'required|string|min:6|max:16',
         'email' => 'required|email',
     ];
+
+    public function mount()
+    {
+        if(session()->has('email-to-confirm')){
+            $this->email = session('email-to-confirm');
+        }
+    }
+
+    public function newEmailToShouldBeConfirmed($email)
+    {
+        $this->email = $email;
+    }
 
     public function render()
     {
@@ -41,12 +53,12 @@ class ForceEmailVerifyNotification extends Component
         if($user){
             if(!$user->hasVerifiedEmail()){
                 $this->user = $user;
-                if($user->token == $this->token){
+                if($user->token == $this->code){
                     $this->user->markEmailAsVerified();
                     $this->confirmed = true;
                 }
                 else{
-                    $this->addError('token', "La clé ne correspond pas!");
+                    $this->addError('code', "La clé ne correspond pas!");
                     $this->addError('email', "La clé ne correspond pas!");
                 }
             }

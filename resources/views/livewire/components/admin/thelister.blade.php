@@ -4,6 +4,11 @@
         [
         'users' => $users
         ])
+    @elseif ($tag == 'unconfirmed')
+        @include('livewire.components.admin.unconfirmed', 
+            [
+            'unconfirmed' => $unconfirmed
+            ])
     @elseif ($tag == 'admins')
         @include('livewire.components.admin.theAdmins', 
             [

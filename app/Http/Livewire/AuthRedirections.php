@@ -4,42 +4,56 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 use App\Models\UserOnlineSession;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Events\Registered;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthRedirections extends Component
 {
+    public $showPassword = false;
+    public $showNewPassword = false;
     public $email_auth;
+    public $email_for_reset;
     public $password_auth;
     public $email;
     public $name;
     public $password;
+    public $new_password;
     public $password_confirmation;
+    public $new_password_confirmation;
     public $target;
+    public $unverifiedUser = false;
+    public $user;
+    public $userNoConfirm = false;
+    public $reset_password_final_step = false;
 
-    protected function rules()
+    protected $rules = [
+        'name' => 'required|string|between:5,50',
+        'email' => 'required|email',
+        'email_auth' => 'required|email|between:5,255',
+        'email_for_reset' => 'required|email|between:5,255',
+        'password_auth' => 'required|string|between: 4, 40',
+        'password_confirmation' => 'required|string|between:4,40',
+        'password' => 'required|string|confirmed|between:4,40',
+    ];
+
+    public function updated($property)
     {
-        if($this->target == 'login'){
-            return [
-                'email_auth' => 'required|email|between:5,255',
-                'password_auth' => 'required|string',
-            ];
-        }
-        elseif($this->target == 'registration'){
-            return [
-                'name' => 'required|string|unique:users|between:5,255',
-                'email' => 'required|email|unique:users|between:5,255',
-                'password' => 'required|string|confirmed',
-            ];
-        }
+        $this->validateOnly($property);
     }
 
-
+    public function toogleShowPassword()
+    {
+        $this->showPassword = !$this->showPassword;
+    }
 
     public function mount()
     {
@@ -50,6 +64,9 @@ class AuthRedirections extends Component
         elseif($target == 'registration'){
             $this->target = 'registration';
         }
+        elseif($target == 'password-forgot'){
+            $this->target = 'reset_password';
+        }
     }
 
     public function render()
@@ -59,24 +76,39 @@ class AuthRedirections extends Component
 
     public function login()
     {
-       $this->validate();
-       $credentials = ['email' => $this->email_auth, 'password' => $this->password_auth];
-       if(Auth::attempt($credentials)){
-            $this->dispatchBrowserEvent('Login');
-            $this->emit("newUserConnected");
-            $this->emit("connected", Auth::user()->id);
-            Session::put('user-'.Auth::user()->id, Auth::user()->id);
-            return redirect('/');
-            if(Auth::user()->id == 1){
-                
+        $this->reset('userNoConfirm');
+        $this->validate([
+            'email_auth' => 'required|email',
+            'password_auth' => 'required|string|between:4, 40'
+        ]);
+        $credentials = ['email' => $this->email_auth, 'password' => $this->password_auth];
+        $u = User::where('email', $this->email_auth)->first();
+        if($u && !$u->hasVerifiedEmail()){
+            $this->user = $u;
+            $this->email = $u->email;
+            $this->emit('newEmailToShouldBeConfirmed', $this->email);
+            session()->put('email-to-confirm', $this->email);
+            $this->addError('email_auth', "Ce compte n'a pas été confirmé!");
+            $this->userNoConfirm = true;
+        }
+        else{
+            if(Auth::attempt($credentials)){
+                $this->user = User::find(auth()->user()->id);
+                if($this->user->id == 1 || $this->user->role == 'admin' || $this->user->role == 'master'){
+                    $this->user->__generateAdminKey();
+                }
+                $this->dispatchBrowserEvent('Login');
+                $this->user->__backToUserProfilRoute();
             }
-       }
-       else{
-            session()->flash('message', 'Aucune correspondance trouvée');
-            session()->flash('type', 'danger');
-            $this->addError('email_auth', "Vos renseignements ne sont pas correctes!");
-            $this->addError('password_auth', "Vos renseignements ne sont pas correctes!");
-       }
+            else{
+                session()->flash('message', 'Aucune correspondance trouvée');
+                session()->flash('type', 'danger');
+                $this->addError('email_auth', "Vos renseignements ne sont pas correctes!");
+                $this->addError('password_auth', "Vos renseignements ne sont pas correctes!");
+            }
+        }
+
+       
     }
 
 
@@ -87,31 +119,44 @@ class AuthRedirections extends Component
             $this->password = '00000';
             $this->password_confirmation = '00000';
         }
-        if ($this->validate()) {
+        $v = $this->validate([
+            'name' => 'required|string|unique:users|between:5, 50',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|confirmed|between:4, 40',
+            'password_confirmation' => 'required|string|between:4, 40'
+        ]);
+        if ($v) {
             $this->user = User::create([
                 'name' => $this->name,
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
+                'token' => Str::random(6),
+                'email_verified_token' => Hash::make(Str::random(16)),
             ]);
             if($this->user->id == 1){
-                $this->user->update(['role' => 'admin']);
+                $this->user->markEmailAsVerified();
             }
-
-            event(new Registered($this->user));
-            if(!$this->auth){
+            else{
+                $masterAdmin = User::find(1);
+                if($masterAdmin){
+                    $masterAdmin->__followThisUser($this->user->id, true);
+                }
+            }
+            if(!$this->auth && $this->user->id == 1){
                 $this->dispatchBrowserEvent('RegistredSelf');
                 Auth::login($this->user);
-                $connected = Auth::user();
-                if($connected){
-                    UserOnlineSession::create(['user_id' => $connected->id]);
-                    $this->emit("newUserConnected");
-                }
+            }
+            else{
+                $this->resetErrorBag();
+                $this->dispatchBrowserEvent('hide-form');
+                $this->user->sendEmailVerificationNotification();
+                session()->put('user_email_to_verify', $this->user->id);
+                return redirect()->route('email-verification-notify', ['id' => $this->user->id]);
             }
             $this->resetErrorBag();
             $this->emit("newUserAdded", $this->name);
             $this->dispatchBrowserEvent('RegistredNewUser', ['username' => $this->name]);
             $this->emit("refreshUsersList");
-            $this->dispatchBrowserEvent('hide-form');
             if($this->user->role == 'admin'){
                 return redirect(RouteServiceProvider::ADMIN);
             }
@@ -124,5 +169,39 @@ class AuthRedirections extends Component
         }
 
     }
+
+    public function sendCode()
+    {
+        $this->validate(['email_for_reset' => 'required|email']);
+        $user = User::where('email', $this->email_for_reset)->first();
+        if($user){
+            $this->user = $user;
+            if($user->hasVerifiedEmail()){
+                $user->forceFill([
+                    'reset_password_token' => Str::random(6),
+                ])->save();
+                $this->user->sendEmailForForgotPasswordNotification();
+                return redirect($user->__urlForPasswordReset());
+            }
+            else{
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'warning', 'message' => "Cette adresse n'a pas encore été confirmé",  'title' => 'Compte non activé']);
+                $this->emit('newEmailToShouldBeConfirmed', $this->email_for_reset);
+                session()->put('email-to-confirm', $this->email_for_reset);
+                $this->addError('email_for_reset', "Ce compte n'a pas été confirmé!");
+                $this->userNoConfirm = true;
+            }
+        }
+        else{
+            $this->addError('email_for_reset', "L'adresse mail est introuvable");
+            $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'error', 'message' => "L'adresse mail renseillée est introuvable",  'title' => 'Erreur']);
+        }
+    }
+
+
+    public function forcedEmailVerification()
+    {
+        return redirect($this->user->__urlForEmailConfirmation(true));
+    }
+
 
 }

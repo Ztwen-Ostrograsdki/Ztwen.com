@@ -2,16 +2,23 @@
     <div class="z-justify-relative-top-100 w-100" style="width: 90%;" >
        <div class="w-100 m-0 p-0">
           <div class="m-0 p-0 w-100"> 
-             <div class="mx-auto w-75 border p-3 m-0 z-bg-hover-secondary">
+             <div class="mx-auto w-75 border p-3 m-0 z-bg-secondary-light-opac border rounded z-border-orange" style="opacity: 0.8;">
                 @if(!$error)
                 <div class="zw-85 mx-auto m-0 p-0 text-white" style="">
                    <div class="mx-auto w-100 mb-3">
-                        <h5 class="w-75">
-                            <h4 class="border py-2 text-capitalise">
-                                <span class="bi-check-all text-success mx-2"></span>
-                                Processus de confirmation de compte @if($email) <span class="text-warning"> de l'adresse mail : {{$email}}</span> @endif
-                            </h4>
-                        </h5>
+                        <div class="w-100 z-color-orange">
+                            <h5 class="text-center w-100">
+                                <span class="fa fa-unlock fa-3x "></span>
+                                <h4 class="w-100 text-uppercase text-center">
+                                    <span class="bi-check-all text-success fa fa-2x mr-2"></span>
+                                    <strong>
+                                        Processus de confirmation de compte @if($email) de l'adresse mail : <span class="text-warning text-lowercase"> {{$email}}</span> @endif
+                                    </strong>
+                                </h4>
+                                <small class="w-100 text-center text-warning d-block">Une clé vous a été envoyé par courriel. Veuillez vérifier votre boite mail.</small>
+                            </h5>
+                            <hr class="w-100 z-border-orange mx-auto my-2">
+                        </div>
                         @if(!$confirmed && !$resentToken)
                         <div class="mx-auto w-100 mt-3">
                             <h5>
@@ -44,13 +51,13 @@
                                             <span class="text-danger">{{$message}}</span>
                                         </div>
                                     @enderror
-                                    <input placeholder="Saisissez la clé..." style="font-family: cursive !important;" wire:model.defer="token" class="form-control border w-90 py-3 my-1 text-white bg-transparent @error('token') border-danger @enderror" name="token" id="token" >
-                                    @error('token') 
+                                    <input placeholder="Saisissez la clé..." style="font-family: cursive !important;" wire:model.defer="code" class="form-control border w-90 py-3 my-1 text-white bg-transparent @error('code') border-danger @enderror" name="code" id="code" >
+                                    @error('code') 
                                         <div class="w-75 m-0 p-0 mb-2">
                                             <span class="text-danger">{{$message}}</span>
                                         </div>
                                     @enderror
-                                    <button id="" class="btn btn-primary d-flex mx-auto justify-content-center w-50 mt-2">
+                                    <button id="" class="btn rounded z-bg-orange border border-white d-flex mx-auto justify-content-center w-50 mt-2">
                                         <span class="d-none d-lg-inline d-md-inline d-xl-inline mr-lg-2 mr-md-2 mr-xl-2 m-0">Confirmer mon compte</span>
                                         <span class="fa fa-send mt-2"></span>
                                     </button>
@@ -78,9 +85,9 @@
                                 Vous pouvez vous connecter juste en cliquant sur le boutton
                             </h5>
                             <div class="mx-auto w-75 d-flex my-2 justify-content-center">
-                                <span class="btn btn-success py-1 cursor-pointer px-4 z-word-break-break w-85" wire:click="forceLogin">
+                                <a href="{{route('login')}}" class="btn btn-success py-1 cursor-pointer px-4 z-word-break-break w-85">
                                     Se connecter
-                                </span>
+                                </a>
                             </div>
                         </div>
                         @endif

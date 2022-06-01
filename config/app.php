@@ -18,6 +18,7 @@ return [
     // 'routes' =>  ['home', 'product-profil', 'admin', 'category'],
     'routes' =>  [],
     'payment_type_default' => 'Mobile',
+    'admin_key' => 'ah07Xw68ee',
 
     /*
     |--------------------------------------------------------------------------
@@ -166,6 +167,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         RealRashid\SweetAlert\SweetAlertServiceProvider::class,
+        // App\Providers\UserProvider::class,
 
         /*
          * Package Service Providers...
@@ -237,6 +239,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'alert' => RealRashid\SweetAlert\Facades\Alert::class,
+        // 'Ztwen' => App\Helpers\UserTraits\UserTrait::class,
 
     ],
 
