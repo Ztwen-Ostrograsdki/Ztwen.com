@@ -3,7 +3,7 @@
         <div class="w-100 d-flex flex-column">
             @foreach ($comments as $key => $com)
             <div class="@if(Auth::user() && $com->user_id == Auth::user()->id) text-right @else text-left @endif">
-                <h5 wire:key="{{$com->id}}" id="" class="chatMessageCard cursor-pointer shadow border   @if($com->deleted_at) border border-muted w-50 @else w-75 @endif p-2 my-2 @if(Auth::user() && $com->user_id == Auth::user()->id) float-right mr-2 @else float-left  @endif">
+                <h5 wire:key="{{$com->id}}" id="" class="chatMessageCard cursor-pointer shadow border rounded   @if($com->deleted_at) border-muted @endif p-2 w-auto my-2 @if(Auth::user() && $com->user_id == Auth::user()->id) float-right mr-2 @else float-left  @endif">
                     <span class="d-flex w-100">
                         <span class="text-dark pb-1 d-flex border-bottom w-100 @if(Auth::user() && $com->user_id == Auth::user()->id) float-right @if($com->deleted_at) border-muted @else border-warning @endif text-right justify-content-end @else border-primary text-left float-left justify-content-start @endif">
                             @if(Auth::user() && $com->user_id == Auth::user()->id)
@@ -38,14 +38,14 @@
                             {{$com->content}}
                         </span>
                     </span>
-                    <span class="messages-keyboard d-flex mt-2 w-100 @if(Auth::user() && $com->user_id == Auth::user()->id)  @if($com->deleted_at) bg-seconday @else bg-warning @endif float-right text-right justify-content-end @else text-left float-left   @if($com->deleted_at) bg-primary @else bg-primary @endif justify-content-start @endif">
-                        <small class="text-italic italic d-flex justify-content-between w-100 " style="font-size: 11px; padding: 1px">
-                            <i class="  @if($com->deleted_at) text-muted @endif">
+                    <span class="messages-keyboard d-flex mt-2 w-100 @if(Auth::user() && $com->user_id == Auth::user()->id)   bg-warning float-right text-right justify-content-end @else text-left float-left bg-primary justify-content-start @endif">
+                        <small class="text-italic italic d-flex justify-content-between w-100 " style="font-size: 9px; padding: 1px">
+                            <span style="font-size: 10px">
                                 Posté {{$com->getDateAgoFormated()}}
-                            </i>
+                            </span>
                             @if($com->approved)
                                 <span class="px-1 py-0">
-                                    <i class="fa fa-2x bi-check-all text-success px-1 py-0"></i>
+                                    <i style="font-size: 14px" class="bi-check-all text-success px-1 py-0"></i>
                                 </span>
                             @endif
                         </small>

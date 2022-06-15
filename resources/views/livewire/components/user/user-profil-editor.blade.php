@@ -33,9 +33,12 @@
                         <form wire:submit.prevent="changeEmail" autocomplete="off" class="my-1 d-flex p-2 cursor-pointer w-100 shadow">
                             <div class="d-flex justify-between zw-80">
                                 <div class="w-100">
+                                    <small class="text-warning float-left text-left d-block w-100">Votre actuelle adresse email est : 
+                                        <strong>{{$this->user->email}}</strong>
+                                    </small>
                                     <label class="z-text-cyan float-left text-left" for="my_email">Veuillez saisir votre nouvelle adresse email</label>
-                                    <input type="text" placeholder="Saisissez votre nouvelle adresse mail..." style="font-family: cursive !important;" wire:model="email" class="form-control py-3 border zw-95 text-white bg-transparent @error('email') border-danger text-danger @enderror" name="my_email" id="my_email" >
-                                    @error('email')
+                                    <input type="text" placeholder="Saisissez votre nouvelle adresse mail..." style="font-family: cursive !important;" wire:model="new_email" class="form-control py-3 border zw-95 text-white bg-transparent @error('new_email') border-danger text-danger @enderror" name="my_email" id="my_email" >
+                                    @error('new_email')
                                         <span class="text-danger mx-2 mt-1 float-left text-left">{{$message}}</span>
                                     @enderror
                                 </div>

@@ -7,17 +7,17 @@ use App\Http\Livewire\UserProfil;
 use App\Http\Livewire\ShowProducts;
 use App\Http\Livewire\MessengerChat;
 use App\Http\Livewire\ProductProfil;
+use App\Http\Livewire\ResetPassword;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\ShowCategories;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\AuthRedirections;
+use App\Http\Livewire\AdminAuthorization;
 use App\Http\Livewire\RegisteringNewUser;
 use App\Http\Livewire\EmailVerifyNotification;
+use App\Http\Controllers\BlockTemporaryMyAccount;
 use App\Http\Livewire\ConfirmedEmailVerification;
 use App\Http\Livewire\ForceEmailVerifyNotification;
-use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\BlockTemporaryMyAccount;
-use App\Http\Livewire\AdminAuthorization;
-use App\Http\Livewire\ResetPassword;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,9 +33,9 @@ use App\Http\Livewire\ResetPassword;
 Route::get('/', Home::class)->name('home');
 Route::get('/connexion', AuthRedirections::class)->name('login')->middleware('guest');
 Route::get('/inscription', AuthRedirections::class)->name('registration')->middleware('guest');
-Route::get('/authentification', AdminAuthorization::class)->name('get-admin-authorization')->middleware('auth');
+Route::get('/authentification', AdminAuthorization::class)->name('get-admin-authorization')->middleware(['auth', 'admin', 'verifiedUser']);
 Route::get('/mot-de-passe-oublie', AuthRedirections::class)->name('password-forgot')->middleware('guest');
-Route::get('/changer-mot-de-passe/get-protection/id={id}/token={token}/key={key}/hash={hash}/s={skey?}/from-email={email?}/reset-password=1/password=new', ResetPassword::class)->name('reset-password')->middleware(['guest', 'signed']);
+Route::get('/changer-mot-de-passe/get-protection/id={id}/token={token}/key={key}/hash={hash}/s={s}/from-email={email}/reset-password=1/password=new', ResetPassword::class)->name('reset.password')->middleware(['guest', 'signed']);
 Route::get('/verrouillage-de-mon-compte/protection=1/id={id}/token={token}/hash={hash}/security=1/blocked=true', [BlockTemporaryMyAccount::class, '__locked'])->name('block-temporary-account')->middleware(['signed']);
 
 Route::get('/articles', ShowProducts::class)->name('products');
@@ -54,15 +54,21 @@ Route::prefix('verification')->group(function(){
     Route::get('/fire/email={email}/evtok={token}/k={key}/hash={hash}/r=accepted/confirmed=forced', ForceEmailVerifyNotification::class)->name('force-email-verification-notify')->middleware(['guest', 'signed']);
 });
 
+Route::get('/deconnection', function () {
+    Auth::guard('web')->logout();
+    session()->flush();
+    return redirect()->route('login');
+})->name('logout');
+
 Route::get('/about', function () {
     return view('layouts/app');
 })->name('about');
-Route::get('/contact', function () {
-    return view('layouts/app');
-})->name('contact');
+// Route::get('/contact', function () {
+//     return view('layouts/app');
+// })->name('contact');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth'])->name('dashboard');
 
 // require __DIR__.'/auth.php';

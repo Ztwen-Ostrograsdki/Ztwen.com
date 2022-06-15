@@ -57,7 +57,12 @@ class RegisteringNewUser extends Component
             }
             if(!$this->auth && $this->user->id == 1){
                 $this->dispatchBrowserEvent('RegistredSelf');
+                $this->resetErrorBag();
+                $this->dispatchBrowserEvent('hide-form');
                 Auth::login($this->user);
+                $this->dispatchBrowserEvent('Login');
+                $this->user->__backToUserProfilRoute();
+
             }
             else{
                 $this->resetErrorBag();
@@ -70,12 +75,7 @@ class RegisteringNewUser extends Component
             $this->dispatchBrowserEvent('RegistredNewUser', ['username' => $this->name]);
             $this->emit("refreshUsersList");
             $this->dispatchBrowserEvent('hide-form');
-            if($this->user->role == 'admin'){
-                return redirect(RouteServiceProvider::ADMIN);
-            }
-            else{
-                return redirect()->back();
-            }
+            
         }
         else{
             

@@ -2,15 +2,16 @@
 
 namespace App\Http\Livewire;
 
-use App\Helpers\ActionsTraits\ModelActionTrait;
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
+use Illuminate\Support\Str;
 use App\Models\MyNotifications;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\ActionsTraits\ModelActionTrait;
 
 
 class Admin extends Component
@@ -132,8 +133,20 @@ class Admin extends Component
 
     public function regenerateAdminKey()
     {
-        return $this->user->__regenerateAdminKey();
+        $make = $this->user->__regenerateAdminKey();
+        if($make){
+            $this->dispatchBrowserEvent('Toast', ['type' => 'success', 'title' => 'CLE MODIFIEE AVEC SUCCES',  'message' => "La clé a été générée avec succès"]);
+        }
+        else{
+            $this->dispatchBrowserEvent('Toast', ['type' => 'error', 'title' => "ERREUR", 'message' => "La clé n'a pas pu être générée! Veuillez réessayer!"]);
+        }
     }
+    
+    public function displayAdminSessionKey()
+    {
+        $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'info', 'title' => "LA CLE", 'message' => $this->user->__getKeyNotification()]);
+    }
+
     public function destroyAdminSessionKey()
     {
         return $this->user->__destroyAdminKey();
@@ -141,7 +154,7 @@ class Admin extends Component
 
     public function newUserAdded($user)
     {
-        $this->user = $user;
+        $this->mount();
     }
 
     public function setActiveTag($name, $title)

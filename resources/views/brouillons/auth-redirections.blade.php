@@ -148,3 +148,78 @@
  </div>
 
 @endif
+
+
+
+<div class="call-to-action m-0 p-0">
+        <div class="container">
+          <div class="row py-0 ">
+            <div class="col-md-12 ">
+              <div class="inner-content m-0 mb-2  border border-dark">
+                <div class="d-flex justify-content-between bg-secondary border rounded px-2 py-2">
+                  <div class="">
+                    <h4 class="text-white" >ZtweN <em>Oströgrasdki</em> <small class="text-lowercase text-white-50"><sup>market</sup></small> </h4>
+                    <h5 class="text-white">
+                      La technologie du buziness!!!
+                    </h5>
+                  </div>
+                  <div class="">
+                    <div class="w-100 d-flex flex-column justify-content-center text-center">
+                      <h5 class="w-100 py-2">L'auteur : <br>
+                        <hr class="my-1 bg-white">
+                        <strong>Kouassi Vincent HOUNDEKINDO</strong>
+                      </h5>
+                      <img class="text-center mx-auto border shadow" width="200" src="myassets/author/img-1.jpg" alt="l'auteur">
+                    </div>
+                  </div>
+                  <div class="">
+                    <a href="#" class="filled-button">S'abonner maintenant</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div>
+    <footer class="border z-footer home-footer">
+        <div class="container my-0">
+            <div class="row my-0">
+                <div class="col-md-12 my-0">
+                    <div class="inner-content text-white-50 my-0">
+                        <div class="col-md-12">
+                            <div class="mx-auto text-white mb-2">
+                                <select wire:change="changeLocalLang" wire:model="localLang" class="form-select text-white bg-transparent" name="lang" id="lang">
+                                    <option class="bg-secondary text-dark py-2" value="">@lang('lang.choose')</option>
+                                    <option class="bg-secondary text-dark py-2" value="en">
+                                        <span>{{trans('lang.en')}}</span>
+                                    </option>
+                                    <option class="bg-secondary text-dark py-2" value="fr">
+                                       <span>{{trans('lang.fr')}}</span>
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    <p>Copyright &copy; {{date('Y')}} ZtweN Oströgrasdki@webDev.
+                    - Design: <a rel="nofollow noopener" href="#" target="_blank">HOUNDEKINDO</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>

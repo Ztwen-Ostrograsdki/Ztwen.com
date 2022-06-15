@@ -15,6 +15,9 @@
 <script src="{{asset('registrationVendor/jquery/jquery.js')}}"></script>
 <script src="{{asset('myassets/js/registration/global.js')}}"></script>
 <script src="{{asset('myassets/js/registration/ztw.js')}}"></script>
+<script src="{{asset('myassets/js/bootstrap.min.js')}}"></script>
+<script src="{{asset('myassets/js/popper.min.js')}}"></script>
+{{-- <script src="{{asset('myassets/js/bootstrap-last-version.min.js')}}"></script> --}}
 <script language = "text/Javascript"> 
   cleared[0] = cleared[1] = cleared[2] = 0; //set a cleared flag for each field
   function clearField(t){                   //declaring the array outside of the

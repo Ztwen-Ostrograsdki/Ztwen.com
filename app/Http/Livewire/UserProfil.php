@@ -28,6 +28,7 @@ class UserProfil extends Component
     public $name;
     public $code;
     public $email;
+    public $new_email;
     public $user;
     public $carts;
     public $profilImage;
@@ -43,6 +44,7 @@ class UserProfil extends Component
     protected $rules = [
         'name' => 'required|string|between:5,50',
         'email' => 'required|email',
+        'new_email' => 'required|email',
         'code' => 'required|string',
         'new_password_confirmation' => 'required|string|between:4,40',
         'new_password' => 'required|string|confirmed|between:4,40',
@@ -63,6 +65,7 @@ class UserProfil extends Component
                 $this->user = $user;
                 $this->name = $this->user->name;
                 $this->email = $this->user->email;
+                $this->new_email = $this->user->new_email;
             }
             else{
                 return abort(403, "Votre requête ne peut aboutir");
@@ -76,8 +79,8 @@ class UserProfil extends Component
             $this->activeTagTitle = session('userProfilTagTitle');
         }
         else{
-            $this->activeTagName = (new ProfilManager('demandes', "Les demandes envoyées"))->name;
-            $this->activeTagTitle = (new ProfilManager('demandes', "Les demandes envoyées"))->title;
+            $this->activeTagName = (new ProfilManager('editing', "Edition de profil"))->name;
+            $this->activeTagTitle = (new ProfilManager('editing', "Edition de profil"))->title;
         }
         $this->getDemandes();
         $this->getMyFollowers();
@@ -88,10 +91,27 @@ class UserProfil extends Component
 
     }
 
+    public function booted()
+    {
+        return $this->mount($this->user->id);
+    }
+
     public function regenerateAdminKey()
     {
-        return $this->user->__regenerateAdminKey();
+        $make = $this->user->__regenerateAdminKey();
+        if($make){
+            $this->dispatchBrowserEvent('Toast', ['type' => 'success', 'title' => 'CLE MODIFIEE AVEC SUCCES',  'message' => "La clé a été générée avec succès"]);
+        }
+        else{
+            $this->dispatchBrowserEvent('Toast', ['type' => 'error', 'title' => "ERREUR", 'message' => "La clé n'a pas pu être générée! Veuillez réessayer!"]);
+        }
     }
+
+    public function displayAdminSessionKey()
+    {
+        $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'info', 'title' => "LA CLE", 'message' => $this->user->__getKeyNotification()]);
+    }
+
     public function destroyAdminSessionKey()
     {
         return $this->user->__destroyAdminKey();
@@ -231,7 +251,6 @@ class UserProfil extends Component
 
     public function editMyName()
     {
-        dd(['u' => $this->user->myNotifications, 'a_n' => MyNotifications::all()], $this->user->userAdminKey, UserAdminKey::all());
         $this->edit_email = false;
         $this->edit_password = false;
         $this->edit_name = !$this->edit_name;
@@ -267,12 +286,12 @@ class UserProfil extends Component
 
     public function changeEmail()
     {
-        $old = User::withTrashed('deleted_at')->where('email', $this->email)->whereKeyNot($this->user->id)->first();
+        $old = User::withTrashed('deleted_at')->where('email', $this->new_email)->whereKeyNot($this->user->id)->first();
         if($old){
-            $this->addError('email', "Cette adresse mail est déjà existante !");
+            $this->addError('new_email', "Cette adresse mail est déjà existante !");
         }
         else{
-            // $sendToken = $this->user->__resetEmail($this->email);
+            // $update = $this->user->__initialisedResetUserEmail($this->new_email);
             $sendToken = true;
             if($sendToken){
                 $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'warning', 'message' => "Nous procedons à la mise à jour de votre adresse mail, cependant  veuillez confirmer votre adresse à l'aide du code envoyé à l'adresse mail {$this->email} !"]);

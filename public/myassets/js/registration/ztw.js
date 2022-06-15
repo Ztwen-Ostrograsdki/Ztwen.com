@@ -146,6 +146,59 @@ window.addEventListener('MessageDeleted', event => {
 
     });
 });
+window.addEventListener('Toast', event => {
+    if (event.detail.title !== undefined) {
+        Swal.fire({
+            icon: event.detail.type,
+            title: event.detail.title,
+            text: event.detail.message,
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
+    } else {
+        Swal.fire({
+            icon: event.detail.type,
+            text: event.detail.message,
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+
+        });
+    }
+});
+window.addEventListener('ToastDoNotClose', event => {
+    if (event.detail.title !== undefined) {
+        Swal.fire({
+            icon: event.detail.type,
+            title: event.detail.title,
+            text: event.detail.message,
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+        });
+    } else {
+        Swal.fire({
+            icon: event.detail.type,
+            text: event.detail.message,
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+        });
+    }
+});
 
 
 $(function() {

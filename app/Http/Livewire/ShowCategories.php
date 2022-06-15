@@ -5,9 +5,9 @@ namespace App\Http\Livewire;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
-use App\Models\ShoppingBag;
-use App\Models\SeenLikeProductSytem;
 use Illuminate\Support\Facades\Auth;
+
+use function PHPUnit\Framework\isInstanceOf;
 
 class ShowCategories extends Component
 {
@@ -15,10 +15,15 @@ class ShowCategories extends Component
         'productUpdated', 'categoriesUpdated',
         'newCategoryCreated', 'newProductCreated', 
         'connected', 
+        'categorySelected', 
         'aProductHasBeenDeleted', 'aProductHasBeenRestored', 
         'aCategoryHasBeenDeleted', 'aCategoryHasBeenRestored'
     ];
+    public $search;
+    public $targets = [];
     public $products = [];
+    public $productsCounter;
+    public $galery;
     public $categorySelectedID;
     public $categories;
     public $category;
@@ -41,6 +46,7 @@ class ShowCategories extends Component
         $categories = Category::orderBy('name', 'asc')->get();
         $this->user = Auth::user();
         $this->categories = $categories;
+        $this->productsCounter = Product::all()->count();
         $this->getProducts();
     }
 
@@ -48,9 +54,15 @@ class ShowCategories extends Component
     {
         return view('livewire.show-categories');
     }
+
+    public function categorySelected($category_id)
+    {
+        $this->changeCategory($category_id);
+    }
     
     public function changeCategory($category_id = null)
     {
+        $this->reset('search', 'targets');
         session()->forget('categorySelectedID');
         if($category_id !== null){
             session()->put('categorySelectedID', $category_id);
@@ -58,6 +70,28 @@ class ShowCategories extends Component
         }
         else{
             session()->forget('categorySelectedID');
+        }
+    }
+
+    public function updatedSearch($v)
+    {
+        $this->targets['products'] = [];
+        $this->targets['categories'] = [];
+        if($v && strlen($v) >= 3){
+            $searchTerm = '%'. $v .'%';
+            $targets1 = Product::orderBy('slug', 'asc')->where('slug','like', $searchTerm)->orWhere('description','like', $searchTerm)->get();
+            $targets2 = Category::orderBy('name', 'asc')->where('name','like', $searchTerm)->orWhere('description','like', $searchTerm)->get();
+            
+            if($targets1->count() > 0){
+                $this->targets['products'] = $targets1;
+            }
+            if($targets2->count() > 0){
+                $this->targets['categories'] = $targets2;
+            }
+            
+        }
+        else{
+            $this->mount();
         }
     }
 
@@ -69,21 +103,11 @@ class ShowCategories extends Component
             $this->categorySelectedID = $category_id;
             session()->put('categorySelectedID', $category_id);
             $this->products = $this->category->products;
-            if($this->products->count() > 0){
-                foreach ($this->products as $p){
-                    $p->__setDateAgo();
-                }
-            }
         }
         elseif(session()->has('categorySelectedID') && session('categorySelectedID') !== null){
             $this->categorySelectedID = session('categorySelectedID');
             $this->category = Category::find($this->categorySelectedID);
             $this->products = $this->category->products;
-            if($this->products->count() > 0){
-                foreach ($this->products as $p){
-                    $p->__setDateAgo();
-                }
-            }
         }
         else{
             session()->forget('categorySelectedID');

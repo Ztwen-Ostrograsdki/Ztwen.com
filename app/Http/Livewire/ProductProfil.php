@@ -101,12 +101,7 @@ class ProductProfil extends Component
 
     public function productUpdated($product_id)
     {
-        $this->updating = true;
-        $this->galery = [];
-        $product = Product::find($product_id);
-        if($product){
-            $this->emit('productUpdated', $product_id);
-        }
+        $this->getProduct();
     }
 
     public function updatingFinish($asset = true)

@@ -32,41 +32,6 @@ class EditProductData extends Component
         return view('livewire.edit-product-data');
     }
 
-
-
-    public function updateData()
-    {
-        $user = Auth::user();
-        if($user){
-            $product  = Product::withTrashed('deleted_at')->whereId($this->product->id)->firstOrFail();
-            if($product){
-                $this->slug = str_replace(' ', '-', $this->slug);
-                if($this->validate()){
-                    $product->update(
-                        [
-                            'slug' => $this->slug,
-                            'description' => $this->description,
-                            'price' => $this->price,
-                            'total' => $this->total,
-                            'reduction' => $this->reduction,
-                            'category_id' => $this->category_id,
-                        ]
-                    );
-                    $this->dispatchBrowserEvent('hide-form');
-                    $this->emit('updatingFinish', true);
-                    $this->dispatchBrowserEvent('FireAlert', ['title' => 'Mise à jour réussie', 'message' => "La mise à jour de l'article s'est bien déroulée", 'type' => 'success']);
-                }
-            }
-            else{
-                return abort(403, "Votre requête ne peut aboutir");
-            }
-        }
-        else{
-            return redirect(route('login'));
-        }
-
-    }
-
     public function editAProduct($product_id)
     {
         $product  = Product::withTrashed('deleted_at')->whereId($product_id)->firstOrFail();
@@ -81,4 +46,41 @@ class EditProductData extends Component
             $this->category_id = $this->product->category_id;
         }
     }
+
+
+
+    public function updateData()
+    {
+        $user = Auth::user();
+        if($user){
+            $product  = Product::withTrashed('deleted_at')->whereId($this->product->id)->first();
+            if($product){
+                $this->slug = str_replace(' ', '-', $this->slug);
+                if($this->validate()){
+                    $product->update(
+                        [
+                            'slug' => $this->slug,
+                            'description' => $this->description,
+                            'price' => $this->price,
+                            'total' => $this->total,
+                            'reduction' => $this->reduction,
+                            'category_id' => $this->category_id,
+                        ]
+                    );
+                    $this->dispatchBrowserEvent('hide-form');
+                    $this->emit('productUpdated', $product->id);
+                    $this->dispatchBrowserEvent('FireAlert', ['title' => 'Mise à jour réussie', 'message' => "La mise à jour de l'article s'est bien déroulée", 'type' => 'success']);
+                }
+            }
+            else{
+                return abort(403, "Votre requête ne peut aboutir");
+            }
+        }
+        else{
+            return redirect(route('login'));
+        }
+
+    }
+
+    
 }

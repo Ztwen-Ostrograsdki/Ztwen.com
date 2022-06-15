@@ -11,16 +11,15 @@ class ResetEmail extends Notification
 {
     use Queueable;
 
-    public $newEamil;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($newEamil)
+    public function __construct()
     {
-        $this->newEamil = $newEamil;
+
     }
 
     /**
@@ -43,15 +42,15 @@ class ResetEmail extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject("Confirmation de mail Ztwen-Oströgrasdki")
-                    ->line("Monsieur/Madame {$notifiable->name}, vous avez lancé une de modification de votre adresse mail")
-                    ->line("Nous procédons donc à une vérification de votre nouvelle adresse mail renseillée")
-                    ->line("Si vous reconnaissez la requête d'inscription veuillez cliquer sur le button afin de confirmer votre adresse mail")
-                    ->line("Si vous ne reconnaissez pas cette requête veuillez juste ignorer ce courriel")
-                    ->line("")
-                    ->line("La clé est: {$notifiable->getEmailResetToken()}")
-                    ->line("")
-                    ->line("Nous vous remercions de votre fidélité");
+            ->subject("Confirmation de mail Ztwen-Oströgrasdki")
+            ->line("Monsieur/Madame {$notifiable->name}, vous avez lancé une de modification de votre adresse mail")
+            ->line("Nous procédons donc à une vérification de votre nouvelle adresse mail renseillée")
+            ->line("Si vous reconnaissez la requête d'inscription veuillez cliquer sur le button afin de confirmer votre adresse mail")
+            ->line("Si vous ne reconnaissez pas cette requête veuillez juste ignorer ce courriel")
+            ->line("")
+            ->line("La clé est: {$notifiable->getEmailResetToken()}")
+            ->line("")
+            ->line("Nous vous remercions de votre fidélité");
     }
 
     /**
@@ -66,4 +65,5 @@ class ResetEmail extends Notification
             //
         ];
     }
+
 }

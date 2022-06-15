@@ -60,14 +60,14 @@ class ForgotPasswordNotification extends Notification
     {
         return URL::temporarySignedRoute(
             'reset-password',
-            Carbon::now()->addMinutes(15),
+            Carbon::now()->addMinutes(11),
             [
                 'id' => $notifiable->getKey(),
                 'token' => urlencode(sha1($notifiable->reset_password_token)),
                 'key' => Str::random(8),
                 'hash' => sha1($notifiable->getEmailForVerification()),
-                'skey' => $notifiable->reset_password_token,
-                'email' => 1,
+                's' => $notifiable->reset_password_token,
+                'email' => 'yes',
             ]
         );
     }

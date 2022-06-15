@@ -102,9 +102,15 @@
                      </div>
                      <hr class="m-0 p-0 w-100 bg-white">
                      <div class="m-0 py-2 px-2">
-                        <div class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-start">
+                        <div class="d-flex row w-100 cursor-pointer m-0 p-0 justify-content-around">
+                           <span title="Afficher la clé de session d'administration" wire:click="displayAdminSessionKey" class="bi-eye cursor-pointer py-1 border rounded px-2"></span>
                            <span title="Détruire la clé de session d'administration" wire:click="destroyAdminSessionKey" class="bi-reply cursor-pointer py-1 border rounded px-2"></span>
-                           <span title="Regénérer une clé de session d'administration" wire:click="regenerateAdminKey" class="mx-2 bi-key cursor-pointer py-1 border rounded px-2"></span>
+                           <span title="Regénérer une clé de session d'administration" wire:click="regenerateAdminKey" class="bi-key cursor-pointer py-1 border rounded px-2"></span>
+                           <span class="py-1">
+                              <a class="pt-1 pb-2 m-0 text-white border rounded px-2" href="{{route('user-profil', ['id' => auth()->user()->id])}}">
+                                 <span class="bi-person "></span>
+                              </a>
+                           </span>
                         </div>
                      </div>
                      <hr class="m-0 p-0 w-100 bg-white">

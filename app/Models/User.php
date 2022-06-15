@@ -17,6 +17,7 @@ use App\Helpers\ProductManager;
 use App\Models\MyNotifications;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\User as ModelsUser;
+use App\Helpers\UserTraits\UserTrait;
 use App\Models\ResetEmailConfirmation;
 use Laravel\Jetstream\HasProfilePhoto;
 use App\Helpers\AdminTraits\AdminTrait;
@@ -25,9 +26,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use App\Helpers\ActionsTraits\ModelActionTrait;
 use App\Helpers\ActionsTraits\FollowSystemTrait;
-use App\Helpers\ActionsTraits\MustVerifyEmailTrait;
+use App\Helpers\UserTraits\MustVerifyEmailTrait;
 use App\Helpers\UserTraits\UserPasswordManagerTrait;
-use App\Helpers\UserTraits\UserTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -57,10 +57,12 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'new_email',
         'password',
         'role',
         'current_photo',
         'email_verified_token',
+        'new_email_verified_token',
         'reset_password_token',
         'blocked',
         'token',

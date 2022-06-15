@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\User;
 use App\Rules\EqualsTo;
 use Livewire\Component;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class ResetPassword extends Component
@@ -12,27 +13,31 @@ class ResetPassword extends Component
 
     public $showPassword = false;
     public $password;
+    public $delay;
+    public $pageOff = false;
     public $password_confirmation;
     public $user;
     public $token;
     public $user_id;
     public $key;
+    public $expires;
     public $code;
     public $hash;
     public $from_email = false;
-    public $skey;
+    public $s;
     protected $rules = [
         'password_confirmation' => 'required|string|between:4,40',
         'password' => 'required|string|confirmed|between:4,40',
     ];
 
 
-    public function mount(int $id, $token, $key, $hash, $skey = null, $email = null)
+    public function mount($id, $token, $key, $hash, $s, $email)
     {
         if(!request()->hasValidSignature()){
             return abort(401);
         }
         if($id){
+            $this->expires = Carbon::parse((int)request()->expires);
             $user = User::where('id', $id)->whereNull('email_verified_token')->whereNull('token')->whereNotNull('email_verified_at')->first();
             if($user){
                 $this->user_id = $id;
@@ -40,9 +45,9 @@ class ResetPassword extends Component
                 $this->token = $token;
                 $this->key = $key;
                 $this->hash = $hash;
-                if($skey && $email == 1){
+                if($s !== 'no' && $email == 'yes'){
                     $this->from_email = true;
-                    $this->skey = $skey;
+                    $this->s = $s;
                     $this->code = $this->skey;
                 }
             }
@@ -53,6 +58,8 @@ class ResetPassword extends Component
        
     }
 
+
+    
     public function updated($property)
     {
         $this->validateOnly($property);
@@ -122,6 +129,45 @@ class ResetPassword extends Component
         }
         return redirect()->route('login');
     }
+
+
+
+    public function getDelay()
+    {
+        if($this->pageOff){
+            $sec = 0;
+            $min = 0;
+            $this->pageOff = true;
+            $this->delay =  " 00 min 00'";
+            return false;
+        }
+        $now = Carbon::now();
+        $e = $this->expires;
+        $all = $now->diffInSeconds($e);
+        if($all == 0){
+            $sec = 0;
+            $min = 0;
+            $this->pageOff = true;
+            $this->delay =  " 00 min 00 '";
+        }
+        else{
+            $toMins = $all / 60;
+            if($toMins > 1){
+                $min = floor($toMins);
+                $sec = floor(($toMins - $min)*60);
+                $this->pageOff = false;
+                $this->delay =  $min . " min " . $sec . " '";
+            }
+            else{
+                $min = '00';
+                $sec = $all;
+                $this->pageOff = false;
+                $this->delay =  $min . " min " . $sec . " '";
+            }
+        }
+        
+    }
+
 
 
 }

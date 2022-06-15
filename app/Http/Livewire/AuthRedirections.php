@@ -5,16 +5,11 @@ namespace App\Http\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
-use App\Models\UserOnlineSession;
-use Illuminate\Support\Facades\URL;
+use App\Rules\StrongPassword;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Auth\Events\Registered;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Redirect;
 
 class AuthRedirections extends Component
 {
@@ -36,14 +31,18 @@ class AuthRedirections extends Component
     public $reset_password_final_step = false;
 
     protected $rules = [
-        'name' => 'required|string|between:5,50',
+        'name' => 'required|string|between:2,255',
         'email' => 'required|email',
-        'email_auth' => 'required|email|between:5,255',
-        'email_for_reset' => 'required|email|between:5,255',
-        'password_auth' => 'required|string|between: 4, 40',
-        'password_confirmation' => 'required|string|between:4,40',
-        'password' => 'required|string|confirmed|between:4,40',
+        'email_auth' => 'required|email',
+        'password' => 'required|string|min:4',
+        'password_confirmation' => 'required|string|min:4',
+        'new_password' => 'required|string|min:4',
+        'new_password_confirmation' => 'required|string|min:5',
+        'password' => 'required|string',
+
     ];
+
+    
 
     public function updated($property)
     {
@@ -79,7 +78,7 @@ class AuthRedirections extends Component
         $this->reset('userNoConfirm');
         $this->validate([
             'email_auth' => 'required|email',
-            'password_auth' => 'required|string|between:4, 40'
+            'password_auth' => 'required|string|min:4'
         ]);
         $credentials = ['email' => $this->email_auth, 'password' => $this->password_auth];
         $u = User::where('email', $this->email_auth)->first();
@@ -122,50 +121,50 @@ class AuthRedirections extends Component
         $v = $this->validate([
             'name' => 'required|string|unique:users|between:5, 50',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|confirmed|between:4, 40',
-            'password_confirmation' => 'required|string|between:4, 40'
+            'password' => 'required|string|confirmed|min:4',
+            'password_confirmation' => 'required|string|min:4'
         ]);
         if ($v) {
-            $this->user = User::create([
-                'name' => $this->name,
-                'email' => $this->email,
-                'password' => Hash::make($this->password),
-                'token' => Str::random(6),
-                'email_verified_token' => Hash::make(Str::random(16)),
-            ]);
-            if($this->user->id == 1){
-                $this->user->markEmailAsVerified();
-            }
-            else{
-                $masterAdmin = User::find(1);
-                if($masterAdmin){
-                    $masterAdmin->__followThisUser($this->user->id, true);
+            $v = $this->validate(['password' => new StrongPassword(false, false, false, 4)]);
+            if($v){
+                $this->user = User::create([
+                    'name' => $this->name,
+                    'email' => $this->email,
+                    'password' => Hash::make($this->password),
+                    'token' => Str::random(6),
+                    'email_verified_token' => Hash::make(Str::random(16)),
+                ]);
+                if($this->user->id == 1){
+                    $this->user->markEmailAsVerified();
+                }
+                else{
+                    $masterAdmin = User::find(1);
+                    if($masterAdmin){
+                        $masterAdmin->__followThisUser($this->user->id, true);
+                    }
+                }
+                if(!$this->auth && $this->user->id == 1){
+                    $this->dispatchBrowserEvent('RegistredSelf');
+                    Auth::login($this->user);
+                }
+                else{
+                    $this->resetErrorBag();
+                    $this->dispatchBrowserEvent('hide-form');
+                    $this->user->sendEmailVerificationNotification();
+                    session()->put('user_email_to_verify', $this->user->id);
+                    return redirect()->route('email-verification-notify', ['id' => $this->user->id]);
+                }
+                $this->resetErrorBag();
+                $this->emit("newUserAdded", $this->name);
+                $this->dispatchBrowserEvent('RegistredNewUser', ['username' => $this->name]);
+                $this->emit("refreshUsersList");
+                if($this->user->role == 'admin'){
+                    return redirect(RouteServiceProvider::ADMIN);
+                }
+                else{
+                    return redirect()->back();
                 }
             }
-            if(!$this->auth && $this->user->id == 1){
-                $this->dispatchBrowserEvent('RegistredSelf');
-                Auth::login($this->user);
-            }
-            else{
-                $this->resetErrorBag();
-                $this->dispatchBrowserEvent('hide-form');
-                $this->user->sendEmailVerificationNotification();
-                session()->put('user_email_to_verify', $this->user->id);
-                return redirect()->route('email-verification-notify', ['id' => $this->user->id]);
-            }
-            $this->resetErrorBag();
-            $this->emit("newUserAdded", $this->name);
-            $this->dispatchBrowserEvent('RegistredNewUser', ['username' => $this->name]);
-            $this->emit("refreshUsersList");
-            if($this->user->role == 'admin'){
-                return redirect(RouteServiceProvider::ADMIN);
-            }
-            else{
-                return redirect()->back();
-            }
-        }
-        else{
-            
         }
 
     }

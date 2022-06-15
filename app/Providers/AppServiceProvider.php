@@ -98,6 +98,22 @@ class AppServiceProvider extends ServiceProvider
             return false;
 
         });
+        
+        Blade::if('routeHas', function($routeName){
+            if(Route::has($routeName)){
+                return true; 
+            }
+            return false;
+
+        });
+
+        Blade::if('routeHasNot', function($routeName){
+            if(Route::has($routeName)){
+                return false;
+            }
+            return true;
+
+        });
 
         Blade::if('isNotRoute', function($routeName){
             if(Route::currentRouteName() == $routeName){
@@ -106,6 +122,33 @@ class AppServiceProvider extends ServiceProvider
             return true;
 
         });
+
+        Blade::if('isRoutes', function($routesName){
+            foreach($routesName as $routeName){
+                if(Route::has($routeName)){
+                    if(in_array(Route::currentRouteName(), $routesName)){
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+
+        });
+
+        Blade::if('isNotRoutes', function($routesName){
+            foreach($routesName as $routeName){
+                if(Route::has($routeName)){
+                    if(in_array(Route::currentRouteName(), $routesName)){
+                        return false;
+                    }
+                    return true;
+                }
+                return true;
+            }
+
+        });
+
 
 
         Blade::if('isOnline', function($user){

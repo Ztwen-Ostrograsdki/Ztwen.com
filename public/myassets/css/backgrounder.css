@@ -326,6 +326,10 @@
     color: #f33f3f !important;
 }
 
+.z-text-orange {
+    color: #f33f3f !important;
+}
+
 .z-border-orange {
     border-color: #f33f3f !important;
 }
@@ -388,8 +392,4 @@ header .navbar {
     padding-bottom: 14px !important;
     padding-top: 6px !important;
     border-bottom: solid thin white !important;
-}
-
-border-bottom: solid thin white !important;
-
 }

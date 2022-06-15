@@ -3,9 +3,10 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
-use App\Rules\EqualsTo;
 use Livewire\Component;
 use App\Models\UserAdminKey;
+use App\Rules\PasswordChecked;
+use Illuminate\Support\Facades\Hash;
 
 class AdminAuthorization extends Component
 {
@@ -44,10 +45,9 @@ class AdminAuthorization extends Component
 
     public function authentify()
     {
-        // dd($this->user->userAdminKey->key);
         $this->user->__hydrateAdminSession();
         $this->validate();
-        $this->validate(['code' => new EqualsTo($this->default_key)]);
+        $this->validate(['code' => new PasswordChecked($this->default_key)]);
         $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success', 'message' => "Authentification réussie"]);
         $this->user->__regenerateAdminSession();
         $this->user->__regenerateAdminKey();

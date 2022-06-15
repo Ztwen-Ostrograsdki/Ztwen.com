@@ -2,8 +2,10 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Category;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 class Header extends Component
 {
@@ -11,16 +13,33 @@ class Header extends Component
     public $user;
     public $username;
     public $carts;
+    public $categories;
+    public $showCategories = false;
 
 
     public function mount()
     {
+        $this->getData();
         $this->getUserData();
     }
     public function render()
     {
         return view('livewire.header');
-    }
+    } 
+
+    public function displayCategories()
+    {
+        return $this->showCategories = true;
+    } 
+    public function hideCategories()
+    {
+        return $this->showCategories = false;
+    } 
+    public function categorySelected($category_id)
+    {
+        dd($category_id);
+        $this->emit('categorySelected', $category_id);
+    } 
 
 
     public function booted()
@@ -40,6 +59,10 @@ class Header extends Component
         if($user){
             $this->carts = $user->shoppingBags()->count();
         }
+    }
+    public function getData()
+    {
+        $this->categories = Category::all();
     }
 
     public function userDataEdited($user_id)

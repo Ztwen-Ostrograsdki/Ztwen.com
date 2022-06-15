@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 class LoginUser extends Component
@@ -28,6 +29,7 @@ class LoginUser extends Component
 
     public function login()
     {
+        session()->flush();
         $this->reset('userNoConfirm');
         $this->validate();
         $credentials = ['email' => $this->email, 'password' => $this->password];
@@ -38,7 +40,6 @@ class LoginUser extends Component
         }
         else{
             if(Auth::attempt($credentials)){
-                session()->flush();
                 if($u->reset_password_token){
                     $u->forceFill([
                         'reset_password_token' => null,

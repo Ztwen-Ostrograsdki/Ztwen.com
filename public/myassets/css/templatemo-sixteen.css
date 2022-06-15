@@ -323,9 +323,9 @@ header .navbar {
 }
 
 .navbar .navbar-toggler {
-    border-color: #fff;
-    background-color: #fff;
-    height: 36px;
+    /* border-color: #fff; */
+    /* background-color: #fff; */
+    /* height: 36px; */
     outline: none;
     border-radius: 0px;
     position: absolute;
@@ -620,7 +620,7 @@ footer {
 }
 
 footer .inner-content {
-    border-top: 1px solid #eee;
+    /*border-top: 1px solid #eee;*/
     margin-top: 60px;
     padding: 60px 0px;
 }
@@ -1053,7 +1053,7 @@ footer .inner-content p a {
     }
     .navbar .navbar-nav a.nav-link {
         padding: 15px 0px;
-        color: #1e1e1e!important;
+        /* color: #1e1e1e!important; */
     }
     .navbar .navbar-nav .nav-link:hover,
     .navbar .navbar-nav .active>.nav-link,

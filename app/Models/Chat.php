@@ -14,12 +14,14 @@ class Chat extends Model
     use SoftDeletes;
     use DateFormattor;
     use ModelActionTrait;
+
     protected $fillable = ['message', 'sender_id', 'receiver_id', 'seen', 'reply_to_id'];
 
     public function sender()
     {
         // 
     }
+
 
     public function receiver()
     {

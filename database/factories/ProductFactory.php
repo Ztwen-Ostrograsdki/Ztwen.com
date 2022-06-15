@@ -16,7 +16,7 @@ class ProductFactory extends Factory
         return [
             'slug' => $this->faker->slug(5),
             'description' => $this->faker->paragraph(2),
-            'category_id' => rand(1, 20),
+            'category_id' => rand(1, 10),
         ];
     }
 }

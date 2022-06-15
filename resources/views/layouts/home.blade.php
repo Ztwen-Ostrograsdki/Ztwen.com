@@ -30,7 +30,7 @@
           <div class="col-md-12">
             <div class="section-heading">
               <h2>Latest Products</h2>
-              <a href="{{route('products')}}">view all products <i class="fa fa-angle-right"></i></a>
+              <a href="#">view all products <i class="fa fa-angle-right"></i></a>
             </div>
           </div>
           <div class="col-md-4">
@@ -164,7 +164,7 @@
                 <li><a href="#">Corporis, omnis doloremque</a></li>
                 <li><a href="#">Non cum id reprehenderit</a></li>
               </ul>
-              <a href="{{route('about')}}" class="filled-button">Read More</a>
+              <a href="#" class="filled-button">Read More</a>
             </div>
           </div>
           <div class="col-md-6">

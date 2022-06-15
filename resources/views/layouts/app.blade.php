@@ -12,7 +12,6 @@
 
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-        <title>Sixteen Clothing HTML Template</title>
         @include("components.mycomponents.styles") {{-- chargement des styles --}}
 
         <!-- Scripts -->
@@ -39,7 +38,7 @@
         @livewire('admin-master-authentication')
         {{-- chargement des modals --}}
 
-        <div class="min-h-screen bg-gray-100" style="background-color: rgb(167, 193, 219);">
+        <div class=" bg-gray-100 border" style="background-color: rgb(167, 193, 219); min-height: 150vh !important;">
             <!-- Page Content -->
             <div class="">
                 @if (isset($slot))

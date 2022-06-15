@@ -6,6 +6,7 @@ use Livewire\Component;
 use Illuminate\Support\Str;
 use App\Models\UserAdminKey;
 use App\Models\MyNotifications;
+use Illuminate\Support\Facades\Hash;
 
 trait AdminTrait{
 
@@ -57,14 +58,20 @@ trait AdminTrait{
     }
 
 
-    public function __sendKey()
+    public function __sendKey($key)
     {
-        MyNotifications::create([
-            'content' => "Bienvenu(e) sur la plateforme. Nous vous envoyons la clé de connexion à la page d'administration. Clé: "  . auth()->user()->userAdminKey->key,
+        $make = MyNotifications::create([
+            'content' => "Bienvenu(e) sur la plateforme. Nous vous envoyons la clé de connexion à la page d'administration. Clé: "  . $key,
             'user_id' =>  auth()->user()->id,
             'target' => "Admin-Key",
             'target_id' => null
         ]);
+        if($make){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 
@@ -74,22 +81,24 @@ trait AdminTrait{
         if($this->hasAdminKey()){
             $make = $this->userAdminKey->update([
                 'user_id' => $this->id,
-                'key' => $key
+                'key' => Hash::make($key)
             ]);
             if($make){
                 $this->__refreshNotifications();
-                return $this->__sendKey();
+                return $this->__sendKey($key);
             }
+            return false;
         }
         else{
             $make = UserAdminKey::create([
                 'user_id' => $this->id,
-                'key' => $key
+                'key' =>  Hash::make($key)
             ]);
             if($make){
                 $this->__refreshNotifications();
-                return $this->__sendKey();
+                return $this->__sendKey($key);
             }
+            return false;
         }
     }
 

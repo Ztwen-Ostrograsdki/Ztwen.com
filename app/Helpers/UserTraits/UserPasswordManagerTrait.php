@@ -15,13 +15,15 @@ trait UserPasswordManagerTrait{
     public function __urlForPasswordReset()
     {
         return URL::temporarySignedRoute(
-            'reset-password',
-            Carbon::now()->addMinutes(15),
+            'reset.password',
+            Carbon::now()->addMinutes(11),
             [
                 'id' => $this->getKey(),
                 'token' => urlencode(sha1($this->reset_password_token)),
                 'key' => Str::random(8),
                 'hash' => sha1($this->getEmailForVerification()),
+                'email' => 'no',
+                's' => 'no',
             ]
         );
     }
