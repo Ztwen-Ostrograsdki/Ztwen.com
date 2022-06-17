@@ -33,6 +33,11 @@ class CommentsLister extends Component
         $this->booted();
     }
 
+    public function loadProductImages($product_id)
+    {
+        $this->emit('loadProductImages', $product_id);
+    }
+
 
 
 

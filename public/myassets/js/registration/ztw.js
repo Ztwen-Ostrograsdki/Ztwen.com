@@ -1,6 +1,3 @@
-var closeIt = $('#registerModal form');
-
-
 window.addEventListener('hide-form', event => {
     $('.modal').modal('hide');
 });

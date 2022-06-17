@@ -2,15 +2,15 @@
     <div wire:ignore.self class="modal fade lug" id="addNewCommentModal" role="dialog" >
        <div class="modal-dialog modal-z-xlg" role="document">
           <!-- Modal content-->
-          <div class="modal-content  border @error('comment') border-danger @enderror" style="position: absolute; top:100px; z-index: 2010;">
+          <div class="modal-content modal-fullscreen  border @error('comment') border-danger @enderror" style="position: absolute; top:100px; z-index: 2010;">
              <div class="modal-header">
                 <div class="d-flex justify-content-between w-100">
-                   <h4 class="text-uppercase mr-2 mt-1">
+                   <h6 class="text-uppercase mr-2 mt-1">
                        Poster un nouveau commentaire
                            @if (session()->has('alert'))
-                               <span class="alert text-capitalize alert-{{session('type')}} ml-4">{{session('alert')}}</span>
-                       @endif
-                   </h4>
+                              <span class="alert text-capitalize alert-{{session('type')}} ml-4">{{session('alert')}}</span>
+                           @endif
+                   </h6>
                    <div class="d-flex justify-content-end w-20">
                       <div class="w-15 mx-0 px-0">
                       </div>
@@ -24,8 +24,8 @@
                 <div class="">
                     <div class="wrapper wrapper--w780 ">
                        <div class="card card-3 border row w-100 p-0 m-0 z-bg-hover-secondary">
-                            <div class="card-body border p-0 col-12 col-lg-8 col-xl-8 p-3">
-                               <h5 class="z-title text-white text-center p-1 m-0 text-capitalize"> Article : {{$product->getName()}}</h5>
+                            <div class="card-body border p-0 col-12 p-3">
+                               <h6 class="z-title text-white text-center p-1 m-0 text-capitalize"> Article : {{$product->getName()}}</h6>
                                    <form autocomplete="off" class="mt-3 pb-3" wire:submit.prevent="create">
                                     @csrf
                                     <div class="w-100 m-0 p-0 mx-auto d-flex justify-content-between">

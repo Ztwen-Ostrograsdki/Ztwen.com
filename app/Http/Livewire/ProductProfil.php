@@ -6,10 +6,7 @@ use App\Models\Comment;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\ShoppingBag;
-use App\Models\SeenLikeProductSytem;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
 
 class ProductProfil extends Component
 {
@@ -111,12 +108,19 @@ class ProductProfil extends Component
     }
 
 
-    public function updategalery()
+    public function updateProductGalery($product_id = null)
     {
-        $this->emit('targetedProduct', $this->product->id);
+        if($product_id){
+            $id = $product_id;
+        }
+        else{
+            $id = $this->product->id;
+        }
+        $this->emit('targetedProduct', $id);
         $this->dispatchBrowserEvent('modal-updateProductGalery');
         
     }
+
     public function editAProduct()
     {
         $this->emit('editAProduct', $this->product->id);

@@ -3,7 +3,7 @@
       <div class="w-100 border m-0 p-0">
          <div class="m-0 p-0 w-100">
             <div class="row w-100 m-0">
-               <div class="col-2 m-0 text-capitalize border border-dark bg-dark p-0  @if($adminTrashedData) text-danger @else text-white @endif" style="min-height: 650px;">
+               <div id="adminLeftDashboard" class="col-2 m-0 text-capitalize border border-dark bg-dark p-0  @if($adminTrashedData) text-danger @else text-white @endif" style="min-height: 650px;">
                   <div class="d-fex flex-column w-100 mb-3">
                      <div class="m-0 py-2 px-2">
                         <div class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
@@ -13,11 +13,11 @@
                            </h5>
                         </div>
                      </div>
-                     <hr class="m-0 p-0 w-100 bg-white">
+                     <hr class="m-0 p-0 w-100 text-white bg-white">
                      <div class="m-0 py-2 @if($adminTagName == 'notifications') z-admin-active @endif px-2">
                         <div wire:click="setActiveTag('notifications', 'Notifications')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="bi-envelope-fill mr-2"></span>
-                           <h5 class="w-100 m-0 d-none d-xl-inline">Notifications</h5>
+                           <span class="w-100 m-0 d-none d-xl-inline">Notifications</span>
                            <span class="">255</span>
                            <span class="@if($adminTagName == 'notifications') bi-chevron-down @else bi-chevron-right @endif "></span>
                         </div>
@@ -26,7 +26,7 @@
                      <div class="m-0 py-2 @if($adminTagName == 'comments') z-admin-active @endif  px-2">
                         <div wire:click="setActiveTag('comments', 'Commentaires')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-chat-fill "></span>
-                           <h5 class="w-100 m-0 d-none d-xl-inline">Commentaires</h5>
+                           <span class="w-100 m-0 d-none d-xl-inline">Commentaires</span>
                            @if ($comments->count() > 9)
                               <span class="">{{$comments->count()}}</span>
                            @else
@@ -39,7 +39,7 @@
                      <div class="m-0 py-2 @if($adminTagName == 'admins') z-admin-active @endif px-2">
                         <div wire:click="setActiveTag('admins', Administrateurs')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-person-workspace"></span>
-                           <h5 class="w-100 m-0 d-none d-xl-inline">Administrateurs</h5>
+                           <span class="w-100 m-0 d-none d-xl-inline">Administrateurs</span>
                            @if ($admins->count() > 9)
                               <span class="">{{$admins->count()}}</span>
                            @else
@@ -52,7 +52,7 @@
                      <div class="m-0 py-2 px-2 @if($adminTagName == 'users') z-admin-active @endif">
                         <div wire:click="setActiveTag('users', 'Utilisateurs')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-people-fill"></span>
-                           <h5 class="w-100 m-0 d-none d-xl-inline">Utilisateurs</h5>
+                           <span class="w-100 m-0 d-none d-xl-inline">Utilisateurs</span>
                            @if ($users->count() > 9)
                               <span class="">{{$users->count()}}</span>
                            @else
@@ -65,7 +65,7 @@
                      <div class="m-0 py-2 px-2 @if($adminTagName == 'unconfirmed') z-admin-active @endif">
                         <div wire:click="setActiveTag('unconfirmed', 'Email non confirmé')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-person-x-fill  "></span>
-                           <h5 class="w-100 m-0 d-none d-xl-inline">Email non confirmé</h5>
+                           <span class="w-100 m-0 d-none d-xl-inline">Email non confirmé</span>
                            @if ($unconfirmed->count() > 9)
                               <span class="">{{$unconfirmed->count()}}</span>
                            @else
@@ -78,7 +78,7 @@
                      <div class="m-0 py-2 px-2 @if($adminTagName == 'categories') z-admin-active @endif">
                         <div wire:click="setActiveTag('categories', 'Catégories')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-list-check"></span>
-                           <h5 class="w-100 m-0 d-none d-xl-inline">Catégories</h5>
+                           <span class="w-100 m-0 d-none d-xl-inline">Catégories</span>
                            @if ($categories->count() > 9)
                               <span class="">{{$categories->count()}}</span>
                            @else
@@ -91,7 +91,7 @@
                      <div class="m-0 py-2 @if($adminTagName == 'products') z-admin-active @endif px-2">
                         <div wire:click="setActiveTag('products', 'Articles')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-cart-check"></span>
-                           <h5 class="w-100 m-0  d-none d-xl-inline">Articles</h5>
+                           <span class="w-100 m-0  d-none d-xl-inline">Articles</span>
                            @if ($products->count() > 9)
                               <span class="">{{$products->count()}}</span>
                            @else
@@ -102,13 +102,23 @@
                      </div>
                      <hr class="m-0 p-0 w-100 bg-white">
                      <div class="m-0 py-2 px-2">
-                        <div class="d-flex row w-100 cursor-pointer m-0 p-0 justify-content-around">
-                           <span title="Afficher la clé de session d'administration" wire:click="displayAdminSessionKey" class="bi-eye cursor-pointer py-1 border rounded px-2"></span>
-                           <span title="Détruire la clé de session d'administration" wire:click="destroyAdminSessionKey" class="bi-reply cursor-pointer py-1 border rounded px-2"></span>
-                           <span title="Regénérer une clé de session d'administration" wire:click="regenerateAdminKey" class="bi-key cursor-pointer py-1 border rounded px-2"></span>
-                           <span class="py-1">
-                              <a class="pt-1 pb-2 m-0 text-white border rounded px-2" href="{{route('user-profil', ['id' => auth()->user()->id])}}">
+                        <div class="d-flex flex-column w-100 cursor-pointer m-0 p-0 justify-content-around">
+                           <span title="Détruire la clé de session d'administration" wire:click="destroyAdminSessionKey" class="cursor-pointer py-1 border rounded px-2">
+                                 <span class="bi-trash"></span>
+                                 <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Détruire la clé</span>
+                           </span>
+                           <span title="Regénérer une clé de session d'administration" wire:click="regenerateAdminKey" class="cursor-pointer py-1 my-1 border rounded px-2">
+                                 <span class="bi-key"></span>
+                                 <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Générer une clé</span>
+                           </span>
+                           <span title="Afficher la clé de session d'administration" wire:click="displayAdminSessionKey" class="cursor-pointer py-1 border rounded px-2">
+                              <span class="bi-eye"></span>
+                              <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Afficher la clé</span>
+                           </span>
+                           <span title="Acceder à mon profil" class="cursor-pointer border rounded my-1 py-1">
+                              <a class=" w-100 text-white py-2 px-2" href="{{route('user-profil', ['id' => auth()->user()->id])}}">
                                  <span class="bi-person "></span>
+                                 <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Mon profil</span>
                               </a>
                            </span>
                         </div>
@@ -116,13 +126,17 @@
                      <hr class="m-0 p-0 w-100 bg-white">
                   </div>
                </div>
-               <div class="col-10 border-left border-white bg-dark pb-5">
+               <div id="adminRightDashboard" class="col-10 border-left border-white bg-dark pb-5">
+                  <span id="adminsToggler" class="adminsToggler position-relative d-flex">
+                     <strong class="bi-chevron-right  d-none text-white" id="adminHider"></strong>
+                     <strong class="bi-chevron-left text-white" id="adminShower"></strong>
+                  </span>
                   <div class="w-100 mx-auto mt-2 border">
                     <div class="mx-auto d-flex w-100 justify-content-between">
                         <div class="col-6 bg-info">
-                           <h4 class="text-center text-white text-uppercase mt-4">
+                           <h6 class="text-center text-white text-uppercase mt-4">
                               {{$adminTagTitle}}
-                           </h4>
+                           </h6>
                         </div>
                         <div class="col-3 p-0 text-white flex-column border-left d-flex justify-content-between">
                            <span wire:click="getTheActiveData" class="py-2 px-2 cursor-pointer @if(!$adminTrashedData) bg-info @endif">

@@ -5,7 +5,7 @@
           <div class="modal-content modal-fullscreen border @if('errorTexto') border-danger @endif" style="z-index: 2010; top: 80px;">
              <div class="modal-header">
                 <div class="d-flex justify-content-between w-100">
-                   <h4 class="text-uppercase mr-2 mt-1 d-flex justify-content-between">
+                   <h6 class="text-uppercase mr-2 mt-1 d-flex justify-content-between">
                        Messenger <span class="fa bi-messenger mx-2 mr-4"></span>
                         @if($receiver)
                             <span>
@@ -25,7 +25,7 @@
                         @if (session()->has('alert'))
                             <span class="alert text-capitalize alert-{{session('type')}} ml-4">{{session('alert')}}</span>
                         @endif
-                   </h4>
+                   </h6>
                    <div class="d-flex justify-content-end w-20">
                       <div class="w-15 mx-0 px-0">
                       </div>
@@ -43,17 +43,17 @@
                                 <div>
                                     <div class="w-100 p-0 m-0 mx-auto d-flex flex-column messages-box" wire:poll.visible.5000ms="setTheMessages"> 
                                        @if($total > $limit)
-                                        <h5 wire:loaded wire:target="allMessages" wire:click="showMoreMessages" class="mx-auto border cursor-pointer bg-transparent border-secondary px-3 py-2 rounded">
+                                        <h6 wire:loaded wire:target="allMessages" wire:click="showMoreMessages" class="mx-auto border cursor-pointer bg-transparent border-secondary px-3 py-2 rounded">
                                            <span class="bi-download"></span>
                                            Charger plus de messages
-                                       </h5>
+                                       </h6>
                                        @endif
                                         <h5 wire:loading wire:target="allMessages" class="mx-auto border cursor-pointer bg-transparent border-secondary px-3 py-2 rounded">
                                             ... Chargement en cours, veuillez patienter ...
                                         </h5>
                                         @foreach ($allMessages as $key => $m)
                                             <div class="@if($m->sender_id == Auth::user()->id) text-right @else text-left @endif">
-                                                <h4 wire:key="{{$m->id}}" id="" class="chatMessageCard cursor-pointer shadow border rounded  @if($m->deleted_at) border d-inline-block border-muted w-auto @else w-auto @endif p-2 my-2 @if($m->sender_id == Auth::user()->id) float-right @else float-left  @endif">
+                                                <h6 wire:key="{{$m->id}}" id="" class="chatMessageCard cursor-pointer shadow border rounded  @if($m->deleted_at) border d-inline-block border-muted w-auto @else w-auto @endif p-2 my-2 @if($m->sender_id == Auth::user()->id) float-right @else float-left  @endif">
                                                     <span class="d-flex w-100">
                                                         <span class="text-white-50 pb-1 d-flex border-bottom w-100 @if($m->sender_id == Auth::user()->id) float-right @if($m->deleted_at) border-muted @else border-warning @endif text-right justify-content-end @else border-primary text-left float-left justify-content-start @endif">
                                                             @if($m->sender_id == Auth::user()->id)
@@ -119,14 +119,14 @@
                                                         </small>
                                                     </span>
                                                     
-                                                </h4>
+                                                </h6>
                                             </div>
                                         @endforeach
                                         @if($defaultLimit < $limit)
-                                        <h5 wire:click="showLessMessages" class="mx-auto border cursor-pointer bg-transparent border-secondary px-3 py-2 rounded">
+                                        <h6 wire:click="showLessMessages" class="mx-auto border cursor-pointer bg-transparent border-secondary px-3 py-2 rounded">
                                             <span class="bi-cloud-download"></span>
                                             Charger moins de messages
-                                       </h5>
+                                       </h6>
                                        @endif
                                     </div>
                                 </div>

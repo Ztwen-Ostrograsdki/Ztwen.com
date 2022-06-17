@@ -148,7 +148,7 @@
                         </span>
                         @endguest
                         @isAdmin()
-                        <span wire:click="updateproduct->productGalery()({{$product->id}})" class="z-scale cursor-pointer py-1 btn-primary px-3 border border-white">
+                        <span wire:click="updateProductGalery({{$product->id}})" class="z-scale cursor-pointer py-1 btn-primary px-3 border border-white">
                             <span class="bi-image"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Ajouter une image</small>
                         </span>
                         @endisAdmin

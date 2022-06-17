@@ -41,7 +41,7 @@
             <h2 class="m-0 p-0 my-1">Les articles récents</h2>
             <a href="{{route('products')}}">Voir tous les articles <i class="fa fa-angle-right"></i></a>
           </div>
-            <div class="col-md-12" wire:poll="refreshThePosts">
+            <div class="col-md-12">
                 <div class="filters-content m-0 p-0">
                     <div class="row grid m-0 p-0">
                         @foreach($products as $product)
@@ -174,6 +174,11 @@
                     'comments' => $lastComments
                     ])
                 </div>
+                <div class="col-12">
+                    <div>
+                        @livewire('product-images-galery')
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -181,11 +186,6 @@
     {{-- THE END OF LAST COMMENTS --}}
     <div class="container">
         <div class="row mb-0 mt-2 p-0 py-2">
-            <div class="col-md-12">
-                <div class="section-heading">
-                    A propos <h2  class="" >ZtweN <em>Oströgrasdki</em> <small class="text-lowercase text-muted"><sup>market</sup></small> </h2>
-                </div>
-            </div>
             <div class="col-md-6">
                 <div class="left-content">
                     <h4>Suivre le meilleur des articles</h4>

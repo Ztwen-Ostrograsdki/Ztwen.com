@@ -1,6 +1,5 @@
 
 <!-- Bootstrap core CSS -->
-{{-- <link rel="stylesheet" href="{{ asset('myvendor/bootstrap/css/bootstrap.min.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('myassets/bootstrap-icons/bootstrap-icons.css') }}">
 <!--
 TemplateMo 546 Sixteen Clothing
@@ -19,6 +18,8 @@ https://templatemo.com/tm-546-sixteen-clothing
 <link rel="stylesheet" href="{{ asset('myassets/css/backgrounder.css') }}">
 <link rel="stylesheet" href="{{ asset('myassets/css/footer.css') }}">
 <link rel="stylesheet" href="{{ asset('myassets/css/footer-2.css') }}">
-<link rel="stylesheet" href="{{ asset('myassets/css/bootstrap-last-version.min.css') }}">
-{{-- <link rel="stylesheet" href="{{ asset('myassets/css/bootstrap.min.css') }}"> --}}
+<link rel="stylesheet" href="{{ asset('myvendor/bootstrap/css/bootstrap.css') }}">
+<link rel="stylesheet" href="{{ asset('myassets/css/bootstrap-last-version.css') }}">
+
+
 @livewireStyles

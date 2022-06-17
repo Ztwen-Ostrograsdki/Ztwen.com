@@ -1,6 +1,6 @@
 <div>
     <div class="mx-auto justify-center text-white d-flex w-100">
-        <div class="d-flex mx-100 text-center p-3 mt-4 w-100">
+        <div class="d-flex mx-100 text-center p-2 mt-4 w-100">
             <div class="w-100">
                 <div class="w-100">
                     @if($edit_name)
@@ -19,11 +19,11 @@
                             </div>
                         </form>
                     @else
-                        <h5 class="my-1 d-flex p-2 cursor-pointer p-2">
-                            <span class="text-bold text-white-50 mt-2">Nom : </span>
+                        <span class="my-1 d-flex py-2 cursor-pointer">
+                            <strong class="text-bold text-white-50 mt-2">Nom : </strong>
                             <span class="mx-2 mt-2">{{$user->name}}</span>
                             <span class="bi-pen mx-2 ml-3 p-2 float-end" wire:click="editMyName"></span>
-                        </h5>
+                        </span>
                         <hr class="bg-secondary">
                     @endif
                 </div>
@@ -67,11 +67,11 @@
                         </form>
                         @endif
                     @else
-                        <h5 class="my-1 d-flex p-2 cursor-pointer p-2">
-                            <span class="text-bold text-white-50 mt-2">Adresse mail : </span>
+                        <span class="my-1 d-flex py-2 cursor-pointer">
+                            <strong class="text-bold text-white-50 mt-2">Adresse mail : </strong>
                             <span class="mx-2 mt-2">{{$user->email}}</span>
                             <span class="bi-pen mx-2 ml-3 p-2 float-end" wire:click="editMyEmail"></span>
-                        </h5>
+                        </span>
                         <hr class="bg-secondary">
                     @endif
                 </div>
@@ -152,11 +152,11 @@
                         </form>
                         @endif
                     @else
-                        <h5 class="my-1 d-flex p-2 cursor-pointer p-2">
-                            <span class="text-bold text-white-50 mt-2">Sécurité : </span>
+                        <span class="my-1 d-flex py-2 cursor-pointer">
+                            <strong class="text-bold text-white-50 mt-2">Sécurité : </strong>
                             <span class="mx-2 mt-2">Changer mon mot de passe</span>
                             <span class="bi-pen mx-2 ml-3 p-2 float-end" wire:click="editMyPassword"></span>
-                        </h5>
+                        </span>
                         <hr class="bg-secondary">
                     @endif
                 </div>

@@ -544,5 +544,18 @@ class Admin extends Component
         $this->categories = Category::orderBy('name', 'asc')->get();
     }
 
+    public function updateProductGalery($product_id)
+    {
+        $product = Product::find($product_id);
+        if($product){
+            $this->emit('targetedProduct', $product->id);
+            $this->dispatchBrowserEvent('modal-updateProductGalery');
+        }
+        else{
+            $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'error ', 'message' => "Cet article n'existe pas ou déjà été supprimé!",  'title' => 'Echec']);
+        }
+        
+    }
+
 
 }

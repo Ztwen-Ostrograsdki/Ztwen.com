@@ -13,6 +13,7 @@ use App\Models\SeenLikeProductSytem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Helpers\ActionsTraits\ModelActionTrait;
+use BaconQrCode\Renderer\Path\Path;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
@@ -25,6 +26,7 @@ class Product extends Model
 
     public $myLikes;
     const MAX_IMAGES = 3;
+    const IMAGES_BASE_PATH = '/storage/articlesImages/';
     const DEFAULT_PRODUCT_GALERY_PATH = ["/myassets/default/default-img-product.jpg", "/myassets/default/default-img-product.jpg", "/myassets/default/default-img-product.jpg",];
 
     protected $fillable = [
@@ -82,11 +84,18 @@ class Product extends Model
         }
     }
 
-
+    /**
+     * Undocumented function
+     *
+     * @return 'path' of image
+     */
     public function getRandomDefaultImage()
     {
         $r = rand(0, 2);
-        return ($this->productGalery())[$r];
+        if($this->images->count() < 1){
+            return ($this->productGalery())[$r];
+        }
+        return self::IMAGES_BASE_PATH . $this->images->reverse()->first()->name;
     }
 
     public function getProductDefaultImageInGalery()

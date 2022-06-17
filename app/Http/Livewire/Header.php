@@ -37,7 +37,6 @@ class Header extends Component
     } 
     public function categorySelected($category_id)
     {
-        dd($category_id);
         $this->emit('categorySelected', $category_id);
     } 
 
@@ -57,6 +56,7 @@ class Header extends Component
     {
         $user = Auth::user();
         if($user){
+            $this->user = Auth::user();
             $this->carts = $user->shoppingBags()->count();
         }
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\User;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
@@ -51,8 +52,7 @@ class EditProductData extends Component
 
     public function updateData()
     {
-        $user = Auth::user();
-        if($user){
+        if($this->authenticated()){
             $product  = Product::withTrashed('deleted_at')->whereId($this->product->id)->first();
             if($product){
                 $this->slug = str_replace(' ', '-', $this->slug);
@@ -76,10 +76,22 @@ class EditProductData extends Component
                 return abort(403, "Votre requête ne peut aboutir");
             }
         }
-        else{
-            return redirect(route('login'));
-        }
 
+    }
+
+    public function authenticated()
+    {
+        if(Auth::user()){
+            if(User::find(Auth::user()->id)->__hasAdminAuthorization()){
+                return true;
+            }
+            else{
+                return $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Authentification requise', 'message' => "Veuillez vous enthentifier avant de lancer des mises à jour", 'type' => 'warning']);
+            }
+        }
+        else{
+            return redirect()->route('login');
+        }
     }
 
     

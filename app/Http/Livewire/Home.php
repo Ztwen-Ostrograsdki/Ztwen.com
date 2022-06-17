@@ -145,6 +145,12 @@ class Home extends Component
         $this->getProducts($all, $products);
     }
 
+
+    public function loadProductImages($product_id)
+    {
+        $this->emit('loadProductImages', $product_id);
+    }
+
     
 
 

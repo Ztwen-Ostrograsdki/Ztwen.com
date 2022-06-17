@@ -18,10 +18,14 @@ class EditCategory extends Component
         'description' => 'required|string|between:10,255',
     ];
 
+
+
     public function render()
     {
         return view('livewire.edit-category');
     }
+
+    
 
     public function update()
     {

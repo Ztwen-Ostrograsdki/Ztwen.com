@@ -1,5 +1,14 @@
 /*The login, resistering and .... backgrounder manager style*/
 
+hr {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#adminsToggler {
+    top: 50%;
+}
+
 .bg-image-fgt-pwd {
     background: url("/registrationImages/fgt-img-bg.jpg") top left/cover no-repeat;
     background-position: 0px -17px;
@@ -210,6 +219,10 @@
     width: 30% !important;
 }
 
+.zw-35 {
+    width: 35% !important;
+}
+
 .zw-33 {
     width: 33% !important;
 }
@@ -260,6 +273,12 @@
 
 .z-modal {
     margin: 0 auto !important;
+}
+
+@media (min-width: 992px) {
+    .modal-z-xlg {
+        max-width: 860px !important;
+    }
 }
 
 .z-banner {
@@ -368,7 +387,7 @@ header .navbar {
     position: fixed;
     /* background-color: #fff!important; */
     background-color: #334 !important;
-    opacity: 0.91;
+    opacity: 0.95;
     color: #fff!important;
     box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.1);
     border-bottom: thin solid #fff !important;

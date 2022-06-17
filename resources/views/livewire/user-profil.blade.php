@@ -18,15 +18,15 @@
                         <div class="m-0 py-2 px-2 z-bg-secondary" wire:click="setActiveTag('editing', 'Edition de profil')">
                            <div class="d-flex w-100 justify-content-between cursor-pointer m-0 p-0">
                                 <span class="bi-tools "></span>
-                                <h5 class="w-100 m-0 ml-3 d-none d-lg-inline d-xl-inline">Editer profil</h5>
+                                <h6 class="w-100 ml-3 d-none d-lg-inline d-xl-inline">Editer profil</h6>
                                 <span class="bi-pen-fill"></span>
                            </div>
                         </div>
                         <hr class="m-0 p-0 bg-white w-100">
-                        <div class="m-0 py-2 px-2 @if($activeTagName == 'panier') bg-info @endif">
+                        <div class="m-0 py-2 px-2 @if($activeTagName == 'panier') z-bg-orange @endif">
                            <div class="d-flex w-100 justify-content-between cursor-pointer m-0 p-0" wire:click="setActiveTag('panier', 'Panier')">
                                 <span class="bi-cart-check "></span>
-                                <h5 class="w-100 m-0 ml-3 d-none d-lg-inline d-xl-inline">Panier</h5>
+                                <h6 class="w-100 ml-3 d-none d-lg-inline d-xl-inline">Panier</h6>
                                 @if (count($carts) < 10)
                                     <span class="">(0{{ count($carts) }})</span>
                                 @else
@@ -36,10 +36,10 @@
                            </div>
                         </div>
                         <hr class="m-0 p-0 bg-white w-100">
-                        <div class="m-0 py-2 px-2 @if($activeTagName == 'demandes') bg-info @endif">
+                        <div class="m-0 py-2 px-2 @if($activeTagName == 'demandes') z-bg-orange @endif">
                            <div class="d-flex justify-content-between w-100 cursor-pointer m-0 p-0" wire:click="setActiveTag('demandes', 'Les demandes envoyées')">
                                 <span class="bi-person-plus"></span>
-                                <h5 class="w-100 m-0 ml-3 d-none d-lg-inline d-xl-inline">Demandes envoyées</h5>
+                                <h6 class="w-100 ml-3 d-none d-lg-inline d-xl-inline">Demandes envoyées</h6>
                                 @if (count($demandes) < 10)
                                     <span class="">(0{{ count($demandes) }})</span>
                                 @else
@@ -49,10 +49,10 @@
                            </div>
                         </div>
                         <hr class="m-0 p-0 bg-white w-100">
-                        <div class="m-0 py-2 px-2 @if($activeTagName == 'followers') bg-info @endif">
+                        <div class="m-0 py-2 px-2 @if($activeTagName == 'followers') z-bg-orange @endif">
                             <div class="d-flex justify-content-between w-100 cursor-pointer m-0 p-0" wire:click="setActiveTag('followers', 'Les amis qui me suivent')">
                                 <span class="bi-people-fill"></span>
-                                <h5 class="w-100 m-0 ml-3 d-none d-lg-inline d-xl-inline">Followers</h5>
+                                <h6 class="w-100 ml-3 d-none d-lg-inline d-xl-inline">Followers</h6>
                                 @if (count($myFollowers) < 10)
                                     <span class="">(0{{ count($myFollowers) }})</span>
                                 @else
@@ -62,10 +62,10 @@
                             </div>
                         </div>
                         <hr class="m-0 p-0 bg-white w-100">
-                        <div class="m-0 py-2 px-2 @if($activeTagName == 'friends') bg-info @endif">
+                        <div class="m-0 py-2 px-2 @if($activeTagName == 'friends') z-bg-orange @endif">
                             <div class="d-flex justify-content-between w-100 cursor-pointer m-0 p-0" wire:click="setActiveTag('friends', 'Vos Amis')">
                                 <span class="bi-person-heart"></span>
-                                <h5 class="w-100 m-0 d-none d-lg-inline d-xl-inline ml-3">Mes Amis</h5>
+                                <h6 class="w-100 d-none d-lg-inline d-xl-inline ml-3">Mes Amis</h6>
                                 @if (count($myFriends) < 10)
                                     <span class="">(0{{ count($myFriends) }})</span>
                                 @else
@@ -76,10 +76,19 @@
                         </div>
                         <hr class="m-0 p-0 bg-white w-100">
                         <div class="m-0 py-2 px-2">
-                            <div class="d-flex row w-100 cursor-pointer m-0 p-0 justify-content-around">
-                               <span title="Détruire la clé de session d'administration" wire:click="destroyAdminSessionKey" class="bi-reply cursor-pointer py-1 border rounded px-2"></span>
-                               <span title="Regénérer une clé de session d'administration" wire:click="regenerateAdminKey" class="bi-key cursor-pointer py-1 border rounded px-2"></span>
-                               <span title="Afficher la clé de session d'administration" wire:click="displayAdminSessionKey" class="bi-eye cursor-pointer py-1 border rounded px-2"></span>
+                            <div class="d-flex flex-column w-100 cursor-pointer m-0 p-0 justify-content-around">
+                                <span title="Détruire la clé de session d'administration" wire:click="destroyAdminSessionKey" class="cursor-pointer py-1 border rounded px-2">
+                                    <span class="bi-trash"></span>
+                                    <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Détruire la clé</span>
+                                </span>
+                                <span title="Regénérer une clé de session d'administration" wire:click="regenerateAdminKey" class="cursor-pointer py-1 my-1 border rounded px-2">
+                                    <span class="bi-key"></span>
+                                    <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Générer une clé</span>
+                                </span>
+                                <span title="Afficher la clé de session d'administration" wire:click="displayAdminSessionKey" class="cursor-pointer py-1 border rounded px-2">
+                                    <span class="bi-eye"></span>
+                                    <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Afficher la clé</span>
+                                </span>
                             </div>
                          </div>
                         <hr class="m-0 p-0 bg-white w-100">
@@ -94,26 +103,26 @@
                                     <span class="bi-person-badge mx-2"></span>
                                     Profil
                                 </h4>
-                                <hr class="m-0 p-0 bg-white w-100">
+                                <hr class="m-0 p-0 text-white w-100">
                                 <div class="d-flex flex-column w-100">
-                                    <h5 class="text-white-50 px-3 pt-2 pb-1">
+                                    <h6 class="text-white-50 px-3 pt-2 pb-1">
                                         <span class="bi-pen-fill mx-2"></span>
                                         {{ $user->name }}
                                     </h5>
-                                    <h5 class="text-white-50 px-3 pb-1">
+                                    <h6 class="text-white-50 px-3 pb-1">
                                         <span class="bi-shield-check mx-2"></span>
                                         {{ $user->role }}
-                                    </h5>
-                                    <h5 class="text-white-50 px-3 pb-1">
+                                    </h6>
+                                    <h6 class="text-white-50 px-3 pb-1">
                                         <span class="bi-people mx-2"></span>
                                         {{ count($user->getMyFriends()) }}
-                                    </h5>
+                                    </h6>
                                 </div>
                             </div>
                         </div>
                         @auth
-                           <div class="text-white-50 cursor-pointer border-left p-3" data-toggle="modal" data-target="#addFriendsModal" data-dismiss="modal">
-                              <span class="">
+                           <div class="text-white-50 cursor-pointer text-center border-left p-3" data-toggle="modal" data-target="#addFriendsModal" data-dismiss="modal">
+                              <span class="text-center">
                                  <span class="fa fa-user-plus fa-2x mt-3"></span>
                                  <span class="">Suivre des amis</span>
                               </span>
@@ -123,9 +132,9 @@
                      </div>
                      <div class="border mt-3 p-3">
                         <div class="mx-auto justify-center d-flex w-75">
-                           <h4 class="text-uppercase text-white">{{$activeTagTitle}}</h4>
+                           <h5 class="text-uppercase text-white">{{$activeTagTitle}}</h5>
                         </div>
-                        <hr class="w-100 bg-white mt-2">
+                        <hr class="w-100 bg-white text-white mt-2">
                         <div class="px-2" style="height: 360px; overflow: auto">
                         @if($activeTagName == 'demandes')
                             <div class="mx-auto justify-center d-flex w-100">
@@ -141,10 +150,10 @@
                                                     @endif
                                                 </div>
                                                 <div class="m-0 p-0 w-75 p-2">
-                                                    <h4 class="text-white">
+                                                    <h6 class="text-white">
                                                         {{$req['user']->name}}
-                                                    </h4>
-                                                    <h5 class="text-white-50">
+                                                    </h6>
+                                                    <h6 class="text-white-50">
                                                         {{count($req['user']->getMyFriends())}}
                                                         <span class="bi-people"></span>
                                                         <span class="text-warning ml-2 float-right">
@@ -153,7 +162,7 @@
                                                                 <small>Admin</small>
                                                             @endif
                                                         </span>
-                                                    </h5>
+                                                    </h6>
                                                     <div class="mt-3">
                                                         <small wire:click="requestManager({{$req['user']->id}}, 'accepted')" class="text-success d-none w-50">
                                                             <small class="fa fa-check cursor-pointer mt-1"></small>
@@ -179,7 +188,7 @@
                                 @else
                                     <div class="d-flex flex-column mx-auto text-center p-3 mt-4">
                                         <span class="fa fa-warning text-warning fa-4x"></span>
-                                        <h4 class="text-warning fa fa-3x">Ouups aucune demandes enregistées !!!</h4>
+                                        <h6 class="text-warning fa fa-3x">Ouups aucune demandes enregistées !!!</h6>
                                     </div>
                                 @endif
                             </div>
@@ -197,10 +206,10 @@
                                                 @endif
                                             </div>
                                         <div class="m-0 p-0 w-75 p-2">
-                                            <h4 class="text-white">
+                                            <h6 class="text-white">
                                                 {{$u->name}}
-                                            </h4>
-                                            <h5 class="text-white-50">
+                                            </h6>
+                                            <h6 class="text-white-50">
                                                 {{count($u->getMyFriends())}}
                                                 <span class="bi-people"></span>
                                                 <span class="text-warning ml-2 float-right">
@@ -209,7 +218,7 @@
                                                         <small>Admin</small>
                                                     @endif
                                                 </span>
-                                            </h5>
+                                            </h6>
                                             <div class="mt-3">
                                                 <small wire:click="requestManager({{$u->id}}, 'accepted')" class="btn-success border border-white text-dark px-3 py-2 rounded cursor-pointer mr-2">
                                                     <small class="fa bi-person-check cursor-pointer mt-1"></small>
@@ -238,7 +247,7 @@
                                 @else
                                     <div class="d-flex flex-column mx-auto text-center p-3 mt-4">
                                         <span class="fa fa-warning text-warning fa-4x"></span>
-                                        <h4 class="text-warning fa fa-2x">Ouups vous n'avez aucun amis qui vous suit !!!</h4>
+                                        <h6 class="text-warning fa fa-2x">Ouups vous n'avez aucun amis qui vous suit !!!</h6>
                                     </div>
                                 @endif
                             </div>
@@ -256,10 +265,10 @@
                                                 @endif
                                             </div>
                                         <div class="m-0 p-0 w-75 p-2">
-                                            <h4 class="text-white">
+                                            <h6 class="text-white">
                                                 {{$u->name}}
-                                            </h4>
-                                            <h5 class="text-white-50">
+                                            </h6>
+                                            <h6 class="text-white-50">
                                                 {{count($u->getMyFriends())}}
                                                 <span class="bi-people"></span>
                                                 <span class="text-warning ml-2 float-right">
@@ -268,7 +277,7 @@
                                                         <small>Admin</small>
                                                     @endif
                                                 </span>
-                                            </h5>
+                                            </h6>
                                             <div class="mt-3">
                                                 <small wire:click="unfollowThis({{$u->id}})" class="btn-info border border-white text-white px-3 py-2 rounded cursor-pointer mr-2">
                                                     <small class="fa bi-person-x-fill cursor-pointer mt-1"></small>
@@ -293,7 +302,7 @@
                                 @else
                                     <div class="d-flex flex-column mx-auto text-center p-3 mt-4">
                                         <span class="fa fa-warning text-warning fa-4x"></span>
-                                        <h4 class="text-warning fa fa-2x">Ouups vous n'avez aucun amis qui vous suit !!!</h4>
+                                        <h6 class="text-warning fa fa-2x">Ouups vous n'avez aucun amis qui vous suit !!!</h6>
                                     </div>
                                 @endif
                             </div>
@@ -307,7 +316,7 @@
                             @else
                                 <div class="d-flex flex-column mx-auto text-center p-3 mt-4">
                                     <span class="fa fa-warning text-warning fa-4x"></span>
-                                    <h4 class="text-warning fa fa-3x">Ouups votre panier est vide !!!</h4>
+                                    <h6 class="text-warning fa fa-3x">Ouups votre panier est vide !!!</h6>
                                     <a href="{{route('products')}}" class="btn btn-primary my-2 text-white ml-2">
                                         <span class="bi-cart"></span>
                                         <span>

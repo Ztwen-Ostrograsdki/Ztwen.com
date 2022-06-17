@@ -64,4 +64,11 @@ class AdminMasterAuthentication extends Component
             $this->dispatchBrowserEvent('modal-editProduct');
         }
     }
+
+
+    public function loadProductImages($product_id)
+    {
+        $this->emit('loadProductImages', $product_id);
+    }
+
 }

@@ -6,10 +6,10 @@
                 <hr class="z-bg-orange my-1 w-100">
                 <div class="col-12 my-0 p-0">
                     <div>
-                        <h4 class="z-color-orange">
+                        <h6 class="z-color-orange">
                             <span class="fa fa-user fa-1x mr-3"></span>
                             <strong>Auteur</strong>
-                        </h4>
+                        </h6>
                     </div>
                     <hr class="z-bg-orange my-1 w-100">
                     <div class="my-0 p-0">
@@ -18,13 +18,13 @@
                                 <a href="#"><img src="{{$authorImages[0]}}" alt="Image" class="h-100 img-fluid border"></a>
                             </div>
                             <div class="text-left p-2 zw-70" style="height: 100px;">
-                                <h4 class="z-color-orange">
+                                <h6 class="z-color-orange">
                                     Kouassi Vincent HOUNDEKINDO
-                                </h4>
+                                </h6>
                                 <h6>
                                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum praesentium aut, doloribus ullam rem at mollitia similique iusto amet ipsam laudantium perferendis distinctio, placeat quasi exercitationem ipsa optio quibusdam saepe.
                                 </h6>
-                                <div class="mt-5 col-lg-5 col-md-6 col-xl-5 d-flex justify-content-between z-color-orange">
+                                <div class="mt-lg-5 mt-xxl-5 mt-xl-5 mt-3 col-lg-5 col-md-7 col-xl-5 col-10 m-0 p-0 d-flex justify-content-between z-color-orange">
                                     <span class="bi-facebook"></span>
                                     <span class="bi-messenger"></span>
                                     <span class="bi-whatsapp"></span>
@@ -40,7 +40,7 @@
                 </div>
                 <hr class="z-bg-orange my-1 w-100">
                 <div class="col-md pr-md-5 mb-4 mb-md-0">
-                    <h3>Apropos de nous</h3>
+                    <h5>Apropos de nous</h5>
                     <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam itaque unde facere repellendus, odio et iste voluptatum aspernatur ratione mollitia tempora eligendi maxime est, blanditiis accusamus. Incidunt, aut, quis!</p>
                     <ul class="list-unstyled quick-info mb-4">
                     <li><a href="#" class="d-flex align-items-center"><span class="icon mr-3 icon-phone z-color-orange"></span> (+229) 61 100 804 </a></li>
@@ -56,7 +56,7 @@
                     
                 </div>
               <div class="col-md mb-4 mb-md-0">
-                <h3>Dernier Tweets</h3>
+                <h5>Dernier Tweets</h5>
                 <ul class="list-unstyled tweets">
                   <li class="d-flex">
                     <div class="mr-4"><span class="icon icon-twitter"></span></div>
@@ -74,7 +74,7 @@
               </div>
   
               <div class="col-md-3 mb-4 mb-md-0">
-                <h3>Les plus actrayants</h3>
+                <h5>Les plus actrayants</h5>
                 <div class="row gallery">
                   <div class="col-4">
                     <a href="#"><img src="{{$footerImages[0]}}" alt="Image" class="img-fluid border"></a>
@@ -142,11 +142,11 @@
           </div>
         </div>
         <div class="w-100 d-block pb-5 border-top border-secondary">
-            <h5 class="z-color-orange pt-4 pb-1" style="font-family: cursive">
+            <h6 class="z-color-orange pt-4 pb-1" style="font-family: cursive">
                 <strong class="z-color-orange">Copyright &copy; {{date('Y')}} 
                     <a class="z-color-orange mx-3" href="#" target="_blank">ZtweN Oströgrasdki@webDev</a>
                 </strong>
-            </h5>
+            </h6>
         </div>
       </footer>
 </div>

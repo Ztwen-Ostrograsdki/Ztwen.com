@@ -1,7 +1,7 @@
 <header class="d-lg-block d-xxl-block d-xl-block d-none yours @fixedHeaderForRoute() position-fixed @endfixedHeaderForRoute" style="z-index:;" >
     <nav class="navbar navbar-expand-lg d-lg-block d-xxl-block d-xl-block d-none">
       <div class="container">
-        <a class="navbar-brand" href="{{route('home')}}"><h2>ZtweN <em>Oströgrasdki</em> <small class="text-lowercase text-muted"><sup>market</sup></small> </h2></a>
+        <a class="navbar-brand" href="{{route('home')}}"><h2>ZtweN <em>Oströgrasdki</em> <small class="text-lowercase text-white-50"><sup>market</sup></small> </h2></a>
         <button style="background-color: none !important" class="navbar-toggler border border-white bg-transparent" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -152,11 +152,22 @@
                     </x-z-link>
                     @endguest
                     
-                  </ul>
-                  <form class="d-flex mt-3" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                  </form>
+                    </ul>
+                    <form class="d-flex mt-3" role="search">
+                        <input class="form-control me-2 bg-transparent border border-white" type="search" placeholder="Lancer une recherche..." aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Rechercher</button>
+                    </form>
+                    <div class="position-absolute bottom-0 py-2">
+                        @auth
+                            <div>
+                                @if($user && $user->current_photo)
+                                    <img width="80" height="300" class="rounded-circle border border-white" src="/storage/profilPhotos/{{$user->currentPhoto()}}" alt="mon profil">
+                                @elseif($user && !$user->current_photo)
+                                    <img width="80" height="300" class="rounded-circle border border-white" src="{{$user->currentPhoto()}}" alt="mon profil">
+                                @endif
+                            </div>
+                        @endauth
+                    </div>
                 </div>
               </div>
             </div>

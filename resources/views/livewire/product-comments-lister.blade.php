@@ -3,7 +3,7 @@
         <div class="w-100 d-flex flex-column">
             @foreach ($comments as $key => $com)
             <div class="@if(Auth::user() && $com->user_id == Auth::user()->id) text-right @else text-left @endif">
-                <h5 wire:key="{{$com->id}}" id="" class="chatMessageCard cursor-pointer shadow border rounded   @if($com->deleted_at) border-muted @endif p-2 w-auto my-2 @if(Auth::user() && $com->user_id == Auth::user()->id) float-right mr-2 @else float-left  @endif">
+                <h6 wire:key="{{$com->id}}" id="" class="chatMessageCard cursor-pointer shadow border rounded   @if($com->deleted_at) border-muted @endif p-2 w-auto my-2 @if(Auth::user() && $com->user_id == Auth::user()->id) float-right mr-2 @else float-left  @endif">
                     <span class="d-flex w-100">
                         <span class="text-dark pb-1 d-flex border-bottom w-100 @if(Auth::user() && $com->user_id == Auth::user()->id) float-right @if($com->deleted_at) border-muted @else border-warning @endif text-right justify-content-end @else border-primary text-left float-left justify-content-start @endif">
                             @if(Auth::user() && $com->user_id == Auth::user()->id)
@@ -33,7 +33,7 @@
                             @endif
                         </span>
                     </span>
-                    <span message-id="message-{{$com->id}}" class="messages-content message-content-box cursor-pointer py-1">
+                    <span style="font-size: 12px" message-id="message-{{$com->id}}" class="messages-content message-content-box cursor-pointer py-1">
                         <span class="my-2">
                             {{$com->content}}
                         </span>
@@ -51,7 +51,7 @@
                         </small>
                     </span>
                     
-                </h5>
+                </h6>
             </div>
             @endforeach
         </div>
