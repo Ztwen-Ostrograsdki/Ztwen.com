@@ -124,7 +124,6 @@ hr {
 .messages-box .messages-content {
     font-family: cursive;
     font-size: 14px;
-    font-weight: ;
 }
 
 .z-scale:hover {
@@ -271,6 +270,10 @@ hr {
     color: cyan !important;
 }
 
+.text-cyan {
+    color: cyan !important;
+}
+
 .z-modal {
     margin: 0 auto !important;
 }
@@ -279,16 +282,6 @@ hr {
     .modal-z-xlg {
         max-width: 860px !important;
     }
-}
-
-.z-banner {
-    background: url('/myassets/banners/morecolor.jpg');
-    height: 120px !important;
-}
-
-.home-footer {
-    background: url('/myassets/banners/flash.jpg');
-    height: auto;
 }
 
 .text-cursive {
@@ -305,7 +298,16 @@ hr {
     color: #bbb !important;
 }
 
+.bg-hover-secondary {
+    background-color: #334 !important;
+    color: #bbb !important;
+}
+
 .z-bg-secondary-dark {
+    background-color: #334 !important;
+}
+
+.bg-secondary-dark {
     background-color: #334 !important;
 }
 
@@ -313,7 +315,15 @@ hr {
     background-color: #335 !important;
 }
 
+.bg-secondary-light {
+    background-color: #335 !important;
+}
+
 .z-bg-secondary-light-opac {
+    background-color: rgba(10, 10, 40, 0.7) !important;
+}
+
+.bg-secondary-light-opac {
     background-color: rgba(10, 10, 40, 0.7) !important;
 }
 
@@ -329,6 +339,10 @@ hr {
     border-top: 1px solid #fff !important;
 }
 
+.link-border a+a {
+    border-top: 1px solid #fff !important;
+}
+
 .z-select option:active {
     color: #bbb;
 }
@@ -337,7 +351,15 @@ hr {
     word-break: break-all !important;
 }
 
+.word-break-break {
+    word-break: break-all !important;
+}
+
 .z-bg-orange {
+    background-color: #f33f3f !important;
+}
+
+.bg-orange {
     background-color: #f33f3f !important;
 }
 
@@ -349,11 +371,23 @@ hr {
     color: #f33f3f !important;
 }
 
+.text-orange {
+    color: #f33f3f !important;
+}
+
 .z-border-orange {
     border-color: #f33f3f !important;
 }
 
+.border-orange {
+    border-color: #f33f3f !important;
+}
+
 .z-color-hover-orange:hover {
+    color: #f33f3f !important;
+}
+
+.color-hover-orange:hover {
     color: #f33f3f !important;
 }
 
@@ -411,4 +445,15 @@ header .navbar {
     padding-bottom: 14px !important;
     padding-top: 6px !important;
     border-bottom: solid thin white !important;
+}
+
+
+/* font size */
+
+.z-fs-9px {
+    font-size: 9px !important;
+}
+
+.z-fs-11px {
+    font-size: 11px !important;
 }

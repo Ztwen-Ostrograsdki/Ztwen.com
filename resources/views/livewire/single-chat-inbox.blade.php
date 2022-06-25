@@ -118,10 +118,14 @@
                                                             @endif
                                                         </small>
                                                     </span>
-                                                    
                                                 </h6>
                                             </div>
                                         @endforeach
+                                        @if($texto)
+                                            <h6 class="z-bg-secondary border my-1 ">
+                                                {{$texto}}
+                                            </h6>
+                                        @endif
                                         @if($defaultLimit < $limit)
                                         <h6 wire:click="showLessMessages" class="mx-auto border cursor-pointer bg-transparent border-secondary px-3 py-2 rounded">
                                             <span class="bi-cloud-download"></span>
@@ -130,19 +134,19 @@
                                        @endif
                                     </div>
                                 </div>
-                                   <form autocomplete="off" class="mt-3 pb-3" wire:submit.prevent="send">
-                                        @csrf
-                                        <div class="w-100 m-0 p-0 mx-auto d-flex justify-content-between">
-                                            <input placeholder="Taper votre message..." style="font-family: cursive !important;" wire:model.defer="texto" class="form-control chat-input border zw-83 text-white bg-transparent @error('texto') border-danger @enderror" name="texto" id="texto" >
-                                            <button id="" class="btn btn-primary d-flex justify-content-between zw-15">
-                                                <span class="d-none d-lg-inline d-md-inline d-xl-inline mr-lg-2 mr-md-2 mr-xl-2 m-0">Envoyer</span>
-                                                <span class="fa fa-send mt-2"></span>
-                                            </button>
-                                        </div>
-                                        @error('texto') 
-                                          <span class="text-danger">{{$message}}</span>
-                                         @enderror
-                                   </form>
+                                <form autocomplete="off" class="mt-3 pb-3" wire:submit.prevent="send">
+                                    @csrf
+                                    <div class="w-100 m-0 p-0 mx-auto d-flex justify-content-between">
+                                        <input placeholder="Taper votre message..." style="font-family: cursive !important;" wire:model.defer="texto" class="form-control chat-input border zw-83 text-white bg-transparent @error('texto') border-danger @enderror" name="texto" id="texto" >
+                                        <button id="" class="btn btn-primary d-flex justify-content-between zw-15">
+                                            <span class="d-none d-lg-inline d-md-inline d-xl-inline mr-lg-2 mr-md-2 mr-xl-2 m-0">Envoyer</span>
+                                            <span class="fa fa-send mt-2"></span>
+                                        </button>
+                                    </div>
+                                    @error('texto') 
+                                    <span class="text-danger">{{$message}}</span>
+                                    @enderror
+                                </form>
                             </div>
                         </div>
                     </div>

@@ -2,75 +2,98 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\User;
 use App\Models\Product;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class Cart extends Component
 {
-    public $products;
-    public $user;
-    public $carts;
-    protected $listeners = ['myCartWasUpdated'];
-
-    public function mount()
-    {
-        $user = Auth::user();
-        if($user){
-            $this->user = $user;
-            $this->getUserCart();
-            $this->products = $this->carts;
-        }
-    }
+    public $carts_counter;
 
     public function getUserCart()
     {
-        $this->carts = [];
-        $carts = $this->user->shoppingBags->pluck('product_id')->toArray();
-        if(count($carts) > 0){
-            $this->carts = Product::whereIn('id', $carts)->get();
+        $carts = [];
+        $data = auth()->user()->shoppingBags->pluck('product_id')->toArray();
+        if(count($data) > 0){
+            $carts = Product::whereIn('id', $data)->get();
         }
+        return $carts;
+
+    }
+
+    public function refreshCartsCounter()
+    {
+        $this->carts_counter = count(auth()->user()->shoppingBags->pluck('product_id')->toArray());
     }
 
     public function render()
     {
-        return view('livewire.cart');
+        $user = Auth::user();
+        if($user){
+            $user = $user;
+            $carts = $this->getUserCart();
+            $products = $carts;
+        }
+        return view('livewire.cart', compact('user', 'carts', 'products'));
     }
 
-
-    public function getProducts()
+    public function addToCart($product_id = null)
     {
-        $this->products = Product::all();
-    }
-
-
-    public function addToCart($product_id)
-    {
-        $product = Product::find($product_id);
-        if($product && $this->user){
-            if($this->user->addToCart($product->id)){
-                $this->dispatchBrowserEvent('FireAlert', ['title' => 'Réussie', 'message' => "vous avez ajouté l'article {$product->getName()} à votre panier", 'type' => 'success']);
+        if(!$product_id){
+            $product = null;
+        }
+        else{
+            $p = Product::find($product_id);
+            if($p){
+                $product = $p;
             }
             else{
-                return abort(403, "Votre requête ne peut aboutir");
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Article inconnue', 'message' => "L'article que vous tenter d'ajouter à votre panier est introuvable ou a été déjà retiré!", 'type' => 'warning']);
             }
         }
-        $this->mount($this->user->id);
-    }
-
-    public function deleteFromCart($product_id)
-    {
-        $product = Product::find($product_id);
-        if($product && $this->user){
-            if($this->user->deleteFromCart($product->id)){
-                $this->emit('myCartWasUpdated');
-                $this->dispatchBrowserEvent('FireAlert', ['title' => 'Réussie', 'message' => "L'article {$product->getName()} a été retiré de votre panier", 'type' => 'success']);
+        if($product){
+            $add = $product->__addToUserCart();
+            if($add){
+                $this->emit('myCartWasUpdated', Auth::user()->id);
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Ajout réussi', 'message' => "L'article {$product->getName()} a été ajouté à votre panier avec succès!", 'type' => 'success']);
             }
             else{
-                return abort(403, "Votre requête ne peut aboutir");
+                $this->dispatchBrowserEvent($product->livewire_product_alert_type, $product->livewire_product_errors);
             }
         }
+
+        $this->refreshCartsCounter();
+
     }
+    
+    public function deleteFromCart($product_id = null)
+    {
+        if(!$product_id){
+            $product = null;
+        }
+        else{
+            $p = Product::find($product_id);
+            if($p){
+                $product = $p;
+            }
+            else{
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Article inconnue', 'message' => "L'article que vous tenter d'ajouter à votre panier est introuvable ou a été déjà retiré!", 'type' => 'warning']);
+            }
+        }
+        if($product){
+            $del = $product->__retrieveFromUserCart();
+            if($del){
+                $this->emit('myCartWasUpdated', Auth::user()->id);
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Suppression réussie', 'message' => "L'article {$product->getName()} a été retiré de votre panier avec succès!", 'type' => 'success']);
+            }
+            else{
+                $this->dispatchBrowserEvent($product->livewire_product_alert_type, $product->livewire_product_errors);
+            }
+        }
+        $this->refreshCartsCounter();
+    }
+
 
     public function updategalery($product_id)
     {
@@ -93,18 +116,14 @@ class Cart extends Component
     public function liked($product_id)
     {
         $product = Product::find($product_id);
-        if($product && $this->user){
-            if($this->user->likedThis('product', $product->id, $this->user->id)){
+        if($product && auth()->user()){
+            $user = User::find(auth()->user()->id);
+            if($user->likedThis('product', $product->id, auth()->user()->id)){
                 $this->getUserCart();
             }
         }
         else{
             return abort(403, "Votre requête ne peut aboutir");
         }
-    }
-
-    public function myCartWasUpdated()
-    {
-        $this->mount();
     }
 }

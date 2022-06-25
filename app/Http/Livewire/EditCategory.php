@@ -25,12 +25,9 @@ class EditCategory extends Component
         return view('livewire.edit-category');
     }
 
-    
-
     public function update()
     {
-        $user = Auth::user();
-        if($user && ($user->role == 'admin' || $user->id == 1)){
+        if($this->authenticated()){
             if($this->validate()){
                 $cat = Category::withTrashed('deleted_at')->whereId($this->category->id)->firstOrFail();
                 $validateName = Category::withTrashed('deleted_at')->whereName($this->name)->pluck('id')->first();
@@ -45,7 +42,7 @@ class EditCategory extends Component
                             $this->dispatchBrowserEvent('hide-form');
                             $this->dispatchBrowserEvent('FireAlert', ['title' => "Mise à jour d'une catégorie", 'message' => "La mise à jour de la catégorie s'est bien déroulée", 'type' => 'success']);
                             
-                            $users = User::all()->except($user->id);
+                            $users = User::all()->except(Auth::user()->id);
                             if($users->count() > 0 && !$this->category->deleted_at){
                                 foreach ($users as $u){
                                     MyNotifications::create([
@@ -74,7 +71,7 @@ class EditCategory extends Component
                         $this->dispatchBrowserEvent('hide-form');
                         $this->dispatchBrowserEvent('FireAlert', ['title' => "Mise à jour d'une catégorie", 'message' => "La mise à jour de la catégorie s'est bien déroulée", 'type' => 'success']);
 
-                        $users = User::all()->except($user->id);
+                        $users = User::all()->except(Auth::user()->id);
                         if($users->count() > 0 && !$this->category->deleted_at){
                             foreach ($users as $u){
                                 MyNotifications::create([
@@ -90,9 +87,6 @@ class EditCategory extends Component
                 }
             }
         }
-        else{
-            return redirect(route('login'));
-        }
     }
 
     public function targetedCategory($category)
@@ -106,6 +100,21 @@ class EditCategory extends Component
         }
         else{
             return abort(403, "Votre requête ne peut aboutir");
+        }
+    }
+
+    public function authenticated()
+    {
+        if(Auth::user()){
+            if(User::find(Auth::user()->id)->__hasAdminAuthorization()){
+                return true;
+            }
+            else{
+                return $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Authentification requise', 'message' => "Veuillez vous authentifier avant de d'exécuter cette action!", 'type' => 'warning']);
+            }
+        }
+        else{
+            return redirect()->route('login');
         }
     }
 

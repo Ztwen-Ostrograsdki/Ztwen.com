@@ -5,15 +5,16 @@ namespace App\Http\Livewire;
 use App\Models\User;
 use App\Models\Product;
 use Livewire\Component;
-use App\Models\UserAdminKey;
 use Livewire\WithFileUploads;
 use App\Helpers\ProfilManager;
-use App\Models\MyNotifications;
+use App\Events\NewFollowerEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserProfil extends Component
 {
+    public $haveNewFollower = false;
+    public $hasNewData = false;
     public $edit_name = false;
     public $edit_email = false;
     public $edit_password = false;
@@ -29,18 +30,18 @@ class UserProfil extends Component
     public $code;
     public $email;
     public $new_email;
-    public $user;
-    public $carts;
-    public $profilImage;
+    public $user_id;
+    public $carts_counter;
     public $activeTagName;
     public $activeTagTitle;
-    public $demandes;
-    public $myFriends = [];
-    public $myFollowers = [];
-    public $myProducts;
-    public $myProductsComments = [];
 
-    protected $listeners = ['userProfilUpdate', 'myCartWasUpdated', 'updateRequests'];
+    protected $listeners = [
+        'userProfilUpdate', 
+        'myCartWasUpdated', 
+        'updateRequests', 
+        'notifyMeWhenNewFollower',
+        'IsendNewFriendRequest_L_Event' => 'notifyMeWhenNewFollower',
+    ];
     protected $rules = [
         'name' => 'required|string|between:5,50',
         'email' => 'required|email',
@@ -53,6 +54,17 @@ class UserProfil extends Component
 
     use WithFileUploads;
 
+    public function render()
+    {
+        $this->hasNewData = true;
+        $user = User::find(auth()->user()->id);
+        $myFollowers = $this->getMyFollowers();
+        $myFriends = $user->getMyFriends();
+        $this->getUserCart();
+        $demandes = $this->getDemandes();
+
+        return view('livewire.user-profil', compact('demandes', 'myFollowers', 'myFriends', 'user'));
+    }
 
     public function mount(int $id)
     {
@@ -60,12 +72,13 @@ class UserProfil extends Component
             return abort(403, "Vous n'êtes pas authorisé à cette page");
         }
         if($id){
+           
             $user = User::find($id);
             if($user){
-                $this->user = $user;
-                $this->name = $this->user->name;
-                $this->email = $this->user->email;
-                $this->new_email = $this->user->new_email;
+                $this->user_id = $id;
+                $this->name = $user->name;
+                $this->email = $user->email;
+                $this->new_email = $user->new_email;
             }
             else{
                 return abort(403, "Votre requête ne peut aboutir");
@@ -82,23 +95,18 @@ class UserProfil extends Component
             $this->activeTagName = (new ProfilManager('editing', "Edition de profil"))->name;
             $this->activeTagTitle = (new ProfilManager('editing', "Edition de profil"))->title;
         }
-        $this->getDemandes();
-        $this->getMyFollowers();
-        $this->myFriends = $this->user->getMyFriends();
-        $this->profilImage = $this->user->currentPhoto();
-        
-        $this->getUserCart();
 
     }
 
     public function booted()
     {
-        return $this->mount($this->user->id);
+        return $this->mount(Auth::user()->id);
     }
 
     public function regenerateAdminKey()
     {
-        $make = $this->user->__regenerateAdminKey();
+        $user = User::find(auth()->user()->id);
+        $make = $user->__regenerateAdminKey();
         if($make){
             $this->dispatchBrowserEvent('Toast', ['type' => 'success', 'title' => 'CLE MODIFIEE AVEC SUCCES',  'message' => "La clé a été générée avec succès"]);
         }
@@ -109,41 +117,43 @@ class UserProfil extends Component
 
     public function displayAdminSessionKey()
     {
-        $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'info', 'title' => "LA CLE", 'message' => $this->user->__getKeyNotification()]);
+        $user = User::find(auth()->user()->id);
+        $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'info', 'title' => "LA CLE", 'message' => $user->__getKeyNotification()]);
     }
 
     public function destroyAdminSessionKey()
     {
-        return $this->user->__destroyAdminKey();
+        $user = User::find(auth()->user()->id);
+        return $user->__destroyAdminKey();
     }
 
     public function getUserCart()
     {
-        $this->carts = [];
-        $carts = $this->user->shoppingBags->pluck('product_id')->toArray();
-        if(count($carts) > 0){
-            $this->carts = Product::whereIn('id', $carts)->get();
-        }
+        $data = Auth::user()->shoppingBags->pluck('product_id')->toArray();
+        // if(count($data) > 0){
+        //     $carts = Product::whereIn('id', $data)->get();
+        // }
+
+        $this->carts_counter = count($data);
+    }
+
+    public function refreshCartsCounter()
+    {
+        $this->carts_counter = count(auth()->user()->shoppingBags->pluck('product_id')->toArray());
     }
 
     public function getMyFollowers()
     {
-        $this->myFollowers = $this->user->getMyFollowers();
+        $user = User::find(auth()->user()->id);
+        return  $user->getMyFollowers();
     }
 
-    public function render()
-    {
-        return view('livewire.user-profil');
-        
-    }
     public function updateRequests()
     {
-        return $this->mount(auth()->user()->id);
     }
 
     public function userProfilUpdate($id)
     {
-        return $this->mount($id);
     }
 
     public function setActiveTag($name, $title)
@@ -152,17 +162,20 @@ class UserProfil extends Component
         $this->activeTagTitle = (new ProfilManager($name, $title))->title;
         session()->put('userProfilTagName', $name);
         session()->put('userProfilTagTitle', $title);
-        $this->mount($this->user->id);
     }
+
+
     public function getDemandes()
     {
+        $demandes = [];
         $user = Auth::user();
         if($user){
-            $this->demandes = User::find($user->id)->myFriendsRequestsSent();
+            $demandes = User::find($user->id)->myFriendsRequestsSent();
         }
         else{
-            $this->demandes = [];
+            $demandes = [];
         }
+        return $demandes;
 
     }
 
@@ -176,58 +189,44 @@ class UserProfil extends Component
         else{
             $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'error', 'message' => "Une erreure inconnue s'est produite lors de la connexion au serveur"]);
         }
-        $this->mount($this->user->id);
         
     }
 
     public function cancelRequestFriend($user_id)
     {
         $auth = Auth::user()->id;
+        $foll_user = User::find($user_id);
         $made = User::find($auth)->__cancelFriendRequest($user_id);
         if($made){
-            $this->emit('updateRequests');
+            $this->emit('onUpdateUsersList_L_Event');
+            $event = new NewFollowerEvent($foll_user, 'retrieved');
+            broadcast($event);
         }
         else{
             $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'error', 'message' => "Une erreure inconnue s'est produite lors de la connexion au serveur"]);
         }
-        $this->mount($this->user->id);
     }
 
     public function unfollowThis($user_id)
     {
         $auth = Auth::user()->id;
+        $foll_user = User::find($user_id);
         $made = User::find($auth)->__unfollowThis($user_id);
         if($made){
-            $this->emit('updateRequests');
+            $event = new NewFollowerEvent($foll_user, 'retrieved');
+            broadcast($event);
         }
         else{
             $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'error', 'message' => "Une erreure inconnue s'est produite lors de la connexion au serveur"]);
         }
-        $this->mount($this->user->id);
-    }
-
-    public function followThisUser($user_id)
-    {
-        $auth = auth()->user()->id;
-        $user = User::find($user_id);
-        if(!$user){
-            return abort(403, "Vous n'êtes pas authorisé");
-        }
-        if(User::find($auth)->__followThisUser($user->id)){
-            $this->emit('updateRequests');
-            $this->mount($this->user->id);
-        }
-        else{
-            $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'warning', 'message' => "Vous ne pouvez pas effectuer cette requête"]);
-        }
-        
     }
 
     public function liked($product_id)
     {
         $product = Product::find($product_id);
-        if($product && $this->user){
-            if($this->user->likedThis('product', $product->id, $this->user->id)){
+        if($product && Auth::user()){
+            $user = User::find(auth()->user()->id);
+            if($user->likedThis('product', $product->id, $user->id)){
                 $this->getUserCart();
             }
         }
@@ -240,12 +239,11 @@ class UserProfil extends Component
     public function openSingleChat($receiver_id)
     {
         $this->emit('newSingleChat', $receiver_id);
-        $this->mount(auth()->user()->id);
     }
 
-    public function myCartWasUpdated()
+    public function myCartWasUpdated($user_id = null)
     {
-        $this->mount(auth()->user()->id);
+        $this->refreshCartsCounter();
     }
 
 
@@ -271,13 +269,14 @@ class UserProfil extends Component
 
     public function renamed()
     {
-        $old = User::withTrashed('deleted_at')->where('name', $this->name)->whereKeyNot($this->user->id)->first();
+        $old = User::withTrashed('deleted_at')->where('name', $this->name)->whereKeyNot(Auth::user()->id)->first();
         if($old){
             $this->addError('name', "Ce nom est déjà existant !");
         }
         else{
-            $this->user->update(['name' => $this->name]);
-            $this->emit('userDataEdited', $this->user->id);
+            $user = User::find(auth()->user()->id);
+            $user->update(['name' => $this->name]);
+            $this->emit('userDataEdited', Auth::user()->id);
             $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success', 'message' => "La mise à jour de votre nom s'est bien déroulée!"]);
             $this->edit_name = false;
         }
@@ -286,12 +285,12 @@ class UserProfil extends Component
 
     public function changeEmail()
     {
-        $old = User::withTrashed('deleted_at')->where('email', $this->new_email)->whereKeyNot($this->user->id)->first();
+        $old = User::withTrashed('deleted_at')->where('email', $this->new_email)->whereKeyNot(Auth::user()->id)->first();
         if($old){
             $this->addError('new_email', "Cette adresse mail est déjà existante !");
         }
         else{
-            // $update = $this->user->__initialisedResetUserEmail($this->new_email);
+            // $update = Auth::user()->__initialisedResetUserEmail($this->new_email);
             $sendToken = true;
             if($sendToken){
                 $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'warning', 'message' => "Nous procedons à la mise à jour de votre adresse mail, cependant  veuillez confirmer votre adresse à l'aide du code envoyé à l'adresse mail {$this->email} !"]);
@@ -305,7 +304,7 @@ class UserProfil extends Component
 
     public function confirmedEmail()
     {
-        $old = User::withTrashed('deleted_at')->where('email', $this->email)->whereKeyNot($this->user->id)->first();
+        $old = User::withTrashed('deleted_at')->where('email', $this->email)->whereKeyNot(Auth::user()->id)->first();
         if($old){
             $this->addError('email', "Cette adresse mail est déjà existante !");
         }
@@ -313,7 +312,7 @@ class UserProfil extends Component
             $this->validate();
             $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success', 'message' => "La mise à jour de votre adresse mail s'est bien déroulée!"]);
             $this->reset('edit_email', 'code');
-            $this->email = $this->user->email;
+            $this->email = Auth::user()->email;
         }
     }
 
@@ -340,7 +339,7 @@ class UserProfil extends Component
     public function verifiedOldPassword()
     {
         $this->validate(['old_pwd' => 'required|string']);
-        if(!Hash::check($this->old_pwd, $this->user->password)){
+        if(!Hash::check($this->old_pwd, Auth::user()->password)){
             $this->addError('old_pwd', "Le mot de passe ne correspond pas!");
         }
         else{
@@ -355,15 +354,16 @@ class UserProfil extends Component
             'new_password' => 'required|string|confirmed|between:4,40',
             'new_password_confirmation' => 'required|string|between:4, 40'
         ]);
-        if(Hash::check($this->new_password, $this->user->password)){
+        if(Hash::check($this->new_password, Auth::user()->password)){
             $this->addError('new_password', "Vous ne pouvez pas utiliser ce mot de passe");
             $this->addError('new_password_confirmation', "Vous ne pouvez pas utiliser ce mot de passe");
         }
         else{
-            $this->user->forceFill([
+            $user = User::find(auth()->user()->id);
+            $user->forceFill([
                 'password' => Hash::make($this->new_password),
             ])->save();
-            $this->user->sendEmailForPasswordHaveBeenResetNotification();
+            $user->sendEmailForPasswordHaveBeenResetNotification();
             $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success', 'message' => "La mise à jour de votre mot de passe s'est bien déroulée!"]);
             $this->reset('edit_password', 'new_password', 'new_password_confirmation', 'old_pwd', 'psw_step_1', 'psw_step_2');
             return redirect()->route('login');
@@ -374,6 +374,12 @@ class UserProfil extends Component
     public function cancelPasswordEdit()
     {
         $this->reset('edit_password', 'new_password', 'new_password_confirmation', 'old_pwd', 'psw_step_1', 'psw_step_2');
+    }
+
+
+    public function notifyMeWhenNewFollower($event = null)
+    {
+        $this->reset('hasNewData');
     }
 
     

@@ -5,7 +5,7 @@
             <div class="w-100 z-color-orange">
                 <h5 class="text-center w-100">
                     <span class="fa fa-user-secret fa-3x "></span>
-                    <h4 class="w-100 text-uppercase text-center">Authentification</h4>
+                    <h5 class="w-100 text-uppercase text-center">Authentification</h5>
                 </h5>
                 <hr class="w-100 z-border-orange mx-auto my-2">
             </div>
@@ -63,7 +63,7 @@
             <div class="w-100 z-color-orange">
                 <h5 class="text-center w-100">
                     <span class="fa fa-user-plus fa-3x "></span>
-                    <h4 class="w-100 text-uppercase text-center">Inscription</h4>
+                    <h5 class="w-100 text-uppercase text-center">Inscription</h5>
                 </h5>
                 <hr class="w-100 z-border-orange mx-auto my-2">
             </div>
@@ -144,7 +144,7 @@
             <div class="w-100 z-color-orange">
                 <h5 class="text-center w-100">
                     <span class="fa fa-user-secret fa-3x "></span>
-                    <h4 class="w-100 text-uppercase text-center">Reccupération de compte</h4>
+                    <h5 class="w-100 text-uppercase text-center">Reccupération de compte</h5>
                 </h5>
                 <hr class="w-100 z-border-orange mx-auto my-2">
             </div>

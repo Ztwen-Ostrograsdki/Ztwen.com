@@ -13,13 +13,6 @@
                     @endauth
                 </h4>
                 <div class="d-flex justify-content-end w-20">
-                   <div class="w-15 mx-0 px-0">
-                      <ul class="d-flex mx-0 px-0 mt-1 justify-content-between w-100">
-                         <li class=" mx-1"><a href="#"><img src="images/flag-up-1.png" width="100" alt="" /> </a></li>
-                         <li><a href="#"><img src="images/flag-up-2.png" width="100" alt="" /></a></li>
-                      </ul>
-                   </div>
-                   <div class="w-25"></div>
                    <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
                 </div>
              </div>

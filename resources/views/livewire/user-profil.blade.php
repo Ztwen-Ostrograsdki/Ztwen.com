@@ -27,10 +27,10 @@
                            <div class="d-flex w-100 justify-content-between cursor-pointer m-0 p-0" wire:click="setActiveTag('panier', 'Panier')">
                                 <span class="bi-cart-check "></span>
                                 <h6 class="w-100 ml-3 d-none d-lg-inline d-xl-inline">Panier</h6>
-                                @if (count($carts) < 10)
-                                    <span class="">(0{{ count($carts) }})</span>
+                                @if ($carts_counter < 10)
+                                    <span class="">(0{{ $carts_counter }})</span>
                                 @else
-                                    <span class="">({{ count($carts) }})</span>
+                                    <span class="">({{ $carts_counter }})</span>
                                 @endif
                                 <span class="@if($activeTagName == 'panier') bi-chevron-down @else bi-chevron-right @endif "></span>
                            </div>
@@ -164,11 +164,7 @@
                                                         </span>
                                                     </h6>
                                                     <div class="mt-3">
-                                                        <small wire:click="requestManager({{$req['user']->id}}, 'accepted')" class="text-success d-none w-50">
-                                                            <small class="fa fa-check cursor-pointer mt-1"></small>
-                                                            <small class="text-success cursor-pointer">Accepter</small>
-                                                        </small>
-                                                        <small wire:click="cancelRequestFriend({{$req['user']->id}})" class="btn-danger border border-white text-white px-3 py-2 rounded cursor-pointer mr-2">
+                                                        <small title="Supprimer la demande" wire:click="cancelRequestFriend({{$req['user']->id}})" class="btn-danger border border-white text-white px-3 py-2 rounded cursor-pointer mr-2">
                                                             <small class="fa bi-person-x-fill cursor-pointer mt-1"></small>
                                                             <small class="cursor-pointer">Annuler</small>
                                                         </small>
@@ -309,7 +305,7 @@
                         @endif
                         @if($activeTagName == 'panier')
                             <div class="mx-auto justify-center text-white d-flex w-100">
-                            @if(count($carts) > 0)
+                            @if($carts_counter > 0)
                                 <div class="w-100 mx-auto my-1">
                                     @livewire('cart')
                                 </div>

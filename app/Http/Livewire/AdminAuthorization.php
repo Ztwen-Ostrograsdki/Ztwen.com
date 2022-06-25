@@ -4,9 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
-use App\Models\UserAdminKey;
 use App\Rules\PasswordChecked;
-use Illuminate\Support\Facades\Hash;
 
 class AdminAuthorization extends Component
 {

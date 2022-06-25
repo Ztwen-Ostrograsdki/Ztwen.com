@@ -2,12 +2,11 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\User;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
-
-use function PHPUnit\Framework\isInstanceOf;
 
 class ShowCategories extends Component
 {
@@ -21,43 +20,39 @@ class ShowCategories extends Component
     ];
     public $search;
     public $targets = [];
-    public $products = [];
-    public $productsCounter;
     public $galery;
     public $categorySelectedID;
-    public $categories;
-    public $category;
-    public $user;
-    public $allProducts = [];
+    public $category_id;
 
     public function mount()
     {
         $id = (int)request()->id;
         if($id){
-            $category = Category::find($id);
-            if($category){
-                $this->getProducts($id);
+            if(Category::find($id)){
+                $this->category_id = $id;
             }
             else{
                 return abort(403, "Votre requête ne peut aboutir");
             }
         }
-
-        $categories = Category::orderBy('name', 'asc')->get();
-        $this->user = Auth::user();
-        $this->categories = $categories;
-        $this->productsCounter = Product::all()->count();
-        $this->getProducts();
     }
 
     public function render()
     {
-        return view('livewire.show-categories');
+        $category = null;
+        $categories = Category::orderBy('name', 'asc')->get();
+        $user = Auth::user();
+        $productsCounter = Product::all()->count();
+        if($this->category_id){
+            $category = Category::find($this->category_id);
+        }
+        $this->setCategory($this->category_id, false);
+        return view('livewire.show-categories', compact('categories', 'productsCounter', 'category'));
     }
 
     public function categorySelected($category_id)
     {
-        $this->changeCategory($category_id);
+        $this->setCategory($category_id);
     }
     
     public function changeCategory($category_id = null)
@@ -65,8 +60,7 @@ class ShowCategories extends Component
         $this->reset('search', 'targets');
         session()->forget('categorySelectedID');
         if($category_id !== null){
-            session()->put('categorySelectedID', $category_id);
-            $this->getProducts($category_id); 
+            $this->setCategory($category_id); 
         }
         else{
             session()->forget('categorySelectedID');
@@ -91,27 +85,83 @@ class ShowCategories extends Component
             
         }
         else{
-            $this->mount();
+            $this->setCategory($this->category_id, false);
         }
     }
 
-    public function getProducts($category_id = null)
+    public function setCategory($category_id = null, $reset_search = true)
     {
-        $this->reset('products');
+        $products = [];
+        if($reset_search){
+            $this->reset('search', 'targets');
+        }
         if($category_id){
-            $this->category = Category::find($category_id);
+            $this->category_id = $category_id;
+            $category = Category::find($category_id);
             $this->categorySelectedID = $category_id;
             session()->put('categorySelectedID', $category_id);
-            $this->products = $this->category->products;
         }
         elseif(session()->has('categorySelectedID') && session('categorySelectedID') !== null){
             $this->categorySelectedID = session('categorySelectedID');
-            $this->category = Category::find($this->categorySelectedID);
-            $this->products = $this->category->products;
+            $category = Category::find($this->categorySelectedID);
+            $category_id = $category->id;
         }
         else{
             session()->forget('categorySelectedID');
-            $this->products = [];
+        }
+
+        return $products;
+    }
+
+    public function addToCart($product_id = null)
+    {
+        if(!$product_id){
+            $product = null;
+        }
+        else{
+            $p = Product::find($product_id);
+            if($p){
+                $product = $p;
+            }
+            else{
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Article inconnue', 'message' => "L'article que vous tenter d'ajouter à votre panier est introuvable ou a été déjà retiré!", 'type' => 'warning']);
+            }
+        }
+        if($product){
+            $add = $product->__addToUserCart();
+            if($add){
+                $this->emit('myCartWasUpdated', Auth::user()->id);
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Ajout réussi', 'message' => "L'article {$product->getName()} a été ajouté à votre panier avec succès!", 'type' => 'success']);
+            }
+            else{
+                $this->dispatchBrowserEvent($product->livewire_product_alert_type, $product->livewire_product_errors);
+            }
+        }
+    }
+    
+    public function deleteFromCart($product_id = null)
+    {
+        if(!$product_id){
+            $product = null;
+        }
+        else{
+            $p = Product::find($product_id);
+            if($p){
+                $product = $p;
+            }
+            else{
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Article inconnue', 'message' => "L'article que vous tenter d'ajouter à votre panier est introuvable ou a été déjà retiré!", 'type' => 'warning']);
+            }
+        }
+        if($product){
+            $del = $product->__retrieveFromUserCart();
+            if($del){
+                $this->emit('myCartWasUpdated', Auth::user()->id);
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Suppression réussie', 'message' => "L'article {$product->getName()} a été retiré de votre panier avec succès!", 'type' => 'success']);
+            }
+            else{
+                $this->dispatchBrowserEvent($product->livewire_product_alert_type, $product->livewire_product_errors);
+            }
         }
     }
 
@@ -154,37 +204,7 @@ class ShowCategories extends Component
 
     }
     
-    public function addToCart($product_id)
-    {
-        $product = Product::find($product_id);
-        if($product && $this->user){
-            if($this->user->addToCart($product->id)){
-                $this->dispatchBrowserEvent('FireAlert', ['title' => 'Réussie', 'message' => "vous avez ajouté l'article {$product->getName()} à votre panier", 'type' => 'success']);
-                $this->emit('cartEdited', $this->user->id);
-            }
-            else{
-                return abort(403, "Votre requête ne peut aboutir");
-            }
-        }
-    }
-
-
-
-    public function deleteFromCart($product_id)
-    {
-        $product = Product::find($product_id);
-        if($product && $this->user){
-            if($this->user->deleteFromCart($product->id)){
-                $this->emit('cartEdited', $this->user->id);
-                $this->dispatchBrowserEvent('FireAlert', ['title' => 'Réussie', 'message' => "L'article {$product->getName()} a été retiré de votre panier", 'type' => 'success']);
-            }
-            else{
-                return abort(403, "Votre requête ne peut aboutir");
-            }
-        }
-    }
-
-
+    
 
     public function updategalery($product_id)
     {
@@ -219,10 +239,9 @@ class ShowCategories extends Component
     public function liked($product_id)
     {
         $product = Product::find($product_id);
-        if($product && $this->user){
-            if($this->user->likedThis('product', $product->id, $this->user->id)){
-                $this->mount();
-            }
+        $user = User::find(auth()->user()->id);
+        if($product && $user){
+            $user->likedThis('product', $product->id, $user->id);
         }
         else{
             return abort(403, "Votre requête ne peut aboutir");

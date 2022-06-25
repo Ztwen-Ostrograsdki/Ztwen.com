@@ -317,23 +317,6 @@ class User extends Authenticatable
         return $this->hasMany(ShoppingBag::class);
     }
 
-    public function alreadyIntoCart($product_id)
-    {
-        $product = Product::find($product_id);
-        if($product){
-            $alreadyIntoCart = ShoppingBag::where('user_id', $this->id)->where('product_id', $product->id)->get();
-            if($alreadyIntoCart->count() > 0){
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-        else{
-            return abort(403, "Votre requête ne peut aboutir");
-        }
-    }
-
     public function getDateAgoFormated($created_at = false)
     {
         $this->__setDateAgo();

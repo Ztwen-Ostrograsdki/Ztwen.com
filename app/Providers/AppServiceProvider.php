@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
                 if($user == null){
                     $user = Auth::user();
                 }
-                if($user->role == 'admin' || $user->id == 1){
+                if($user->role == 'admin' || $user->role == 'master' || $user->id == 1){
                     return true;
                 }
                 return false;
@@ -43,36 +43,44 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Blade::if('isNotAdmin', function($user = null){
-            if($user == null){
-                $user = Auth::user();
-            }
-            if($user->role == 'admin' || $user->id == 1){
-                return false;
+            if(Auth::user()){
+                if($user == null){
+                    $user = Auth::user();
+                }
+                if($user->role == 'admin' || $user->role == 'master' || $user->id == 1){
+                    return false;
+                }
+                return true;
             }
             return true;
         });
 
         Blade::if('isNotMaster', function($user = null){
-            if($user == null){
-                $user = Auth::user();
-            }
-            if($user->id == 1){
+            if(Auth::user()){
+                if($user == null){
+                    $user = Auth::user();
+                }
+                if($user->role !== 'master' && $user->id !== 1){
+                    return true;
+                }
                 return false;
             }
             return true;
 
         });
         Blade::if('isMaster', function($user = null){
-            if($user == null){
-                $user = Auth::user();
-            }
-            if($user->id == 1){
-                return true;
+            if(Auth::user()){
+                if($user == null){
+                    $user = Auth::user();
+                }
+                if($user->role == 'master' || $user->id == 1){
+                    return true;
+                }
+                return false;
             }
             return false;
 
         });
-
 
         Blade::if('isMySelf', function($user){
             if($user->id == Auth::user()->id){

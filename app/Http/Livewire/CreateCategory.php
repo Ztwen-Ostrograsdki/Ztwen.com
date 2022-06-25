@@ -25,8 +25,7 @@ class CreateCategory extends Component
 
     public function create()
     {
-        $user = Auth::user();
-        if($user && ($user->role == 'admin' || $user->id == 1)){
+        if($this->authenticated()){
             if($this->validate()){
                 $category = Category::create(
                     [
@@ -40,7 +39,7 @@ class CreateCategory extends Component
                     $this->dispatchBrowserEvent('FireAlert', ['title' => 'Ajout de nouvelle catégorie', 'message' => "La création de la catégorie s'est bien déroulée", 'type' => 'success']);
                     $this->emit('newCategoryCreated', $category);
                     
-                    $users = User::all()->except($user->id);
+                    $users = User::all()->except(Auth::user()->id);
                     if($users->count() > 0){
                         foreach ($users as $u){
                             MyNotifications::create([
@@ -57,8 +56,20 @@ class CreateCategory extends Component
                 }
             }
         }
+    }
+
+    public function authenticated()
+    {
+        if(Auth::user()){
+            if(User::find(Auth::user()->id)->__hasAdminAuthorization()){
+                return true;
+            }
+            else{
+                return $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Authentification requise', 'message' => "Veuillez vous authentifier avant de d'exécuter cette action!", 'type' => 'warning']);
+            }
+        }
         else{
-            return redirect(route('login'));
+            return redirect()->route('login');
         }
     }
 

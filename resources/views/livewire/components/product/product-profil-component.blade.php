@@ -3,7 +3,7 @@
         <div class="row m-0 mx-auto p-0 w-100">
             <div class="col-12 p-0 m-0" style="height: auto !important">
                 @if($product && $product->images->count() > 0 && $product->productGalery() !== [])
-                <div id="productProfilImagesCarouselTrue" class="carousel slide m-0" data-ride="carousel">
+                <div id="productProfilImagesCarouselTrue" class="carousel slide m-0 border-bottom" data-ride="carousel">
                     <ol class="carousel-indicators">
                         @foreach ($product->productGalery() as $key => $image)
                             <li data-target="#productProfilImagesCarouselTrue" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
@@ -26,7 +26,7 @@
                     </a>
                 </div>
                 @elseif($product->images->count() < 1 || $product->productGalery() == [])
-                <div id="productProfilImagesCarouselFalse" class="carousel slide  m-0" data-ride="carousel">
+                <div id="productProfilImagesCarouselFalse" class="carousel slide border-bottom  m-0" data-ride="carousel">
                     <ol class="carousel-indicators">
                         @foreach ($product->productGalery() as $key => $image)
                             <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
@@ -89,17 +89,17 @@
                 </div>
                 <hr>
 
-                <div class="d-flex w-100 justify-content-between">
-                    <span>
+                <div class="row mx-auto w-100 justify-content-between">
+                    <span class="col-xxl-4 col-xl-4 col-lg-4 col-7">
                         <strong>Prix: </strong> <span>{{$product->price}} FCFA</span>
                     </span>
-                    <span>
+                    <span class="col-xxl-2 col-xl-2 col-lg-2 col-3">
                         <strong>Total: </strong> <span>{{$product->total}}</span>
                     </span>
-                    <span>
+                    <span class="col-xxl-2 col-xl-3 col-lg-2 col-5">
                         <strong>vendus: </strong> <span>{{$product->sells}}</span>
                     </span>
-                    <span>
+                    <span class="col-xxl-3 col-xl-3 col-lg-4 col-7">
                         <strong>Reduction: </strong> <span>{{$product->reduction}}</span> <span>%</span>
                     </span>
                 </div>
@@ -122,34 +122,34 @@
                     <div class="d-flex justify-content-end">
                         @isAdmin()
                         <span wire:click="editAProduct({{$product->id}})"  class="z-scale py-1 cursor-pointer btn-secondary mr-2 py-0 px-3 border border-white">
-                            <span class="fa fa-edit p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Editer</small>
+                            <span class="fa fa-edit p-0 m-0"></span> <small class="d-none d-xxl-inline d-xl-inline">Editer</small>
                         </span>
                         @endisAdmin
                         @auth
                             <span class="z-scale py-1 cursor-pointer btn-primary py-0 px-3 border border-white">
-                                <span wire:click="bought({{$product->id}})" class="bi-download p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Acheter</small>
+                                <span wire:click="bought({{$product->id}})" class="bi-download p-0 m-0"></span> <small class="d-none d-xxl-inline d-xl-inline">Acheter</small>
                             </span>
-                            @if(Auth::user()->alreadyIntoCart($product->id))
+                            @if(Auth::user()->__alreadyIntoMyCart($product->id))
                                 <span wire:click="deleteFromCart({{$product->id}})" class="z-scale py-1 cursor-pointer btn-danger mx-2 px-3 border border-white">
-                                    <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Retirer du panier</small>
+                                    <span class="bi-minecart "></span> <small class="d-none d-xxl-inline d-xl-inline">Retirer du panier</small>
                                 </span>
                             @else
                                 <span wire:click="addToCart({{$product->id}})" class="z-scale py-1 cursor-pointer btn-primary mx-2 px-3 border border-white">
-                                    <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Panier</small>
+                                    <span class="bi-minecart "></span> <small class="d-none d-xxl-inline d-xl-inline">Panier</small>
                                 </span>
                             @endif
                         @endauth
                         @guest
                         <span class="z-scale py-1 cursor-pointer bg-primary border border-dark py-0 px-3">
-                            <span wire:click="bought({{$product->id}})" class="bi-download p-0 m-0"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Acheter</small>
+                            <span wire:click="bought({{$product->id}})" class="bi-download p-0 m-0"></span> <small class="d-none d-xxl-inline d-xl-inline">Acheter</small>
                         </span>
                         <span wire:click="addToCart({{$product->id}})" class="z-scale py-1 cursor-pointer bg-success mx-2 px-3 border">
-                            <span class="bi-minecart "></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Panier</small>
+                            <span class="bi-minecart "></span> <small class="d-none d-xxl-inline d-xl-inline">Panier</small>
                         </span>
                         @endguest
                         @isAdmin()
                         <span wire:click="updateProductGalery({{$product->id}})" class="z-scale cursor-pointer py-1 btn-primary px-3 border border-white">
-                            <span class="bi-image"></span> <small class="d-none d-lg-inline d-xlg-inline d-md-inline">Ajouter une image</small>
+                            <span class="bi-image"></span> <small class="d-none d-xxl-inline d-xl-inline">Ajouter une image</small>
                         </span>
                         @endisAdmin
                         @auth

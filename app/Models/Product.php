@@ -8,23 +8,26 @@ use App\Models\Comment;
 use App\Models\Category;
 use App\Models\ShoppingBag;
 use App\Helpers\DateFormattor;
-use App\Helpers\ProductManager;
 use App\Models\SeenLikeProductSytem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Helpers\ActionsTraits\ModelActionTrait;
-use BaconQrCode\Renderer\Path\Path;
+use App\Helpers\ProductsTraits\ProductTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+
 
 class Product extends Model
 {
     use HasFactory;
     use SoftDeletes;
     use DateFormattor;
-    use ProductManager;
     use ModelActionTrait;
+    use ProductTrait;
 
     public $myLikes;
+    public $livewire_product_errors = [];
+    public $livewire_product_alert_type = "FireAlertDoNotClose";
     const MAX_IMAGES = 3;
     const IMAGES_BASE_PATH = '/storage/articlesImages/';
     const DEFAULT_PRODUCT_GALERY_PATH = ["/myassets/default/default-img-product.jpg", "/myassets/default/default-img-product.jpg", "/myassets/default/default-img-product.jpg",];
@@ -128,5 +131,7 @@ class Product extends Model
         }
         return $this->dateAgoToStringForUpdated;
     }
+
+    
 
 }

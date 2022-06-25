@@ -41,7 +41,6 @@ class ProductEditor extends Component
 
     public function updateProductGalery()
     {
-        
         if($this->authenticated()){
             $this->validate(['product_image' => 'image|max:1500|mimes:png,jpg,jpeg']);
             $this->photoExtension = $this->product_image->extension();
@@ -68,6 +67,7 @@ class ProductEditor extends Component
                 $this->emit('updatingFinish', true);
                 $this->dispatchBrowserEvent('FireAlert', ['title' => 'Ereur serveur', 'message' => "La mise à jour de la galerie a échoué, veuillez réessayer!", 'type' => 'error']);
             }
+            $this->emit('productUpdated', $this->product->id);
             $this->emit('updatingFinish', true);
         }
 
@@ -88,10 +88,10 @@ class ProductEditor extends Component
 
     public function productUpdated($product_id)
     {
-        $product = Product::find($product_id);
-        if($product){
-            $this->emit('productUpdated', $product_id);
-        }
+        // $product = Product::find($product_id);
+        // if($product){
+        //     $this->emit('productUpdated', $product_id);
+        // }
     }
 
 
@@ -102,7 +102,7 @@ class ProductEditor extends Component
                 return true;
             }
             else{
-                return $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Authentification requise', 'message' => "Veuillez vous enthentifier avant de lancer des mises à jour", 'type' => 'warning']);
+                return $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Authentification requise', 'message' => "Veuillez vous authentifier avant de d'exécuter cette action!", 'type' => 'warning']);
             }
         }
         else{

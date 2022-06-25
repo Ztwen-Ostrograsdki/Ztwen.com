@@ -6,10 +6,11 @@ use App\Models\Comment;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 
 class Home extends Component
 {
-    protected $listeners = ['productUpdated'];
+    protected $listeners = ['productUpdated', 'productsUpdated'];
     public $products = [];
     public $categories;
     public $targetedProduct;
@@ -30,6 +31,10 @@ class Home extends Component
         $this->lastPosted(); 
     }
 
+    public function productsUpdated()
+    {
+        $this->getProducts(); 
+    }
     public function refreshThePosts()
     {
         $this->lastPosted(); 
@@ -150,6 +155,66 @@ class Home extends Component
     {
         $this->emit('loadProductImages', $product_id);
     }
+
+    public function addToCart($product_id = null)
+    {
+        if(!$product_id){
+            $product = $this->product;
+        }
+        else{
+            $p = Product::find($product_id);
+            if($p){
+                $product = $p;
+            }
+            else{
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Article inconnue', 'message' => "L'article que vous tenter d'ajouter à votre panier est introuvable ou a été déjà retiré!", 'type' => 'warning']);
+            }
+        }
+        if($product){
+            $add = $product->__addToUserCart();
+            if($add){
+                $this->emit('productsUpdated');
+                $this->emit('cartEdited', Auth::user()->id);
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Ajout réussi', 'message' => "L'article {$product->getName()} a été ajouté à votre panier avec succès!", 'type' => 'success']);
+            }
+            else{
+                $this->dispatchBrowserEvent($product->livewire_product_alert_type, $product->livewire_product_errors);
+            }
+        }
+
+        $this->emit('productsUpdated');
+
+    }
+    
+    public function deleteFromCart($product_id = null)
+    {
+        if(!$product_id){
+            $product = $this->product;
+        }
+        else{
+            $p = Product::find($product_id);
+            if($p){
+                $product = $p;
+            }
+            else{
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Article inconnue', 'message' => "L'article que vous tenter d'ajouter à votre panier est introuvable ou a été déjà retiré!", 'type' => 'warning']);
+            }
+        }
+        if($product){
+            $del = $product->__retrieveFromUserCart();
+            if($del){
+                $this->emit('productsUpdated');
+                $this->emit('cartEdited', Auth::user()->id);
+                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Suppression réussie', 'message' => "L'article {$product->getName()} a été retiré de votre panier avec succès!", 'type' => 'success']);
+            }
+            else{
+                $this->dispatchBrowserEvent($product->livewire_product_alert_type, $product->livewire_product_errors);
+            }
+        }
+
+        $this->emit('productsUpdated');
+    }
+
 
     
 

@@ -9,7 +9,7 @@
                 </div>
                 {{-- search --}}
                 <div class="input-group my-3 w-75 mx-auto">
-                    <input type="text" wire:model="target" class="form-control bg-transparent border border-white text-white" placeholder="Taper un mot ou groupe de mots clé" aria-label="Chercher" aria-describedby="basic-addon2">
+                    <input type="text" wire:model.debounce.500ms="target" class="form-control bg-transparent border border-white text-white" placeholder="Taper un mot ou groupe de mots clé" aria-label="Chercher" aria-describedby="basic-addon2">
                     <div class="input-group-append cursor-pointer bg-primary">
                         <span class="input-group-text bg-primary text-white" id="basic-addon2">
                             <span class="fa fa-search mx-2"></span>
@@ -21,7 +21,7 @@
                     <div class="text-white mx-auto">
                         <div>
                             <h4>
-                                <span>{{$targetSize}}</span> résultats trouvés pour "<span class='text-warning'>{{$target}}</span>"
+                                <span> {{count($products)}} </span> résultats trouvés pour "<span class='text-warning'>{{$target}}</span>"
                             </h4>
                         </div>
                     </div>
@@ -30,16 +30,16 @@
         </div>
         </div>
     </div>
-    @if($allProducts->count() > 0)
+    @if(count($products) > 0)
         <div class="products">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <div class="mx-auto w-100 d-flex justify-content-center">
-                            <select wire:change="changeEvent" wire:model="categorySelected" class="bg-info form-select-lg text-white py-2" name="categories" id="categories">
+                            <select wire:change="changeCategory" wire:model="categorySelected" class="bg-info form-select-lg text-white py-2" name="categories" id="categories">
                                 <option class="text-dark" value="">Selectionner la catégorie à afficher</option>
                                 @foreach ($categories as $category)
-                                    <option value="{{$category->name}}">
+                                    <option value="{{$category->id}}">
                                         {{$category->name}}
                                     </option>
                                 @endforeach
@@ -52,34 +52,34 @@
                             @if ($categorySelected)
                                 <li class="@if(session()->has('sectionSelected') && session('sectionSelected') == 'allPosted') active @endif" data-filter="*"> 
                                     <span class="text-dark">Catégorie listée</span> : {{$categorySelected}} 
-                                    @if(count($allProducts) > 9)
-                                        <span>({{count($allProducts)}})</span>
+                                    @if(count($products) > 9)
+                                        <span>({{count($products)}})</span>
                                     @else
-                                        <span>(0{{count($allProducts)}})</span>
+                                        <span>(0{{count($products)}})</span>
                                     @endif
                                 </li> 
                             @else
                                 <li wire:click="changeSection('allPosted')" class="@if(session()->has('sectionSelected') && session('sectionSelected') == 'allPosted') active @endif" data-filter="*">Tous les articles 
-                                    @if(count($allProducts) > 9)
-                                        <span>({{count($allProducts)}})</span>
+                                    @if(count($products) > 9)
+                                        <span>({{count($products)}})</span>
                                     @else
-                                        <span>(0{{count($allProducts)}})</span>
+                                        <span>(0{{count($products)}})</span>
                                     @endif
                                 </li>
                             @endif
-                            <li class="@if(session()->has('sectionSelected') && session('sectionSelected') == 'lastPosted') active @endif" wire:click="lastPosted" data-filter=".des">Les plus récents</li>
-                            <li class="@if(session()->has('sectionSelected') && session('sectionSelected') == 'mostSeen') active @endif" wire:click="mostSeen" data-filter=".gras">Les plus visités</li>
+                            <li class="@if(session()->has('sectionSelected') && session('sectionSelected') == 'lastPosted') active @endif" wire:click="changeSection('lastPosted')" data-filter=".des">Les plus récents</li>
+                            <li class="@if(session()->has('sectionSelected') && session('sectionSelected') == 'mostSeen') active @endif" wire:click="changeSection('mostSeen')" data-filter=".gras">Les plus visités</li>
                             <li data-filter=".dev">Flash trocs</li>
                         </ul>
                         </div>
                     </div>
-                    @if($allProducts->count() > 0)
+                    @if(count($products) > 0)
                     <div class="col-md-12">
                         <div class="filters-content">
                             <div class="row grid">
                                 @foreach($products as $product)
                                     <div class="col-lg-4 col-md-4 all des ">
-                                        <div class="product-item @if(Auth::user() && Auth::user()->alreadyIntoCart($product->id)) shadow @endif">
+                                        <div class="product-item @if(Auth::user() && Auth::user()->__alreadyIntoMyCart($product->id)) shadow @endif">
                                             <a wire:click="setTargetedProduct({{$product->id}})" title="Cliquez pour charger l'article {{ $product->slug }}" href="{{route('product-profil', ['id' => $product->id])}}">
                                                 @if($product->images->count() > 0)
                                                     <img class="z-img-h-250" src="/storage/articlesImages/{{$product->getProductDefaultImageInGalery()}}" alt="image de l'article {{$product->slug}}">
@@ -91,7 +91,7 @@
                                                     <a ><h4>{{mb_substr($product->slug, 0, 15)}} ...</h4></a>
                                                     <h6>{{$product->price}} FCFA
                                                         @auth
-                                                            @if(Auth::user()->alreadyIntoCart($product->id))
+                                                            @if(Auth::user()->__alreadyIntoMyCart($product->id))
                                                                 <strong title="Vous suivez cet article: Vous l'avez ajouté à votre panier" class="text-success bi-cart-check-fill cursor-pointer"></strong>
                                                             @endif
                                                         @endauth
@@ -114,15 +114,11 @@
                                                                     <strong class="fa fa-heart mt-1"></strong>
                                                                 </strong>
                                                                 <strong class="mx-3">
-                                                                    <strong class="mt-1"> {{$allProductsComments[$product->id]->count()}} </strong>
+                                                                    <strong class="mt-1"> {{$product->comments->count()}} </strong>
                                                                     <strong class="fa fa-comments mt-1"></strong>
                                                                 </strong>
                                                                 <strong class="">
-                                                                    @if($targetedProduct && $targetedProductSeens && $targetedProduct->id == $product->id)
-                                                                        <strong class="mt-1"> {{$targetedProductSeens}} </strong>
-                                                                    @else
-                                                                        <strong class="mt-1"> {{$product->mySeens()}} </strong>
-                                                                    @endif
+                                                                    <strong class="mt-1"> {{$product->mySeens()}} </strong>
                                                                     <strong class="fa fa-eye mt-1"></strong>
                                                                 </strong>
                                                             </div>
@@ -143,7 +139,7 @@
                                                                     </i>
                                                                 </a>
                                                                 @auth
-                                                                    @if(Auth::user()->alreadyIntoCart($product->id))
+                                                                    @if(Auth::user()->__alreadyIntoMyCart($product->id))
                                                                         <a wire:click="deleteFromCart({{ $product->id }})" title="Mettre cet article dans mon panier" style="width: 45%" class="z-scale text-danger text-center">
                                                                             <i class="btn-danger py-1 pb-2 px-lg-1 px-xl-1 px-md-1 px-4 w-100 border border-warning"> 
                                                                                 <small class="w-75 mx-auto text-center d-inline-block">
@@ -183,33 +179,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mx-auto my-1 bg-transparent p-2 text-white w-50">
+                        {{$products->links()}}
+                    </div>
                     @else
                     <div class="d-flex flex-column mx-auto text-center border border-danger p-3 my-2">
                         <span class="fa fa-warning text-danger fa-4x"></span>
                         <h4 class="text-danger fa fa-2x">Ouups aucun article n'a encore été posté !!!</h4>
-                    </div>
-                    @endif
-                    @if($allProducts->count() > 0 && count($pages) > 1)
-                    <div class="col-md-12 ">
-                        <ul class="pages mb-3">
-                            @if($minPage > 0)
-                                <span>
-                                    <li wire:click="decreasePage()">
-                                    <a>
-                                        <i class="fa fa-angle-double-left"></i>
-                                    </a>
-                                    </li>
-                                </span>
-                            @endif
-                            @foreach ($pages as $page)
-                                @if($page + 1 <= $maxPage && $page + 1 > $minPage)
-                                    <li class="@if($active_page == $page) active @endif cursor-pointer" ><a wire:click="setActivePage({{$page}})" class="" >{{$page + 1}}</a></li>
-                                @endif
-                            @endforeach
-                            @if($maxPage < count($pages))
-                                <li wire:click="increasePage()"><a><i class="fa fa-angle-double-right"></i></a></li>
-                            @endif
-                        </ul>
                     </div>
                     @endif
                 </div>

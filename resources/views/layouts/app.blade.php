@@ -15,7 +15,8 @@
         @include("components.mycomponents.styles") {{-- chargement des styles --}}
 
         <!-- Scripts -->
-        <script src="{{ mix('js/app.js') }}" defer></script>
+
+
     </head>
     <body class="font-sans antialiased" style="background-color: lightslategray;">
         @include('components.mycomponents.loader') {{-- chargement du loader --}}
@@ -55,6 +56,16 @@
         @if(Route::currentRouteName() !== 'chat' && Route::currentRouteName() !== 'email-verification-notify' && Route::currentRouteName() !== 'force-email-verification-notify' && Route::currentRouteName() !== 'messenger')
             @livewire("footer") {{-- chargement du footer --}}
         @endif
+
+        <script src="//{{Request::getHost()}}:6001/socket.io/socket.io.js" ></script>
+        <script>
+            // var user = {{auth()->user()->id}};
+            // window.User = {
+            //     id: user,
+            // }
+            window.User = {!! json_encode(optional(auth()->user())->only('id', 'email')) !!}
+        </script>
+        <script src="{{ mix('js/app.js') }}" defer></script>
         @include("components.mycomponents.scripts") {{-- chargement des scripts js --}}
     </body>
 </html>

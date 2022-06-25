@@ -1,95 +1,46 @@
-@auth
-<div wire:ignore.self class="modal fade" aria-hidden="true" id="addFriendsModal" role="dialog" >
-    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-       <!-- Modal content-->
-       <div class="modal-content" style="position: absolute; top: 60px;z-index:5000;  ">
-          <div class="modal-header">
-             <div class="d-flex justify-content-between w-100">
-                <h4 class="text-uppercase mr-2 mt-1">
-                    Ajout des amis 
-                    @if (session()->has('message'))
-                        <span class="alert text-capitalize alert-{{session('type')}} ml-1">{{session('message')}}</span>
-                    @endif
-                </h4>
-                <div class="d-flex justify-content-end w-20">
-                   <div class="w-15 mx-0 px-0">
-                      <ul class="d-flex mx-0 px-0 mt-1 justify-content-between w-100">
-                         <li class=" mx-1"><a href="#"><img src="images/flag-up-1.png" width="100" alt="" /> </a></li>
-                         <li><a href="#"><img src="images/flag-up-2.png" width="100" alt="" /></a></li>
-                      </ul>
-                   </div>
-                   <div class="w-25"></div>
-                   <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
-                </div>
-             </div>
-          </div>
-          <div class="modal-body m-0 p-0 border border-warning" style="height: 500px; overflow: auto">
-             <div class=" bg-gra-01 ">
-                 <div class=" ">
-                     <div class="card card-3 border border-danger row w-100 p-0 m-0">
-                         <div class="card-body border p-0 border-success py-2 col-12 col-lg-6 col-xl-6">
-                            <h4 class="text-warning text-center p-1 m-0 py-3">Selectionnez vos amis</h4>
-                            <hr class="m-0 p-0 bg-white">
-                            <hr class="m-0 p-0 bg-warning">
-                            <hr class="m-0 p-0 bg-info">
-                            @if($users->count() > 0)
-                            <div class="w-100 m-0 p-0 mt-3 px-2" wire:poll="getUsers">
-                              <table class="w-100 m-0 p-0 table-striped table-bordered z-table text-white">
-                                  <tbody>
-                                        @foreach($users as $u)
-                                            @if(!Auth::user()->isMyFriend($u) && !Auth::user()->iFollowingButNotYet($u))
-                                            <tr>
-                                                <td class="py-2 text-capitalize">
-                                                    @if($u->current_photo)
-                                                        <a href="{{ route('chat', ['id' => $u->id])}}"class="d-flex text-white">
-                                                            <img width="30" class="border rounded-circle" src="/storage/profilPhotos/{{$u->currentPhoto()}}" alt="mon profil">
-                                                            <span class="mx-2">{{$u->name}}</span>
-                                                            @if($u->role == 'admin')
-                                                                <span class="fa fa-user-secret mt-1 text-white-50 float-right"></span>
-                                                            @endif
-                                                        </a>
-                                                    @else
-                                                        <a href="{{ route('chat', ['id' => $u->id])}}" class="d-flex text-white">
-                                                        <img width="30" class="border rounded-circle" src="{{$u->currentPhoto()}}" alt="mon profil">
-                                                        <span class="mx-2">{{$u->name}}</span>
-                                                        @if($u->role == 'admin')
-                                                            <span class="fa fa-user-secret text-white-50 mt-1 float-right"></span>
-                                                        @endif
-                                                        </a>
-                                                    @endif
-                                                </td>
-                                                <td class="text-center w-auto p-0">
-                                                    <span class="d-flex justify-content-around mx-auto w-100 m-0 p-0">
-                                                    <span wire:click="followThisUser({{$u->id}})" class="text-success  success-hover @isNotAdmin($u) col-5 @else col-12  @endisNotAdmin p-2 px-3 cursor-pointer border border-success fa fa-user-plus "></span>
-                                                        @isNotAdmin($u)
-                                                            <span class="text-warning warning-hover col-5 p-2 px-3 cursor-pointer border border-warning fa fa-key"></span>
-                                                        @endisNotAdmin
-                                                    </span>
-                                                </td>
-                                            </tr>
+<x-z-modal-generator :icon="'fa fa-2x bi-person-plus'" :modalName="'addFriendsModal'" :modalHeaderTitle="'Ajout des amis '" :modalBodyTitle=" 'Ajout des amis '">
+    @if(Auth::user() && $users->count() > 0)
+        <div class="w-100 m-0 p-0 mt-3 px-2">
+            <table class="w-100 m-0 p-2 table-striped table-bordered z-table text-white">
+                <tbody>
+                    @foreach($users as $u)
+                        @if(!Auth::user()->isMyFriend($u) && !Auth::user()->iFollowingButNotYet($u))
+                        <tr class="px-2">
+                            <td class="py-2 px-2 text-capitalize">
+                                @if($u->current_photo)
+                                    <a href="{{ route('chat', ['id' => $u->id])}}"class="d-flex text-white">
+                                        <img width="30" class="border rounded-circle" src="/storage/profilPhotos/{{$u->currentPhoto()}}" alt="mon profil">
+                                        <span class="mx-2">{{$u->name}}</span>
+                                        @if($u->role == 'admin')
+                                            <span class="fa fa-user-secret mt-1 text-white-50 float-right"></span>
                                         @endif
-                                      @endforeach
-                                  </tbody>
-                                  </tbody>
-                              </table>                                                     
-                            </div>
-                            @else
-                            <div class="d-flex flex-column mx-auto text-center p-3 mt-4">
-                               <span class="fa fa-warning text-warning fa-4x"></span>
-                               <h4 class="text-warning fa fa-3x">Ouups aucun utilisateur disponible !!!</h4>
-                            </div>
-                            @endif
-                         </div>
-                     </div>
-                 </div>
-             </div>
-          </div>
-          <div class="modal-footer mb-2">
-              Veuillez selectionner les utilisateurs que vous souhaiter suivre. <br>
-              Une notification leur seront envoyées. Ensuite après leur confirmation, vous les verrez dans la liste de vos followers!
-              Mais sachez que vous devriez en retour aussi accepter leur invitation!
-          </div>
-       </div>
-    </div>
- </div>
- @endauth
+                                    </a>
+                                @else
+                                    <a href="{{ route('chat', ['id' => $u->id])}}" class="d-flex text-white">
+                                    <img width="30" class="border rounded-circle" src="{{$u->currentPhoto()}}" alt="mon profil">
+                                    <span class="mx-2">{{$u->name}}</span>
+                                    @if($u->role == 'admin')
+                                        <span class="fa fa-user-secret text-white-50 mt-1 float-right"></span>
+                                    @endif
+                                    </a>
+                                @endif
+                            </td>
+                            <td wire:click="followThisUser({{$u->id}})" class="text-success  z-scale text-center w-auto p-0 cursor-pointer">
+                                <span class="d-flex justify-content-around mx-auto w-100 m-0 p-0">
+                                <span  class="p-2 px-3 fa fa-user-plus "></span>
+                            </td>
+                        </tr>
+                    @endif
+                    @endforeach
+                </tbody>
+                </tbody>
+            </table>                                                     
+        </div>
+        @else
+        <div class="d-flex flex-column mx-auto text-center p-3 mt-4">
+            <span class="fa fa-warning text-warning fa-4x"></span>
+            <h4 class="text-warning fa fa-3x">Ouups aucun utilisateur disponible !!!</h4>
+        </div>
+        @endif
+    <x-z-modal-dismisser>Annuler</x-z-modal-dismisser>
+</x-z-modal-generator>

@@ -58,7 +58,7 @@
                                             <a ><h4>{{mb_substr($product->slug, 0, 15)}} ...</h4></a>
                                             <h6>{{$product->price}}
                                                 @auth
-                                                    @if(Auth::user()->alreadyIntoCart($product->id))
+                                                    @if(Auth::user()->__alreadyIntoMyCart($product->id))
                                                         <strong title="Vous suivez cet article: Vous l'avez ajouté à votre panier" class="text-success bi-cart-check-fill cursor-pointer"></strong>
                                                     @endif
                                                 @endauth
@@ -110,7 +110,7 @@
                                                             </i>
                                                         </a>
                                                         @auth
-                                                            @if(Auth::user()->alreadyIntoCart($product->id))
+                                                            @if(Auth::user()->__alreadyIntoMyCart($product->id))
                                                                 <a wire:click="deleteFromCart({{ $product->id }})" title="Mettre cet article dans mon panier" style="width: 45%" class="z-scale text-danger text-center">
                                                                     <i class="btn-danger py-1 pb-2 px-lg-1 px-xl-1 px-md-1 px-4 w-100 border border-warning"> 
                                                                         <small class="w-75 mx-auto text-center d-inline-block">
@@ -173,11 +173,6 @@
                     [
                     'comments' => $lastComments
                     ])
-                </div>
-                <div class="col-12">
-                    <div>
-                        @livewire('product-images-galery')
-                    </div>
                 </div>
             </div>
         </div>

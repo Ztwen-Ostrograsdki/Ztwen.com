@@ -16,6 +16,7 @@ class CreateUserAdminKeysTable extends Migration
         Schema::create('user_admin_keys', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
             $table->string('key');
+            $table->boolean('advanced')->default(false);
             $table->foreign('user_id')
                   ->references('id')
                   ->on('users')

@@ -256,7 +256,7 @@
                             @if($category)
                                 @if($category->products->count() > 0)
                                     <div class="zw-85 mx-auto my-1">
-                                        @foreach ($products as $p)
+                                        @foreach ($category->products as $p)
                                             @include("livewire.components.product.product-profil-component", [
                                                 'product' => $p
                                             ])

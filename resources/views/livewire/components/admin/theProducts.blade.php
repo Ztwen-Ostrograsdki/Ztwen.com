@@ -1,6 +1,6 @@
 @if($products->count() > 0)
 <div class="w-100 m-0 p-0 mt-3">
-    <table class="w-100 m-0 p-0 table-striped z-table-border border z-table text-white mb-2">
+    <table class="w-100 m-0 p-0 px-1 table-striped z-table-border border z-table text-white mb-2">
         <thead class="text-white text-center">
             <th class="py-2 text-center border-right">#ID</th>
             <th class="">L'article</th>
@@ -14,7 +14,7 @@
             @foreach($products as $key => $p)
                 <tr class="">
                     <td class="text-center border-right">{{$key + 1}}</td>
-                    <td class="p-0 m-0">
+                    <td class="m-0 pl-1">
                         <a class="text-white w-75 p-0 m-0" href="{{route('product-profil', ['id' => $p->id])}}">
                             @if($p->images->count() > 0)
                                 <img class="m-0 p-0 d-inline-block border ml-1 my-1" width="50" src="/storage/articlesImages/{{$p->getProductDefaultImageInGalery()}}" alt="image de l'article {{$p->slug}}">
@@ -22,12 +22,12 @@
                                 <img class="m-0 p-0 d-inline-block border ml-1 my-1" width="50" src="{{$p->getRandomDefaultImage()}}" alt="image de l'article {{$p->slug}}">
                             @endif
                             <span class="">
-                                {{ mb_substr($p->getName(), 0, 14) }}
+                                {{ mb_substr($p->getName(), 0, 30) }}
                             </span>
                         </a>
                         <span wire:click="editAProduct({{$p->id}})" class="mt-3 mr-1 cursor-pointer float-right fa fa-edit text-white" data-toggle="modal" data-dismiss="modal" data-target="#EditCategoryModal"></span>
                     </td>
-                    <td class="p-0 mx-2 pl-2">
+                    <td class="mx-2 pl-2">
                         {{ $p->price }}
                     </td>
                     <td class="text-center">
@@ -38,13 +38,27 @@
                             <x-slot name="trigger">
                                 <x-responsive-nav-link class="text-white-50 cursor-pointer">
                                     <span class="fa fa-chevron-down text-success"></span> 
-                                        Aucune demande
+                                    @if($carts[$p->id])
+                                        {{count($carts[$p->id])}}
+                                    @else
+                                        Aucune 
+                                    @endif
                                 </x-responsive-nav-link>
                             </x-slot>
                             <x-slot name="content" :class="'text-left p-0 m-0'">
+                                @if($carts[$p->id])
+                                    @foreach ($carts[$p->id] as $cart)
+                                        <x-dropdown-link wire:click="manageCart({{$cart['cart']->id}})" class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                            <span class="fa mr-3">
+                                                {{$cart['user']->name}} en a fait {{$cart['cart']->quantity}}
+                                            </span>
+                                        </x-dropdown-link>
+                                    @endforeach
+                                @else
                                     <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
-                                        <span class="fa  mr-3"></span>Aucune demande pour cet article
+                                        <span class="fa mr-3"></span>Aucune demande pour cet article
                                     </x-dropdown-link>
+                                @endif
                             </x-slot>
                         </x-dropdown>
                     </td>

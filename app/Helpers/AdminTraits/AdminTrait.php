@@ -2,12 +2,15 @@
 
 namespace App\Helpers\AdminTraits;
 
-use Livewire\Component;
 use Illuminate\Support\Str;
 use App\Models\UserAdminKey;
 use App\Models\MyNotifications;
 use Illuminate\Support\Facades\Hash;
 
+
+/**
+ * Manage all about the admins
+ */
 trait AdminTrait{
 
     /**
@@ -57,7 +60,12 @@ trait AdminTrait{
         session()->flush();
     }
 
-
+     /**
+     * This method is used to send the weak key to an admin after the key has been generated
+     *
+     * @param string $key
+     * @return bool
+     */
     public function __sendKey($key)
     {
         $make = MyNotifications::create([
@@ -74,7 +82,33 @@ trait AdminTrait{
         }
     }
 
+    /**
+     * This method is used to send the adavanced or strong key to an admin after the key has been generated
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function __sendAdvancedKey($key)
+    {
+        $make = MyNotifications::create([
+            'content' => "Salut! Je vous envoie la clé des requêtes irreversibles dans la page d'administration. Clé: "  . $key,
+            'user_id' =>  auth()->user()->id,
+            'target' => "Admin-Advanced-Key",
+            'target_id' => null
+        ]);
+        if($make){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
+    /**
+     * Use to generate a weak key
+     *
+     * @return void
+     */
     public function __generateAdminKey()
     {
         $key = Str::random(4);
@@ -84,6 +118,7 @@ trait AdminTrait{
                 'key' => Hash::make($key)
             ]);
             if($make){
+                $this->__destroyStrongKeys();
                 $this->__refreshNotifications();
                 return $this->__sendKey($key);
             }
@@ -95,6 +130,7 @@ trait AdminTrait{
                 'key' =>  Hash::make($key)
             ]);
             if($make){
+                $this->__destroyStrongKeys();
                 $this->__refreshNotifications();
                 return $this->__sendKey($key);
             }
@@ -102,13 +138,60 @@ trait AdminTrait{
         }
     }
 
+    /**
+     * Use to generate a strong key
+     *
+     * @return bool
+     */
+    public function __generateAdvancedRequestKey()
+    {
+        $key = Str::random(4);
+        if($this->hasAdminAdvancedKey()){
+            $make = $this->userAdminKey->forceFill([
+                'user_id' => $this->id,
+                'advanced' => 1,
+                'key' => Hash::make($key)
+            ])->save();
+            if($make){
+                $this->__destroyWeakKeys();
+                $this->__refreshNotifications();
+                return $this->__sendAdvancedKey($key);
+            }
+            return false;
+        }
+        else{
+            $make = UserAdminKey::create([
+                'user_id' => $this->id,
+                'key' =>  Hash::make($key)
+            ]);
+            $make->forceFill(['advanced' => true])->save();
+            if($make){
+                $this->__destroyWeakKeys();
+                $this->__refreshNotifications();
+                return $this->__sendAdvancedKey($key);
+            }
+            return false;
+        }
+    }
 
+
+    /**
+     * Use to regenerate a weak key
+     *
+     * @return void
+     */
     public function __regenerateAdminKey()
     {
         return $this->__generateAdminKey();
     }
 
 
+    /**
+     * Use to destroy the current admin key and flush a session authentication
+     * The admin can't access to the admin 
+     *
+     * @return void
+     */
     public function __destroyAdminKey()
     {
         if($this->hasAdminKey()){
@@ -118,7 +201,39 @@ trait AdminTrait{
         $this->__refreshNotifications();
         $this->__backToUserProfilRoute();
     }
+    
+    /**
+     * Use to destroy all admin keys that aren't avanced keys
+     *
+     * @return void
+     */
+    public function __destroyWeakKeys()
+    {
+        $weak_keys = UserAdminKey::where('user_id', $this->id)->where('advanced', false);
+        if($weak_keys->get()->count() > 0){
+            $weak_keys->delete();
+        }
+    }
 
+
+    /**
+     * Use to destroy all advanced adamin keys
+     *
+     * @return void
+     */
+    public function __destroyStrongKeys()
+    {
+        $strong_keys = UserAdminKey::where('user_id', $this->id)->where('advanced', true);
+        if($strong_keys->get()->count() > 0){
+            $strong_keys->delete();
+        }
+    }
+
+    /**
+     * Determine if an admin has a weak admin key
+     *
+     * @return boolean
+     */
     public function hasAdminKey()
     {
         $key = $this->userAdminKey;
@@ -129,10 +244,30 @@ trait AdminTrait{
         return false;
     }
 
+    /**
+     * Determine if an admin has a strong admin key or an advanced admin key
+     *
+     * @return boolean
+     */
+    public function hasAdminAdvancedKey()
+    {
+        $key = $this->userAdminKey;
 
+        if($key && $key->advanced){
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Use to refresh all notification about the admin key: strong and weak
+     *
+     * @return void
+     */
     public function __refreshNotifications()
     {
-        $notifications = MyNotifications::where('user_id', $this->id)->where('target', 'Admin-Key');
+        $notifications = MyNotifications::where('user_id', $this->id)->where('target', 'Admin-Key')->orWhere('target', 'Admin-Advanced-Key');
         if($notifications->get()->count() > 0){
             return $notifications->delete();
         }

@@ -3,40 +3,30 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use App\Events\NewFollowerEvent;
+use Illuminate\Support\Facades\Auth;
 
 class FollowingSystem extends Component
 {
 
-    public $users;
-    protected $listeners = ['updateRequests'];
+    protected $listeners = ['onUpdateUsersList_L_Event' => 'onUpdateUsersList'];
+    public $counter = 0;
 
     
     public function render()
     {
-        return view('livewire.following-system');
-    }
-
-
-    public function getUsers()
-    {
+        $users = [];
         if(Auth::user()){
-            $this->users = User::all()->except([Auth::user()->id]);
+            $users = User::all()->except([Auth::user()->id]);
         }
-        else{
-            // $this->users = User::all()->except([1]);
-        }
+        return view('livewire.following-system', compact('users'));
     }
 
-    public function booted()
-    {
-        $this->getUsers();
-    }
 
-    public function updateRequests()
+    public function onUpdateUsersList()
     {
-        $this->booted();
+        $this->reset('counter');
     }
 
 
@@ -48,7 +38,9 @@ class FollowingSystem extends Component
             return abort(403, "Vous n'êtes pas authorisé");
         }
         if(User::find($auth)->__followThisUser($user->id)){
-            $this->emit('updateRequests');
+            $this->emit('IsendNewFriendRequest_L_Event');
+            $event = new NewFollowerEvent($user, 'added');
+            broadcast($event);
         }
         else{
             $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'warning', 'message' => "Vous ne pouvez pas effectuer cette requête"]);

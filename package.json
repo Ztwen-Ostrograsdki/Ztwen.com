@@ -32,6 +32,7 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "laravel-echo": "^1.12.0",
         "sweetalert2": "^11.3.10",
         "vue-router": "^3.5.3"
     }

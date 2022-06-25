@@ -37,7 +37,7 @@
                      </div>
                      <hr class="m-0 p-0 w-100 bg-white">
                      <div class="m-0 py-2 @if($adminTagName == 'admins') z-admin-active @endif px-2">
-                        <div wire:click="setActiveTag('admins', Administrateurs')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
+                        <div wire:click="setActiveTag('admins', 'Administrateurs')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-person-workspace"></span>
                            <span class="w-100 m-0 d-none d-xl-inline">Administrateurs</span>
                            @if ($admins->count() > 9)
@@ -102,11 +102,56 @@
                      </div>
                      <hr class="m-0 p-0 w-100 bg-white">
                      <div class="m-0 py-2 px-2">
+                        @if(Auth::user()->hasAdminAdvancedKey())
+                        <x-dropdown align="right"  width="80" class=" m-0 p-0 bg-secondary">
+                            <x-slot name="trigger">
+                                <x-responsive-nav-link class="text-white cursor-pointer m-0 p-0">
+                                    <span class="bi-tools"></span>
+                                    Gestion
+                                </x-responsive-nav-link>
+                            </x-slot>
+                            <x-slot name="content" :class="'text-left p-0 m-0 text-dark'">
+                                <x-dropdown-link title="Actions sur les articles" wire:click="advancedRequests('articles')" class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                       <span class="bi-cart-dash mr-1"></span>
+                                       <span>Vider les articles</span>
+                                </x-dropdown-link>
+                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                    <span class="bi-tags mr-1"></span>
+                                    <span>Vider les Catégories</span>
+                                </x-dropdown-link>
+                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                    <span class="bi-people mr-1"></span>
+                                    <span>Vider les Utilisateurs</span>
+                                </x-dropdown-link>
+                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                    <span class="fa fa-user-secret mr-1"></span>
+                                    <span>Vider les admins</span>
+                                </x-dropdown-link>
+                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                    <span class="fa fa-comment mr-1"></span>
+                                    <span>Vider les commentaires</span>
+                                </x-dropdown-link>
+                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                    <span class="bi-key mr-1"></span>
+                                    <span>Vider toutes clées</span>
+                                </x-dropdown-link>
+                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                    <span class="bi-table mr-1"></span>
+                                    <span>Vider toutes les tables</span>
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                        @endif
+                     </div>
+                     <hr class="m-0 p-0 w-100 bg-white">
+                     <div class="m-0 py-2 px-2">
                         <div class="d-flex flex-column w-100 cursor-pointer m-0 p-0 justify-content-around">
-                           <span title="Détruire la clé de session d'administration" wire:click="destroyAdminSessionKey" class="cursor-pointer py-1 border rounded px-2">
-                                 <span class="bi-trash"></span>
-                                 <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Détruire la clé</span>
+                           @if(!Auth::user()->hasAdminAdvancedKey())
+                            <span title="Enclancher une procédure avancée irreversible. Neccessite une clé de confirmation" wire:click="generateAdvancedRequestsKey" class="cursor-pointer py-1 border my-1 rounded px-2">
+                                <span class="bi-tools"></span>
+                                <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Req. avancées</span>
                            </span>
+                           @endif
                            <span title="Regénérer une clé de session d'administration" wire:click="regenerateAdminKey" class="cursor-pointer py-1 my-1 border rounded px-2">
                                  <span class="bi-key"></span>
                                  <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Générer une clé</span>
@@ -115,7 +160,11 @@
                               <span class="bi-eye"></span>
                               <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Afficher la clé</span>
                            </span>
-                           <span title="Acceder à mon profil" class="cursor-pointer border rounded my-1 py-1">
+                           <span title="Détruire la clé de session d'administration" wire:click="destroyAdminSessionKey" class="cursor-pointer py-1 my-1 border rounded px-2">
+                              <span class="bi-trash"></span>
+                              <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Détruire la clé</span>
+                           </span>
+                           <span title="Acceder à mon profil" class="cursor-pointer border rounded mb-1 py-1">
                               <a class=" w-100 text-white py-2 px-2" href="{{route('user-profil', ['id' => auth()->user()->id])}}">
                                  <span class="bi-person "></span>
                                  <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Mon profil</span>
@@ -176,11 +225,11 @@
                                  @if($comments->count() > 0)
                                        <div class="d-flex flex-column p-1 justify-content-between mx-auto w-100">
                                           <div class="w-100 row p-0 m-0 mx-auto">
-                                             <span title="Supprimer les commentaires non approuvés" wire:click="deleteNotApprovedComments" style="font-size: 17px" class="btn-success col-5 border mx-1 px-2 border-white cursor-pointer text-white ">
+                                             <span title="Supprimer les commentaires non approuvés" style="font-size: 17px" class="btn-success col-5 border mx-1 px-2 border-white cursor-pointer text-white ">
                                                 <span class="fa fa-trash cursor-pointer text-white"></span>
                                                 <span class="">Vider</span>
                                              </span>
-                                             <span title="Supprimer tous les commentaires" wire:click="deleteAllComments" style="font-size: 17px" class="btn-danger mx-1 border px-2 col-5 border-white cursor-pointer text-white ">
+                                             <span title="Supprimer tous les commentaires" style="font-size: 17px" class="btn-danger mx-1 border px-2 col-5 border-white cursor-pointer text-white ">
                                                 <span class="fa fa-trash cursor-pointer text-white"></span>
                                                 <span class="">Vider</span>
                                              </span>
@@ -219,14 +268,12 @@
                   @include('livewire.components.admin.thelister', 
                         [
                            'tag' => $adminTagName, 
-                           'users' => $users,
-                           'unconfirmed' => $unconfirmed,
-                           'categories' => $categories
                         ])
                </div>
             </div>
          </div>   
       </div>
    </div>
-   
+   @livewire('user-cart-manager')
+   @livewire('advanced-requests-modal')
 </div>

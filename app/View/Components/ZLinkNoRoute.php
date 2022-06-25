@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class z-input-select extends Component
+class ZLinkNoRoute extends Component
 {
     /**
      * Create a new component instance.
@@ -23,6 +23,6 @@ class z-input-select extends Component
      */
     public function render()
     {
-        return view('components.z-input-select');
+        return view('components.z-link-no-route');
     }
 }

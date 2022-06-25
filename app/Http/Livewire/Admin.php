@@ -7,10 +7,9 @@ use App\Models\Comment;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
-use Illuminate\Support\Str;
+use App\Models\UserAdminKey;
 use App\Models\MyNotifications;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Model;
 use App\Helpers\ActionsTraits\ModelActionTrait;
 
 
@@ -21,11 +20,12 @@ class Admin extends Component
 
     protected $listeners = [
         'newUserAdded', 
-        'refreshUsersList', 
         'newCommentAdd', 
+        'productUpdated',
         'newProductCreated',
+        'thisAuthenticationIs',
+        'categoriesUpdated',
         'newCategoryCreated',
-        'thisAuthenticationIs'
     ];
     public $active = 'active';
     public $search;
@@ -36,20 +36,13 @@ class Admin extends Component
     public $show_token = false;
     public $adminTagName;
     public $adminTagTitle;
-    public $users;
-    public $unconfirmed;
     public $adminTrashedData = false;
-    public $admins;
-    public $comments;
-    public $categories;
-    public $products;
     public $role;
     public $currentUsersProfil;
     public $classMapping;
 
-    public function mount()
+    public function initialiseData()
     {
-        $this->user = auth()->user();
         if(session()->has('adminTagName') && session()->has('adminTagTitle')){
             $this->adminTagName = session('adminTagName');
             $this->adminTagTitle = session('adminTagTitle');
@@ -58,24 +51,20 @@ class Admin extends Component
             $this->adminTagName = "notifications";
             $this->adminTagTitle = "Notifications";
         }
-        if(session()->has('adminTrashedData') && session('adminTrashedData')){
-            $this->adminTrashedData = session('adminTrashedData');
-            $this->products = Product::onlyTrashed()->orderBy('slug', 'asc')->get();
-            $this->categories = Category::onlyTrashed()->orderBy('name', 'asc')->get();
-            $this->admins = User::onlyTrashed()->where('role', 'admin')->orderBy('name', 'asc')->get();
-            $this->users = User::onlyTrashed()->orderBy('name', 'asc')->get();
-            $this->unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->get();
-        }
-        else{
-            $this->users = User::orderBy('name', 'asc')->get();
-            $this->unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->get();
-            $this->categories = Category::orderBy('name', 'asc')->get();
-            $this->admins = User::where('role', 'admin')->orderBy('name', 'asc')->get();
-            $this->products = Product::orderBy('slug', 'asc')->get();
-        }
-        $this->comments = Comment::all()->reverse();
+    }
 
-        $this->getUsers();
+
+    public function render()
+    {
+        $this->initialiseData();
+        $users = $this->getUsers();
+        $carts = $this->getCarts();
+        $admins = $this->getAdmins();
+        $products = $this->getProducts();
+        $categories = $this->getCategories();
+        $comments = $this->getComments();
+        $unconfirmed = $this->getUnconfirmedUsers();
+        return view('livewire.admin', compact('users', 'carts', 'admins', 'comments', 'categories', 'products', 'unconfirmed'));
     }
 
     public function toogleSearchBanner()
@@ -121,19 +110,12 @@ class Admin extends Component
                 
             }
         }
-        else{
-            $this->mount();
-        }
-    }
-
-    public function render()
-    {
-        return view('livewire.admin');
     }
 
     public function regenerateAdminKey()
     {
-        $make = $this->user->__regenerateAdminKey();
+        $user = User::find(auth()->user()->id);
+        $make = $user->__regenerateAdminKey();
         if($make){
             $this->dispatchBrowserEvent('Toast', ['type' => 'success', 'title' => 'CLE MODIFIEE AVEC SUCCES',  'message' => "La clé a été générée avec succès"]);
         }
@@ -142,19 +124,29 @@ class Admin extends Component
         }
     }
     
+    public function generateAdvancedRequestsKey()
+    {
+        $user = User::find(auth()->user()->id);
+        $make = $user->__generateAdvancedRequestKey();
+        if($make){
+            $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'info', 'title' => "LA CLE", 'message' => $user->__getAdvancedKeyNotification()]);
+        }
+    }
+
     public function displayAdminSessionKey()
     {
-        $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'info', 'title' => "LA CLE", 'message' => $this->user->__getKeyNotification()]);
+        $user = User::find(auth()->user()->id);
+        $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'info', 'title' => "LA CLE", 'message' => $user->__getKeyNotification()]);
     }
 
     public function destroyAdminSessionKey()
     {
-        return $this->user->__destroyAdminKey();
+        return User::find(auth()->user()->id)->__destroyAdminKey();
     }
 
     public function newUserAdded($user)
     {
-        $this->mount();
+
     }
 
     public function setActiveTag($name, $title)
@@ -165,32 +157,9 @@ class Admin extends Component
         session()->put('adminTagTitle',$title);
     }
 
-
-    public function getTheTrashedData()
-    {
-        $this->adminTrashedData = true;
-        session()->put('adminTrashedData', $this->adminTrashedData);
-        $this->products = Product::onlyTrashed()->orderBy('slug', 'asc')->get();
-        $this->categories = Category::onlyTrashed()->orderBy('name', 'asc')->get();
-        $this->users = User::onlyTrashed()->orderBy('name', 'asc')->get();
-        $this->admins = User::onlyTrashed()->where('role', 'admin')->orderBy('name', 'asc')->get();
-    }
-
-    public function getTheActiveData()
-    {
-        $this->adminTrashedData = false;
-        session()->put('adminTrashedData', $this->adminTrashedData);
-        $this->users = User::orderBy('name', 'asc')->get();
-        $this->categories = Category::orderBy('name', 'asc')->get();
-        $this->admins = User::where('role', 'admin')->orderBy('name', 'asc')->get();
-        $this->products = Product::orderBy('slug', 'asc')->get();
-    }
-
-
     public function openSingleChat($receiver_id)
     {
         $this->emit('newSingleChat', $receiver_id);
-        $this->mount();
     }
 
     public function toogle_u_u($key)
@@ -199,38 +168,21 @@ class Admin extends Component
         $this->u_u_key = $key;
     }
 
-
-    public function refreshUsersList()
+    public function manageCart($cart_id)
     {
-        return $this->getUsers();
+        $this->emit('openUserCartManager', $cart_id);
     }
 
-    public function getUsers()
-    {
-        $data = User::all();
-        foreach ($data as $u) {
-            if ($u->currentPhoto() !== []) {
-                $this->currentUsersProfil[$u->id] = $u->currentPhoto();
-                
-            }
-            else{
-                $this->currentUsersProfil[$u->id] = '';
-            }
-        }
-        return $this->users = $data;
-    }
-
+    
     public function updateUserRole($userId, $role)
     {
         $user = User::find($userId);
         if($user){
             $user->update(['role' => $role]);
-            $this->emit("refreshUsersList");
             $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'utilisateur $user->name a désormais un rôle $role",  'title' => 'Réussie']);
         }else{
             return abort(403, "Vous n'êtes pas authorisé!");
         }
-        $this->mount();
     }
 
     public function verifiedThisUserMail($user_id)
@@ -240,7 +192,6 @@ class Admin extends Component
             if(!$user->hasVerifiedEmail()){
                 $user->markEmailAsVerified();
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'utilisateur {$user->name} a été confirmé avec succès",  'title' => 'Email confirmé']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'warning', 'message' => "L'utilisateur {$user->name} a déjà confirmé son adresse mail",  'title' => 'Echec']);
@@ -259,7 +210,6 @@ class Admin extends Component
             if($user->deleteThisModel(false)){
                 $this->emit('aUserHasBeenDeleted', $user->id);
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'utilisateur {$user->name} a été envoyé dans la corbeile avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La suppression de l''utilisateur {$user->name} a échoué",  'title' => 'Echec']);
@@ -272,7 +222,6 @@ class Admin extends Component
         if($user){
             if($user->__blockThisUser()){
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'utilisateur {$user->name} a été bloqué avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "Le blocage de l''utilisateur {$user->name} a échoué",  'title' => 'Echec']);
@@ -286,7 +235,6 @@ class Admin extends Component
             if($user->restoreThisModel()){
                 $this->emit('aUserHasBeenRestored', $user->id);
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'utilisateur {$user->name} a été restauré avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La restauration de l''utilisateur {$user->name} a échoué",  'title' => 'Echec']);
@@ -299,7 +247,6 @@ class Admin extends Component
         if($user){
             if($user->__unblockThisUser()){
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'utilisateur {$user->name} a été débloqué avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "Le déblocage de l''utilisateur {$user->name} a échoué",  'title' => 'Echec']);
@@ -315,7 +262,6 @@ class Admin extends Component
                 $user->__deletedMyFollowSystemRequests();
                 $this->emit('aUserHasBeenDeleted', $user->id);
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'utilisateur {$user->name} a été supprimé définivement avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La suppression définitive de l''utilisateur {$user->name} a échoué",  'title' => 'Echec']);
@@ -328,20 +274,14 @@ class Admin extends Component
 
     public function newCommentAdd($product_id)
     {
-        $this->comments = Comment::all()->reverse();
+
     }
     
-    public function refreshCommentsData()
-    {
-        $this->comments = Comment::all()->reverse();
-    }
-
     public function approvedAComment($comment_id)
     {
         $comment = Comment::where('id', $comment_id)->firstOrFail();
         if($comment){
             $comment->update(['approved' => true]);
-            $this->comments = Comment::all()->reverse();
             if($comment->user->id !== 1 && $comment->user->role !== 'admin'){
                 MyNotifications::create([
                     'content' => "Votre commentaire : {$comment->content}; a été approuvé!",
@@ -364,7 +304,6 @@ class Admin extends Component
         if($comment){
             if($comment->deleteThisModel(false)){
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "Le commentaire posté par {$comment->user->name} a été supprimé avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La suppression du commentaire a échoué",  'title' => 'Echec']);
@@ -374,14 +313,17 @@ class Admin extends Component
     
     public function deleteNotApprovedComments()
     {
-        $this->mount();
     }
 
     public function deleteAllComments()
     {
-        $this->classMapping = Comment::class;
-        $this->emit('__throwAuthenicationModal');
-        $this->mount();
+        // $this->emit('__throwAuthenticationModal');
+    }
+
+    public function advancedRequests($classMapping)
+    {
+        $this->classMapping = $classMapping;
+        $this->emit('startAdvancedRequests', $classMapping);
     }
 
 
@@ -390,16 +332,24 @@ class Admin extends Component
         if($response){
             $this->__truncateModel($this->classMapping, $response);
             $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success ', 'message' => "Les données de la classe {{$this->classMapping}} ont été refraichies avec succès!",  'title' => "Authentification approuvée"]);
-            $this->mount();
         }
         else{
             $this->dispatchBrowserEvent('FireAlert', ['type' => 'error', 'message' => "Vous n'êtes pas authorisé",  'title' => "Echec d'authentification"]);
-            $this->mount();
         }
     }
 
 
     // CATEGORIES
+
+    public function newCategoryCreated($category_id = null)
+    {
+    }
+    public function categoriesUpdated()
+    {
+    }
+
+
+
     public function deleteACategory($category_id)
     {
         $category = Category::find($category_id);
@@ -413,7 +363,6 @@ class Admin extends Component
                 }
                 $this->emit('aCategoryHasBeenDeleted', $category->id);
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "La catégorie {$category->name} a été envoyé dans la corbeile avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La suppression de la catégorie {$category->name} a échoué",  'title' => 'Echec']);
@@ -433,7 +382,6 @@ class Admin extends Component
                 }
                 $this->emit('aCategoryHasBeenRestored', $category->id);
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "La catégorie {$category->name} a été restauré avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La restauration de la catégorie {$category->name} a échoué",  'title' => 'Echec']);
@@ -467,7 +415,6 @@ class Admin extends Component
             if($product->deleteThisModel(false)){
                 $this->emit('aProductHasBeenDeleted', $product->id);
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'article {$product->getName()} a été envoyé dans la corbeile avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La suppression de l'article {$product->getName()} a échoué",  'title' => 'Echec']);
@@ -482,7 +429,6 @@ class Admin extends Component
             if($product->deleteThisModel(true)){
                 $this->emit('aProductHasBeenDeleted', $product->id);
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'article {$product->getName()} a été supprimé définivement avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La suppression de l'article {$product->getName()} a échoué",  'title' => 'Echec']);
@@ -497,7 +443,6 @@ class Admin extends Component
             if($product->deleteThisModel(false)){
                 $this->emit('aProductHasBeenDeleted', $product->id);
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'article {$product->getName()} a été masqué avec succès",  'title' => 'Réussie']);
-                $this->mount();
             }
             else{
                 $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "Le retrait de l'article {$product->getName()} a échoué",  'title' => 'Echec']);
@@ -534,15 +479,14 @@ class Admin extends Component
 
     }
 
-    public function newProductCreated()
+    public function newProductCreated($product_id = null)
     {
-        $this->products = Product::orderBy('slug', 'asc')->get();
     }
 
-    public function newCategoryCreated($category_id = null)
+    public function productUpdated($product_id)
     {
-        $this->categories = Category::orderBy('name', 'asc')->get();
     }
+
 
     public function updateProductGalery($product_id)
     {
@@ -555,6 +499,104 @@ class Admin extends Component
             $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'error ', 'message' => "Cet article n'existe pas ou déjà été supprimé!",  'title' => 'Echec']);
         }
         
+    }
+
+
+
+    public function getCarts()
+    {
+        $carts = [];
+        $products = Product::all();
+        foreach($products as $p){
+            $p_carts = $p->shoppingBags;
+            if($p_carts->count() > 0){
+                $the_carts = [];
+                foreach ($p_carts as $c) {
+                    $the_carts[$c->user->id] = ['user' => $c->user, 'cart' => $c];
+                }
+                $carts[$p->id] = $the_carts;
+            }
+            else{
+                $carts[$p->id] = null;
+            }
+        }
+        return $carts;
+    }
+
+    public function getCategories()
+    {
+        $categories = [];
+        if(session()->has('adminTrashedData') && session('adminTrashedData')){
+            $this->adminTrashedData = session('adminTrashedData');
+            $categories = Category::onlyTrashed()->orderBy('name', 'asc')->get();
+        }
+        else{
+            $categories = Category::orderBy('name', 'asc')->get();
+        }
+        return $categories;
+    }
+
+
+    public function getProducts()
+    {
+        $products = [];
+        if(session()->has('adminTrashedData') && session('adminTrashedData')){
+            $this->adminTrashedData = session('adminTrashedData');
+            $products = Product::onlyTrashed()->orderBy('slug', 'asc')->get();
+        }
+        else{
+            $products = Product::orderBy('slug', 'asc')->get();
+        }
+        
+        return $products;
+    }
+
+
+    public function getUsers()
+    {
+        $users = [];
+        if(session()->has('adminTrashedData') && session('adminTrashedData')){
+            $this->adminTrashedData = session('adminTrashedData');
+            $users = User::onlyTrashed()->orderBy('name', 'asc')->get();
+        }
+        else{
+            $users = User::orderBy('name', 'asc')->get();
+        }
+
+        return $users;
+    }
+
+
+    public function getAdmins()
+    {
+        $admins = [];
+        if(session()->has('adminTrashedData') && session('adminTrashedData')){
+            $this->adminTrashedData = session('adminTrashedData');
+            $admins = User::onlyTrashed()->where('role', 'admin')->orderBy('name', 'asc')->get();
+        }
+        else{
+            $admins = User::where('role', 'admin')->orderBy('name', 'asc')->get();
+        }
+        return $admins;
+    }
+
+    public function getUnconfirmedUsers()
+    {
+        $unconfirmed = [];
+        if(session()->has('adminTrashedData') && session('adminTrashedData')){
+            $this->adminTrashedData = session('adminTrashedData');
+            $unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->get();
+        }
+        else{
+            $unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->get();
+        }
+        
+        return $unconfirmed;
+    }
+
+    public function getComments()
+    {
+        return Comment::all()->reverse();
     }
 
 

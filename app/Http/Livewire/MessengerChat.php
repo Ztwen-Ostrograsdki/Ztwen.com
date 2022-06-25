@@ -36,7 +36,6 @@ class MessengerChat extends Component
         $this->sender = Auth::user();
         $this->getUsers();
         $this->allUsers = $this->users->count() + 1;
-        // $this->getConnectedUsers();
 
         if($id){
             $user = User::find($id);
@@ -52,11 +51,6 @@ class MessengerChat extends Component
             
         }
 
-        
-    }
-
-    public function boot()
-    {
         
     }
 

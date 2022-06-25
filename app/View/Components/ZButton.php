@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class z-link-no-route extends Component
+class ZButton extends Component
 {
     /**
      * Create a new component instance.
@@ -23,6 +23,6 @@ class z-link-no-route extends Component
      */
     public function render()
     {
-        return view('components.z-link-no-route');
+        return view('components.z-button');
     }
 }

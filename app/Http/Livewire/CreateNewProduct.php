@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire;
 
-use App\Events\NewProductCreatedEvent;
 use App\Models\User;
 use App\Models\Product;
 use Livewire\Component;
@@ -43,9 +42,7 @@ class CreateNewProduct extends Component
 
     public function create()
     {
-
-        $user = Auth::user();
-        if($user){
+        if($this->authenticated()){
             $this->slug = str_replace(' ', '-', $this->slug);
             if($this->validate()){
                 $product = Product::create(
@@ -59,12 +56,12 @@ class CreateNewProduct extends Component
                     ]
                 );
                 if($product){
-                    $this->emit('newProductCreated');
+                    $this->emit('newProductCreated', $product->id);
                     $this->reset('slug', 'description', 'total', 'price', 'reduction', 'category_id');
                     $this->dispatchBrowserEvent('hide-form');
                     $this->dispatchBrowserEvent('FireAlert', ['title' => 'Ajout du nouvel article', 'message' => "La création de l'article s'est bien déroulée", 'type' => 'success']);
                     
-                    $users = User::all()->except($user->id);
+                    $users = User::all()->except(Auth::user()->id);
                     if($users->count() > 0){
                         foreach ($users as $u){
                             MyNotifications::create([
@@ -81,9 +78,6 @@ class CreateNewProduct extends Component
                     $this->dispatchBrowserEvent('FireAlert', ['title' => 'Echec ', 'message' => "La création de l'article a échoué", 'type' => 'error']);
                 }
             }
-        }
-        else{
-            return redirect(route('login'));
         }
     }
 
@@ -102,5 +96,20 @@ class CreateNewProduct extends Component
     public function createAProduct()
     {
         $this->categories = Category::all();
+    }
+
+    public function authenticated()
+    {
+        if(Auth::user()){
+            if(User::find(Auth::user()->id)->__hasAdminAuthorization()){
+                return true;
+            }
+            else{
+                return $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Authentification requise', 'message' => "Veuillez vous authentifier avant de d'exécuter cette action!", 'type' => 'warning']);
+            }
+        }
+        else{
+            return redirect()->route('login');
+        }
     }
 }

@@ -21,6 +21,7 @@ class SingleChatInbox extends Component
     public $targetedMessage;
     public $activeMSGK;
     public $errorTexto = false;
+    public $show_message = false;
     public $actionIsActive = false;
     protected $listeners = ['newSingleChat'];
     protected $rules = [
@@ -110,14 +111,18 @@ class SingleChatInbox extends Component
 
         $this->errorTexto = false;
         if($this->validate()){
-            Chat::create([
+            $this->show_message = true;
+            $create = Chat::create([
                 'message' => $this->texto,
                 'sender_id' => $this->user->id,
                 'receiver_id' => $this->receiver->id,
             ]);
-            $this->texto = "";
-            $this->setTheMessages($this->user->id, $this->receiver->id, 3);
-
+            if($create){
+                $this->emit('messageHasBeenSend', $create->sender_id);
+                $this->texto = "";
+                // $this->show_message = false;
+                $this->setTheMessages($this->user->id, $this->receiver->id, 3);
+            }
         }
         else{
             $this->errorTexto = true;

@@ -46,6 +46,7 @@
                                 @if($myNotifications && $total > 0)
                                     <div class="d-flex flex-column w-100 mx-auto p-1">
                                         @foreach ($myNotifications as $notif)
+                                            @if($notif->target !== "Admin-Advanced-Key")
                                             <h5 class="border-bottom d-flex flex-column">
                                                 <span class="float-left p-2">
                                                     <span class="fa fa-check text-success"></span>
@@ -111,6 +112,7 @@
                                                     </small>
                                                 </div>
                                             </h5>
+                                            @endif
                                         @endforeach
                                     </div>
                                 @endif

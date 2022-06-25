@@ -22,7 +22,8 @@
     @elseif ($tag == "products")
     @include('livewire.components.admin.theProducts', 
     [
-       'products' => $products
+       'products' => $products,
+       'carts' => $carts,
     ])
     @elseif ($tag == "comments")
     @include('livewire.comments-lister', 

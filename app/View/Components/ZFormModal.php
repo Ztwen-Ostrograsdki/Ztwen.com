@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class z-modal-component extends Component
+class ZFormModal extends Component
 {
     /**
      * Create a new component instance.
@@ -23,6 +23,6 @@ class z-modal-component extends Component
      */
     public function render()
     {
-        return view('components.z-modal-component');
+        return view('components.z-form-modal');
     }
 }

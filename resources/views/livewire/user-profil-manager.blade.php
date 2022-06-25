@@ -11,12 +11,6 @@
                     <span class="ml-3 text-warning text-italic" wire:loading wire:target="user_profil" >Chargement de l'image en cours, veuillez patienter...</span>
                 </span>
                 <div class="d-flex justify-content-end w-20">
-                   <div class="w-15 mx-0 px-0">
-                        <ul class="d-flex mx-0 px-0 mt-1 justify-content-between w-100">
-                           <li class=" mx-1"><a href="#"><img src="/images/flag-up-1.png" width="100" alt="" /> </a></li>
-                           <li><a href="#"><img src="/images/flag-up-2.png" width="100" alt="" /></a></li>
-                        </ul>
-                   </div>
                    <div class="w-25"></div>
                    <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
                 </div>
@@ -43,6 +37,12 @@
                         @endif
                          <div class="z-bg-secondary-dark p-0 col-12">
                                 <form autocomplete="off" class="mt-3 pb-3 px-2 mx-auto form-group bg-transparent zw-90" wire:submit.prevent="editUserProfilPhoto" >
+                                    <div x-data="{isUploading:false, progress: 0 }"
+                                        x-on:livewire-upload-start="isUploading = true"
+                                        x-on:livewire-upload-finish="isUploading = false"
+                                        x-on:livewire-upload-error="isUploading = false"
+                                        x-on:livewire-upload-progress="progress = $event.detail.progress"
+                                    >
                                     <div class="input-group mt-0 mb-2">
                                         <label class="text-white-50 @error('user_profil') text-danger @enderror m-0 p-0 w-100 cursor-pointer" for="photo_prf"><strong>Votre photo de profil</strong></label>
                                         <hr class="m-0 p-0 bg-info w-100 mb-1">
@@ -57,6 +57,12 @@
                                     <div class="m-0 p-0 w-50 text-center mx-auto pb-2">
 			                           <span data-toggle="modal" data-dismiss="modal" class="text-warning" style="cursor: pointer">Non c'est bon</span>
 			                        </div>
+                                    <div x-show="isUploading" class="my-2 progress rounded">
+                                        <div class="progress-bar bg-primary progress-bar-stripped py-1" role="progressbar" aria-valuenow="40" aria-valuemax="100" aria-valuemin="0" x-bind:style="'width:$(progres)%'" >
+
+                                        </div>
+                                    </div>
+                                    </div>
 			                    </form>
                          </div>
                      </div>

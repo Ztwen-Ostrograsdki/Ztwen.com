@@ -114,7 +114,7 @@
                         @endauth    
                         <li><a href="#">Contacts</a></li>
                         @auth
-                            <li><a href="{{route('logout')}}">Logout</a></li>
+                            <li><a data-toggle="modal" data-dismiss="modal" data-target="#logoutModal" href="#">Logout</a></li>
                         @endauth    
                         @guest
                             @routeHas('login')

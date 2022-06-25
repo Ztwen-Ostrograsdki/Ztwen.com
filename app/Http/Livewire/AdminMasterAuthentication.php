@@ -4,14 +4,16 @@ namespace App\Http\Livewire;
 
 use App\Models\Product;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class AdminMasterAuthentication extends Component
 {
     public $key; 
+    public $product; 
     public $classeMapping; 
     public $defaultKey = 'abcd';
 
-    protected $listeners = ['adminAuthentication', '__throwAuthenicationModal'];
+    protected $listeners = ['adminAuthentication', '__throwAuthenticationModal'];
     protected $rules = [
         'key' => 'required|string|between:1,255',
     ];
@@ -26,7 +28,7 @@ class AdminMasterAuthentication extends Component
         $this->dispatchBrowserEvent('modal-adminAuthenticationModal');
     }
 
-    public function __throwAuthenicationModal()
+    public function __throwAuthenticationModal()
     {
         $this->dispatchBrowserEvent('modal-adminAuthenticationModal');
     }
@@ -70,5 +72,18 @@ class AdminMasterAuthentication extends Component
     {
         $this->emit('loadProductImages', $product_id);
     }
+
+    
+    public function addToCart($product_id = null)
+    {
+        
+
+    }
+    
+    public function deleteFromCart($product_id = null)
+    {
+        
+    }
+
 
 }

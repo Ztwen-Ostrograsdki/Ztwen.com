@@ -4,16 +4,23 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class z-input-text extends Component
+class ZLinker extends Component
 {
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct()
+    public $routeName;
+    public $isActive;
+    public $params;
+
+    public function __construct($routeName, $isActive = false, $params = null)
     {
-        //
+        $this->routeName = $routeName;
+        $this->isActive = $isActive;
+        $this->params = $params;
+        
     }
 
     /**
@@ -23,6 +30,6 @@ class z-input-text extends Component
      */
     public function render()
     {
-        return view('components.z-input-text');
+        return view('components.z-linker');
     }
 }

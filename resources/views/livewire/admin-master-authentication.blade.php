@@ -5,9 +5,10 @@
           <div class="modal-content modal-fullscreen border @if('errorTexto') border-danger @endif" style="z-index: 2010; top: 80px;">
              <div class="modal-header">
                 <div class="d-flex justify-content-between w-100">
-                   <h4 class="text-uppercase mr-2 mt-1 d-flex justify-content-between">
+                   <h6 class="text-uppercase mr-2 mt-1 d-flex justify-content-between">
                         Veuillez vous authentifier
-                   </h4>
+                        <span class="fa fa-user-secret ml-2"></span>
+                   </h6>
                    <div class="d-flex justify-content-end w-20">
                       <div class="w-15 mx-0 px-0">
                       </div>
@@ -18,23 +19,25 @@
              </div>
              <div class="modal-body m-0 p-0">
                 <div class="">
-                    <div class="wrapper wrapper--w780 ">
-                       <div class="card card-3 border row w-100 p-0 m-0 z-bg-hover-secondary">
-                            <div class="card-body border p-0 col-12 p-3">
+                    <div class="">
+                       <div class="row w-100 p-0 m-0 z-bg-hover-secondary">
+                            <div class="border p-0 col-12 p-3">
                                 <div>
-                                    <div class="w-100 p-0 m-0 mx-auto d-flex flex-column "> 
-                                        <form autocomplete="off" class="mt-3 pb-3" wire:submit.prevent="authenticate">
+                                    <div class="w-100 p-0 m-0 mx-auto p-2"> 
+                                        <form autocomplete="off" class="mt-3 pb-3 form-group" wire:submit.prevent="authenticate">
                                             @csrf
-                                            <div class="w-100 m-0 p-0 mx-auto d-flex justify-content-between">
-                                                <input type="password" placeholder="Taper la clé d'authentification..." style="font-family: cursive !important;" wire:model.defer="key" class="form-control py-3 border zw-70 text-white bg-transparent @error('key') border-danger @enderror" name="key" id="key" >
-                                                <button id="" class="btn btn-primary d-flex justify-content-between zw-20">
-                                                    <span class="d-none d-lg-inline d-md-inline d-xl-inline mr-lg-2 mr-md-2 mr-xl-2 m-0">Authentifier</span>
-                                                    <span class="fa bi-unlock mt-2"></span>
+                                            <div class="w-100 m-0 p-0 mx-auto row justify-content-center">
+                                                <div class="col-11 mx-auto">
+                                                    <input type="password" placeholder="Taper la clé d'authentification..." style="font-family: cursive !important;" wire:model.defer="key" class="form-control py-3 border w-100 text-white bg-transparent @error('key') border-danger @enderror" name="key" id="key" >
+                                                    @error('key') 
+                                                        <span class="text-danger d-block mt-1 mb-1">{{$message}}</span>
+                                                    @enderror
+                                                </div>
+                                                <button id="" class="btn btn-primary mx-auto mt-2 d-flex justify-content-center col-6 border border-white">
+                                                    <span class="d-none d-lg-inline d-md-inline d-xl-inline mr-2">S'authentifier</span>
+                                                    <span class="fa bi-unlock mt-1"></span>
                                                 </button>
                                             </div>
-                                            @error('key') 
-                                              <span class="text-danger">{{$message}}</span>
-                                             @enderror
                                        </form>
                                     </div>
                                 </div>

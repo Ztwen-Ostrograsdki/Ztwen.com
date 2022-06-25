@@ -9,6 +9,12 @@ window.addEventListener('reloadPage', event => {
 window.addEventListener('modal-updateProductGalery', event => {
     $('#updateProductModal').modal();
 });
+window.addEventListener('modal-userCartManager', event => {
+    $('#userCartManagerModal').modal();
+});
+window.addEventListener('modal-startAdvancedRequests', event => {
+    $('#advancedrequestsModal').modal();
+});
 window.addEventListener('modal-editProduct', event => {
     $('#editProductModal').modal();
 });
@@ -42,7 +48,7 @@ $(function() {
 window.addEventListener('FireAlert', event => {
     if (event.detail.title !== undefined) {
         Swal.fire({
-            title: 'Operation ' + event.detail.title,
+            title: event.detail.title,
             icon: event.detail.type,
             text: event.detail.message,
             timer: 3000,
@@ -65,7 +71,7 @@ window.addEventListener('FireAlert', event => {
 window.addEventListener('FireAlertDoNotClose', event => {
     if (event.detail.title !== undefined) {
         Swal.fire({
-            title: 'Operation ' + event.detail.title,
+            title: event.detail.title,
             icon: event.detail.type,
             text: event.detail.message,
             showCloseButton: false,
