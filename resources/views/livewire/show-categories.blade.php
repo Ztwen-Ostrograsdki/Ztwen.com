@@ -75,20 +75,20 @@
                                         </li>
                                     @endif
                                     @auth
-                                    <x-z-link :params="['id' => auth()->user()->id]" :route="'user-profil'" :active="request()->routeIs('user-profil')">
+                                    <x-z-linker :params="['id' => auth()->user()->id]" :routeName="'user-profil'" :isActive="request()->routeIs('user-profil')">
                                         <span class="bi-person mr-2"></span>
                                         <span>{{ __('Profil') }}</span>
-                                    </x-z-link>
+                                    </x-z-linker>
                                     @endauth
                                     @guest
-                                    <x-z-link :route="'login'" :active="request()->routeIs('login')">
+                                    <x-z-linker :routeName="'login'" :isActive="request()->routeIs('login')">
                                         <span class="bi-person-check mr-2"></span>
                                         <span>{{ __('Se connecter') }}</span>
-                                    </x-z-link>
-                                    <x-z-link :route="'registration'" :active="request()->routeIs('registration')">
+                                    </x-z-linker>
+                                    <x-z-linker :routeName="'registration'" :isActive="request()->routeIs('registration')">
                                         <span class="bi-person-plus mr-2"></span>
                                         <span>{{ __("S'inscrire") }}</span>
-                                    </x-z-link>
+                                    </x-z-linker>
                                     @endguest
                                     
                                 </ul>

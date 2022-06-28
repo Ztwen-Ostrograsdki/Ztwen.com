@@ -18,6 +18,7 @@ use App\Http\Livewire\EmailVerifyNotification;
 use App\Http\Controllers\BlockTemporaryMyAccount;
 use App\Http\Livewire\ConfirmedEmailVerification;
 use App\Http\Livewire\ForceEmailVerifyNotification;
+use App\Http\Livewire\ProductsHome;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,7 +33,7 @@ use App\Http\Livewire\ForceEmailVerifyNotification;
 
 Route::get('/', Home::class)->name('home');
 
-Route::get('/articles', ShowProducts::class)->name('products');
+Route::get('/articles', ProductsHome::class)->name('products');
 Route::get('/articles/{id?}', ProductProfil::class)->name('product-profil');
 Route::get('/categories', ShowCategories::class)->name('categories');
 Route::get('/categories/{id?}', ShowCategories::class)->name('category');
@@ -55,7 +56,6 @@ Route::get('/authentification', AdminAuthorization::class)->name('get-admin-auth
 Route::get('/mot-de-passe-oublie', AuthRedirections::class)->name('password-forgot')->middleware('guest');
 Route::get('/changer-mot-de-passe/get-protection/id={id}/token={token}/key={key}/hash={hash}/s={s}/from-email={email}/reset-password=1/password=new', ResetPassword::class)->name('reset.password')->middleware(['guest', 'signed']);
 Route::get('/verrouillage-de-mon-compte/protection=1/id={id}/token={token}/hash={hash}/security=1/blocked=true', [BlockTemporaryMyAccount::class, '__locked'])->name('block-temporary-account')->middleware(['signed']);
-
 
 
 Route::get('/deconnection', function () {

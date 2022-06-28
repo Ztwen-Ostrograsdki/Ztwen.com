@@ -2,13 +2,12 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\NewUserRegistredEvent;
 use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
-use App\Providers\RouteServiceProvider;
 
 class RegisteringNewUser extends Component
 {
@@ -18,7 +17,7 @@ class RegisteringNewUser extends Component
     public $email = '';
     public $password_confirmation = '';
     public $password = '';
-    protected $listeners = ['newUserAdded', 'refreshUsersList', 'newUserConnected'];
+    protected $listeners = [];
     protected $rules = [
         'name' => 'required|string|unique:users|between:5,255',
         'email' => 'required|email|unique:users|between:5,255',
@@ -68,6 +67,8 @@ class RegisteringNewUser extends Component
                 $this->resetErrorBag();
                 $this->dispatchBrowserEvent('hide-form');
                 $this->user->sendEmailVerificationNotification();
+                $event = new NewUserRegistredEvent($this->user);
+                broadcast($event);
                 session()->put('user_email_to_verify', $this->user->id);
                 return redirect()->route('email-verification-notify', ['id' => $this->user->id]);
             }
@@ -84,18 +85,4 @@ class RegisteringNewUser extends Component
     }
 
 
-    public function newUserAdded($user)
-    {
-
-    }
-
-    public function refreshUsersList()
-    {
-
-    }
-
-    public function newUserConnected()
-    {
-        
-    }
 }

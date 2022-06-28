@@ -199,7 +199,7 @@ class UserProfil extends Component
         $made = User::find($auth)->__cancelFriendRequest($user_id);
         if($made){
             $this->emit('onUpdateUsersList_L_Event');
-            $event = new NewFollowerEvent($foll_user, 'retrieved');
+            $event = new NewFollowerEvent($foll_user, auth()->user(), 'retrieved');
             broadcast($event);
         }
         else{

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\NewCommentPostedEvent;
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Product;
@@ -63,6 +64,7 @@ class CommentManager extends Component
                     'approved' => $this->approved,
                 ]);
                 if($com){
+                    broadcast(new NewCommentPostedEvent($com));
                     $admins = User::where('id', 1)->orWhere('role', 'admin')->get()->except($user->id);
                     foreach ($admins as $admin){
                         MyNotifications::create([
@@ -73,15 +75,14 @@ class CommentManager extends Component
                             'target_id' => $this->product->id,
                         ]);
                     }
-                    $this->emit('newCommentAdd', $this->product->id);
                     session()->forget('newComment');
                     $this->reset('comment');
                     $this->resetErrorBag();
                     $this->dispatchBrowserEvent('hide-form');
-                    $this->dispatchBrowserEvent('FireAlertDoNotClose', ['message' => "Votre commentaire a bien été soumis. $sentence", 'type' => 'success']);
+                    $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'success', 'title' => 'COMMENTAIRE POSTE',  'message' => "Votre commentaire a bien été soumis. $sentence"]);
                 }
                 else{
-                    $this->dispatchBrowserEvent('FireAlertDoNotClose', ['message' => "Erreur serveur : Votre commentaire n'a peu être soumis. Votre commentaire a été gardé en session. Veuillez réessayer!", 'type' => 'warning']);
+                    $this->dispatchBrowserEvent('ToastDoNotClose', ['message' => "Erreur serveur : Votre commentaire n'a peu être soumis. Votre commentaire a été gardé en session. Veuillez réessayer!", 'type' => 'warning']);
                 }
                 
             }
@@ -89,7 +90,7 @@ class CommentManager extends Component
         else{
             session()->put('newComment', $this->comment);
             $this->addError('comment', "Veuillez vous connecter avant de poster un commentaire");
-            $this->dispatchBrowserEvent('FireAlertDoNotClose', ['message' => "Veuillez vous connecter en premier lieu. Votre commentaire a été gardé en session.", 'type' => 'question']);
+            $this->dispatchBrowserEvent('ToastDoNotClose', ['message' => "Veuillez vous connecter en premier lieu. Votre commentaire a été gardé en session.", 'type' => 'question']);
         }
     }
 }

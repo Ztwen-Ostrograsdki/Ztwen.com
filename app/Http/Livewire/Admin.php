@@ -7,9 +7,7 @@ use App\Models\Comment;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
-use App\Models\UserAdminKey;
 use App\Models\MyNotifications;
-use Illuminate\Support\Facades\Schema;
 use App\Helpers\ActionsTraits\ModelActionTrait;
 
 
@@ -19,13 +17,9 @@ class Admin extends Component
 
 
     protected $listeners = [
-        'newUserAdded', 
-        'newCommentAdd', 
-        'productUpdated',
-        'newProductCreated',
         'thisAuthenticationIs',
-        'categoriesUpdated',
-        'newCategoryCreated',
+        'notifyMeWhenNewUserRegistred' => 'refreshDataOnEvent',
+        'notifyMeWhenNewCommentHasBeenPosted' => 'refreshDataOnEvent',
     ];
     public $active = 'active';
     public $search;
@@ -40,9 +34,17 @@ class Admin extends Component
     public $role;
     public $currentUsersProfil;
     public $classMapping;
+    public $dataShouldBeRefresh = false;
+
+    public function refreshDataOnEvent($user = null)
+    {
+        $this->reset('dataShouldBeRefresh');
+    }
+
 
     public function initialiseData()
     {
+        $this->dataShouldBeRefresh = true;
         if(session()->has('adminTagName') && session()->has('adminTagTitle')){
             $this->adminTagName = session('adminTagName');
             $this->adminTagTitle = session('adminTagTitle');
@@ -52,7 +54,6 @@ class Admin extends Component
             $this->adminTagTitle = "Notifications";
         }
     }
-
 
     public function render()
     {
@@ -142,11 +143,6 @@ class Admin extends Component
     public function destroyAdminSessionKey()
     {
         return User::find(auth()->user()->id)->__destroyAdminKey();
-    }
-
-    public function newUserAdded($user)
-    {
-
     }
 
     public function setActiveTag($name, $title)
@@ -272,11 +268,6 @@ class Admin extends Component
 
     //COMMENTS
 
-    public function newCommentAdd($product_id)
-    {
-
-    }
-    
     public function approvedAComment($comment_id)
     {
         $comment = Comment::where('id', $comment_id)->firstOrFail();
@@ -340,15 +331,6 @@ class Admin extends Component
 
 
     // CATEGORIES
-
-    public function newCategoryCreated($category_id = null)
-    {
-    }
-    public function categoriesUpdated()
-    {
-    }
-
-
 
     public function deleteACategory($category_id)
     {
@@ -479,15 +461,6 @@ class Admin extends Component
 
     }
 
-    public function newProductCreated($product_id = null)
-    {
-    }
-
-    public function productUpdated($product_id)
-    {
-    }
-
-
     public function updateProductGalery($product_id)
     {
         $product = Product::find($product_id);
@@ -598,6 +571,5 @@ class Admin extends Component
     {
         return Comment::all()->reverse();
     }
-
 
 }

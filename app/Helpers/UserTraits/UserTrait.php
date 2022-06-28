@@ -5,6 +5,7 @@ namespace App\Helpers\UserTraits;
 use App\Models\Product;
 use App\Models\ShoppingBag;
 use App\Models\MyNotifications;
+use App\Models\SeenLikeProductSytem;
 
 trait UserTrait{
 
@@ -55,6 +56,51 @@ trait UserTrait{
                 return true;
             }
             else{
+                return false;
+            }
+        }
+        else{
+            return abort(403, "Votre requête ne peut aboutir");
+        }
+    }
+    /**
+     * Determine if a product was liked by the user
+     *
+     * @param int $product_id
+     * @return bool
+     */
+    public function __alreadyLikedThis($product_id)
+    {
+        
+    }
+
+
+    public function __likedThis($product_id)
+    {
+        $product = Product::find($product_id);
+        if($product){
+            $likes = $this->likes;
+            if($likes->count() > 0){
+                if(!in_array($product_id, $likes->pluck('product_id')->toArray())){
+                    $like = SeenLikeProductSytem::create([
+                        'user_id' => $this->id,
+                        'product_id' => $product_id,
+                    ]);
+                    if($like){
+                        return true;
+                    }
+                    return false;
+                }
+                return false;
+            }
+            else{
+                $like = SeenLikeProductSytem::create([
+                    'user_id' => $this->id,
+                    'product_id' => $product_id,
+                ]);
+                if($like){
+                    return true;
+                }
                 return false;
             }
         }

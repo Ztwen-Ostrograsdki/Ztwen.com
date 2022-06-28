@@ -1,6 +1,6 @@
 @if($comments->count() > 0)
 <div>
-<div class="w-100 m-0 p-0" wire:poll.visible.30000ms="refreshCommentsData">
+<div class="w-100 m-0 p-0" >
     @foreach ($comments as $key => $com)
     <div class="w-100 mx-auto p-0 border my-3 z-bg-hover-secondary">
         <div class="row m-0 mx-auto p-0 w-100">

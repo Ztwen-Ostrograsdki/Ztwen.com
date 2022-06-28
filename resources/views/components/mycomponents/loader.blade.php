@@ -1,5 +1,5 @@
  <!-- ***** Preloader Start ***** -->
- <div id="preloader">
+ <div id="preloader-orange">
     <div class="jumper">
         <div></div>
         <div></div>

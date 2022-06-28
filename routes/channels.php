@@ -19,3 +19,11 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('user.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+Broadcast::channel('master', function ($user) {
+    return (int) $user->id === 1 || $user->role === 'master';
+});
+Broadcast::channel('online', function ($user) {
+    if((int) $user->id === (int) auth()->user()->id){
+        return ['id' => $user->id, 'name' => $user->name, 'email' => $user->email];
+    }
+});

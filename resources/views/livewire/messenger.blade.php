@@ -1,88 +1,117 @@
-<div class="m-0 p-0 w-100">
-   <div class="z-justify-relative-top-80 w-100" style="width: 90%;">
-      <div class="w-100 border m-0 p-0">
-         <div class="m-0 p-0 w-100">
-            <div class="row w-100 m-0">
-               <div class="col-3 m-0 text-capitalize border border-dark bg-dark p-0 text-white" style="min-height: 650px;">
-                  <div class="d-fex flex-column w-100 mb-3">
-                     <div class="m-0 py-2 px-4">
-                        <div class="d-flex w-100 cursor-pointer m-0 p-0">
-                           <span class="fa fa-2x fa-inbox"></span>
-                           <h4 class="w-100 m-0 mt-2 ml-3">Notifications</h4>
-                           <span class="fa fa-2x">255</span>
-                        </div>
-                     </div>
-                     <hr class="m-0 p-0 w-100 bg-white">
-                     
-                  </div>
-               </div>
-               <div class="col-9 border-left border-white bg-dark pb-3">
-                  <div class="w-100 mx-auto mt-2 border">
-                    <div class="mx-auto d-flex w-100 justify-between">
-                        <div class="text-uppercase text-center text-white w-75">
-                            <h3 class="z-title text-white text-center p-1 mt-2 m-0 w-100">
-                                <span class="fa fa-wechat"></span>
-                                Messenger BOX
-                            </h3>
-                        </div>
-                        <div class="text-white-50 cursor-pointer border-left p-3" data-toggle="modal" data-target="#addFriendsModal" data-dismiss="modal">
-                            <span class="">
-                                <span class="fa fa-user-plus fa-2x"></span>
-                                <span class="">Suivre un amis</span>
-                            </span>
-                        </div>
-                    </div>
-                  </div>
-                  @if($users->count() > 0)
-                  <div class="w-100 m-0 p-0 mt-3">
-                    <table class="w-100 m-0 p-0 table-striped table-bordered z-table text-white">
-                        <tbody>
-                              @foreach($users as $u)
-                                 <tr>
-                                    <td class="py-2 text-capitalize">
-                                       @if($u->current_photo)
-                                             <a href="{{ route('chat', ['id' => $u->id])}}"class="d-flex text-white" wire:click="chatReceiver({{$u->id}})">
-                                                <img width="30" class="border rounded-circle" src="/storage/profilPhotos/{{$u->currentPhoto()}}" alt="mon profil">
-                                                <span class="mx-2">{{$u->name}}</span>
-                                                @if($u->role == 'admin')
-                                                   <span class="fa fa-user-secret mt-1 text-white-50 float-right"></span>
-                                                @endif
-                                             </a>
-                                       @else
-                                          <a href="{{ route('chat', ['id' => $u->id])}}" class="d-flex text-white">
-                                             <img width="30" class="border rounded-circle" src="{{$u->currentPhoto()}}" alt="mon profil">
-                                             <span class="mx-2">{{$u->name}}</span>
-                                             @if($u->role == 'admin')
-                                                <span class="fa fa-user-secret text-white-50 mt-1 float-right"></span>
-                                             @endif
-                                          </a>
-                                       @endif
-                                    </td>
-                                    <td class="text-center w-auto p-0">
-                                       @if ($u->id !== 1)
-                                          <span class="row mx-auto w-100 border m-0 p-0">
-                                             <span class="text-success  success-hover  col-6 p-2 px-3 cursor-pointer border border-success fa fa-user-plus "></span>
-                                             <span class="text-warning warning-hover col-6 p-2 px-3 cursor-pointer border border-warning fa fa-key"></span>
-                                          </span>
-                                       @else
-                                       <strong class="text-success">Administrateur principal</strong>
-                                       @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>                                                     
-                  </div>
-                  @else
-                  <div class="d-flex flex-column mx-auto text-center p-3 mt-4">
-                     <span class="fa fa-warning text-warning fa-4x"></span>
-                     <h4 class="text-warning fa fa-3x">Ouups aucun utilisateur disponible !!!</h4>
-                  </div>
-                  @endif
-               </div>
+<div>
+    <div class="wrapper-chat w-100 m-0 p-0 px-2 border-secondary border z-bg-hover-secondary">
+        <div class="container-chat">
+            <div class="w-100 p-0 my-1 border z-bg-secondary-hover text-center">
+                <h6 class="text-white py-2 text-center px-2 m-0">
+                    <span class="bi-messenger"></span>
+                    <span>Chat Box</span>
+                </h6>
             </div>
-         </div>   
-      </div>
-   </div>
-   
+            <div class="left">
+                <div class="z-bg-hover-secondary m-0 p-0 border py-2">
+                    <form class="d-flex justify-content-start w-100">
+                        @csrf
+                        <input style="width: calc(100% - 55px)" placeholder="Taper..." class="form-control z-bg-hover-secondary mx-1 border text-white-50" type="text" />
+                        <span class="mt-2" style="width: 50px;">
+                            <span class="bi-search cursor-pointer px-1 mx-1"></span>
+                        </span>
+                    </form> 
+                </div>
+                @if(count($users) > 0)
+                <ul class="people m-0 p-0 bg-transparent px-1 py-2">
+                    @foreach ($users as $k => $u)
+                        <li wire:click="setReceiver({{$u->id}})" class="person @if($receiver && $receiver->id === $u->id) active-active @endif" data-chat="person{{$k + 1}}">
+                            <i>
+                                <img src="{{$profil_path1}}" alt="" />
+                                <i style="" class="online bi-circle-fill text-success"></i>
+                            </i>
+                            <span class="name">{{$u->name}}</span>
+                            <span class="time">{{auth()->user()->__getLastMessage($u->id) ? auth()->user()->__getLastMessage($u->id)->getDateAgoFormated(true) : ''}}</span>
+                            <span id="preview_{{$u->id}}" class="preview">{{auth()->user()->__getLastMessage($u->id) ? (mb_strlen(auth()->user()->__getLastMessage($u->id)->message) < 30 ? auth()->user()->__getLastMessage($u->id)->message : mb_substr(auth()->user()->__getLastMessage($u->id)->message, 0, 30) . ' ...') : 'Aucun message'}}</span>
+                            <span style="display: none;" id="UserTyping_{{$u->id}}" class="preview"> {{$u->name}} est entrain d'écrire...</span>
+                        </li>
+                    @endforeach
+                </ul>
+                @else
+                <ul class="people m-0 p-0 bg-transparent px-1 py-2">
+                    <li class="person">
+                        <i>
+                            <img src="{{$profil_path1}}" alt="" />
+                            <i style="" class="online bi-circle-fill text-success"></i>
+                        </i>
+                        <span class="name">{{$u->name}}</span>
+                        <span class="time">2:09 PM</span>
+                        <span class="preview">Once</span>
+                    </li>
+                </ul>
+                @endif
+            </div>
+            <div class="right border">
+                <div class="top z-bg-hover-secondary">
+                    <h6 class="text-center my-3">
+                        <span class="text-white-50">
+                            Ecris avec ... <span class="name text-white text-capitalize ml-2">{{$receiver ? $receiver->name : ''}}</span>
+                        </span>
+                    </h6>
+                </div>
+                <div class="chat @if(!$receiver) d-none @else active-chat @endif" data-chat="">
+                    @if(count($allMessages) > 0)
+                        @foreach ($allMessages as $key => $m )
+                            <div class="conversation-start">
+                                <span>Today, 5:38 PM</span>
+                            </div>
+                            @if($m->sender_id == $receiver->id)
+                            <div class="bubble you mb-0 cursor-pointer">
+                                <span> {{$m->message}}</span>
+                            </div>
+                            <small class="d-inline-block float-left w-100 text-left">
+                                <small class="z-fs-9px">{{$m->getDateAgoFormated(true)}}</small>
+                            </small>
+                            @elseif($m->sender_id == auth()->user()->id)
+                            <div class="bubble me mb-0 cursor-pointer">
+                                <span> {{$m->message}}</span>
+                            </div>
+                            <small class="d-inline-block float-right w-100 text-right">
+                                <small class="z-fs-9px">{{$m->getDateAgoFormated(true)}}</small>
+                                <span class="@if($m->seen) bi-check-all text-success @else bi-check @endif"></span>
+                            </small>
+                            @else
+
+                            @endif
+                            
+                        @endforeach
+                    @else
+                        <div class="chat active-chat" data-chat="">
+                            <div class="bubble empty-left">
+                                Hooops du vide ....
+                            </div>
+                            <div class="bubble empty-right">
+                               ....Aller voyons écriver quelque chose...
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="chat @if($receiver) d-none @else active-chat @endif" data-chat="">
+                    <div class="bubble empty-left">
+                        Selctionner un utilisateur pour ....
+                    </div>
+                    <div class="bubble empty-right">
+                       ....lancer la discussion...
+                    </div>
+                </div>
+                <div class="write z-bg-secondary border border-secondary">
+                    <form class="d-flex justify-content-start w-100 z-bg-secondary" wire:submit.prevent="send">
+
+                        <span style="width: 50px;" class="bi-emoji-smile mt-2 cursor-pointer px-1"></span>
+                        <input wire:model.debounce.500ms="texto" style="width: calc(100% - 140px)" class=" z-bg-hover-secondary mx-1" type="text" />
+                        <span class="mt-2" style="width: 80px;">
+                            <span class="bi-paperclip cursor-pointer px-1"></span>
+                            <span  wire:click="send" class="bi-send cursor-pointer px-1 mx-1"></span>
+                        </span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

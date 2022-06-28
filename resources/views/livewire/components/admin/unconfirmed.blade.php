@@ -6,7 +6,7 @@
         <div class="row m-0 mx-auto p-0 w-100">
             <div class="col-12">
                 <div class="w-100 m-0 p-0 py-1 d-flex justify-content-between">
-                    <h4 class="text-center py-1 w-33">
+                    <h6 class="text-center py-1 w-33">
                         <span class="d-flex">
                             <span class="bi-person mr-2"> : </span>
                             <span class="mx-2 text-uppercase">{{$u_user->name}}</span>
@@ -14,7 +14,7 @@
                             <span class="fa fa-user-secret @isMaster($u_user) text-warning @else text-white-50 @endisMaster mt-1 float-right"></span>
                             @endif
                         </span>
-                    </h4>
+                    </h6>
                     <div class="d-flex justify-content-start">
                         @isMaster()
                         @if(!$u_user->hasVerifiedEmail())

@@ -28,6 +28,11 @@ class EditProductData extends Component
         'category_id' => 'required|numeric',
     ];
 
+    public function mount()
+    {
+        $this->categories = Category::withTrashed('deleted_at')->get();
+    }
+
     public function render()
     {
         return view('livewire.edit-product-data');
@@ -36,7 +41,6 @@ class EditProductData extends Component
     public function editAProduct($product_id)
     {
         $product  = Product::withTrashed('deleted_at')->whereId($product_id)->firstOrFail();
-        $this->categories = Category::withTrashed('deleted_at')->get();
         if($product){
             $this->product = $product;
             $this->slug = $this->product->slug;

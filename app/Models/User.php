@@ -22,6 +22,7 @@ use App\Models\ResetEmailConfirmation;
 use Laravel\Jetstream\HasProfilePhoto;
 use App\Helpers\AdminTraits\AdminTrait;
 use Illuminate\Notifications\Notifiable;
+use App\Helpers\UserTraits\ChatManageTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use App\Helpers\ActionsTraits\ModelActionTrait;
@@ -40,14 +41,14 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
     use SoftDeletes;
-    use ProductManager;
     use DateFormattor;
     use ModelActionTrait;
     use FollowSystemTrait;
     use MustVerifyEmailTrait;
     use AdminTrait;
     use UserPasswordManagerTrait;
-    use UserTrait;
+    use UserTrait; 
+    use ChatManageTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -98,6 +99,11 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+
+    public function likes()
+    {
+        return $this->hasMany(SeenLikeProductSytem::class);
+    }
 
     public function userAdminKey()
     {

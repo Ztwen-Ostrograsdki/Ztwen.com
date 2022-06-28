@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 use App\Rules\StrongPassword;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Events\NewUserConnectedEvent;
+use App\Events\NewUserRegistredEvent;
 use Illuminate\Support\Facades\Route;
 use App\Providers\RouteServiceProvider;
 
@@ -97,6 +99,8 @@ class AuthRedirections extends Component
                     $this->user->__generateAdminKey();
                 }
                 $this->dispatchBrowserEvent('Login');
+                $event = new NewUserConnectedEvent($this->user);
+                broadcast($event);
                 $this->user->__backToUserProfilRoute();
             }
             else{
@@ -150,12 +154,13 @@ class AuthRedirections extends Component
                 else{
                     $this->resetErrorBag();
                     $this->dispatchBrowserEvent('hide-form');
-                    $this->user->sendEmailVerificationNotification();
+                    // $this->user->sendEmailVerificationNotification();
+                    $event = new NewUserRegistredEvent($this->user);
+                    broadcast($event);
                     session()->put('user_email_to_verify', $this->user->id);
                     return redirect()->route('email-verification-notify', ['id' => $this->user->id]);
                 }
                 $this->resetErrorBag();
-                $this->emit("newUserAdded", $this->name);
                 $this->dispatchBrowserEvent('RegistredNewUser', ['username' => $this->name]);
                 $this->emit("refreshUsersList");
                 if($this->user->role == 'admin'){

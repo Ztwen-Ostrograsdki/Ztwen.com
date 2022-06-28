@@ -39,7 +39,7 @@ class FollowingSystem extends Component
         }
         if(User::find($auth)->__followThisUser($user->id)){
             $this->emit('IsendNewFriendRequest_L_Event');
-            $event = new NewFollowerEvent($user, 'added');
+            $event = new NewFollowerEvent($user, auth()->user(), 'added');
             broadcast($event);
         }
         else{

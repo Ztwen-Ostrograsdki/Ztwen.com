@@ -15,17 +15,18 @@ class NewFollowerEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $followed;
+    public $follower;
     public $action;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($followed, $action = 'added')
+    public function __construct($followed, $follower,  $action = 'added')
     {
         $this->followed = $followed;
+        $this->follower = $follower;
         $this->action = $action;
-        // dd($this->followed, $this->action);
     }
 
     /**
