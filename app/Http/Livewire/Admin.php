@@ -7,7 +7,6 @@ use App\Models\Comment;
 use App\Models\Product;
 use Livewire\Component;
 use App\Models\Category;
-use App\Models\MyNotifications;
 use App\Helpers\ActionsTraits\ModelActionTrait;
 
 
@@ -20,7 +19,9 @@ class Admin extends Component
         'thisAuthenticationIs',
         'notifyMeWhenNewUserRegistred' => 'refreshDataOnEvent',
         'notifyMeWhenNewCommentHasBeenPosted' => 'refreshDataOnEvent',
+        'reloadAdminComponent' => 'refreshDataOnEvent',
     ];
+    
     public $active = 'active';
     public $search;
     public $showSearch = false;
@@ -33,14 +34,100 @@ class Admin extends Component
     public $adminTrashedData = false;
     public $role;
     public $currentUsersProfil;
-    public $classMapping;
+    public $classMappingForAdvancedRequest;
+    public $classMappingForSelecteds;
+    public $selectedsTableHasSoftDelete = false;
     public $dataShouldBeRefresh = false;
+    public $page;
+    public $productsPerPage;
+    public $usersPerPage;
+    public $categoriesPerPage;
+    public $commentsPerPage;
+    public $notificationsPerPage;
+    public $perPage = 6;
+    public $selected;
+    public $selectedAction;
+    public $checkeds = [];
+    public $selecteds = [];
+
+
+    public function mount(
+                $page = null, 
+                $productsPerPage = null, 
+                $usersPerPage = null,
+                $categoriesPerPage = null,
+                $commentsPerPage = null, 
+                $notificationsPerPage = null
+            ) 
+    {
+        $this->page = $page ?? 1;
+        $this->productsPerPage = $productsPerPage ?? 10;
+        $this->usersPerPage = $usersPerPage ?? 10;
+        $this->categoriesPerPage = $categoriesPerPage ?? 10;
+        $this->commentsPerPage = $commentsPerPage ?? 3;
+        $this->notificationsPerPage = $notificationsPerPage ?? 10;
+    }
+
 
     public function refreshDataOnEvent($user = null)
     {
         $this->reset('dataShouldBeRefresh');
     }
+    public function resetCheckeds()
+    {
+        $this->reset('selecteds', 'selectedAction');
+    }
+    public function selectedThis($product_id)
+    {
+        if(in_array($product_id, $this->selecteds)){
+            unset($this->selecteds[$product_id]);
+        }
+        else{
+            $this->selecteds[$product_id] = $product_id;
+        }
+    }
 
+    public function submitSelecteds()
+    {
+        $selecteds = $this->selecteds;
+        if($selecteds !== [] && $this->selectedAction){
+            $make = call_user_func_array(array(\App\Helpers\ModelsHelpers\TableManager::class, $this->selectedAction), [$this->classMappingForSelecteds]);
+        }
+    }
+
+    public function setAction($action)
+    {
+        $activeTag = $this->adminTagName;
+        $root = "\App\Models\\";
+        $model = null;
+
+        if(in_array($action, ['deleteMass', 'forceDeleteMass', 'resetGaleryMass', 'resetBasketMass', 'blockMass', 'restoreMass', 'confirmUserEmailMass'])){
+            $this->selectedAction = $action;
+        }
+        else{
+            return false;
+        }
+
+        if($activeTag == 'products'){
+            $classMappingForSelecteds = $root . 'Product';
+        }
+        elseif($activeTag == 'categories'){
+            $classMappingForSelecteds = $root . 'Category';
+        }
+        elseif($activeTag == 'comments'){
+            $classMappingForSelecteds = $root . 'Comment';
+        }
+        elseif($activeTag == 'notifications'){
+            $classMappingForSelecteds = $root . 'MyNotifications';
+        }
+        elseif(in_array($activeTag, ['users', 'admins', 'unconfirmed'])){
+            $classMappingForSelecteds = $root . 'User';
+        }
+
+        $model = new $classMappingForSelecteds;
+        $this->classMappingForSelecteds = $model;
+
+    }
 
     public function initialiseData()
     {
@@ -65,8 +152,37 @@ class Admin extends Component
         $categories = $this->getCategories();
         $comments = $this->getComments();
         $unconfirmed = $this->getUnconfirmedUsers();
-        return view('livewire.admin', compact('users', 'carts', 'admins', 'comments', 'categories', 'products', 'unconfirmed'));
+        $active = $this->adminTagName;
+        if($active == 'users'){
+            $adminActiveData = $users;
+        }
+        elseif($active == 'admins'){
+            $adminActiveData = $admins;
+        }
+        elseif($active == 'unconfirmed'){
+            $adminActiveData = $unconfirmed;
+        }
+        elseif($active == 'products'){
+            $adminActiveData = $products;
+        }
+        elseif($active == 'categories'){
+            $adminActiveData = $categories;
+        }
+        elseif($active == 'comments'){
+            $adminActiveData = $comments;
+        }
+        else{
+            $adminActiveData = [];
+        }
+        return view('livewire.admin', compact('users', 'carts', 'admins', 'comments', 'categories', 'products', 'unconfirmed', 'adminActiveData'));
     }
+
+
+    public function advancedRequests($classMappingForAdvancedRequest)
+    {
+        $this->emit('startAdvancedRequests', $classMappingForAdvancedRequest);
+    }
+
 
     public function toogleSearchBanner()
     {
@@ -147,6 +263,7 @@ class Admin extends Component
 
     public function setActiveTag($name, $title)
     {
+        $this->reset('selecteds', 'selectedAction', 'page');
         $this->adminTagTitle = $title;
         $this->adminTagName = $name;
         session()->put('adminTagName',$name);
@@ -265,71 +382,6 @@ class Admin extends Component
         }
     }
 
-
-    //COMMENTS
-
-    public function approvedAComment($comment_id)
-    {
-        $comment = Comment::where('id', $comment_id)->firstOrFail();
-        if($comment){
-            $comment->update(['approved' => true]);
-            if($comment->user->id !== 1 && $comment->user->role !== 'admin'){
-                MyNotifications::create([
-                    'content' => "Votre commentaire : {$comment->content}; a été approuvé!",
-                    'user_id' => $comment->user_id,
-                    'comment_id' => $comment->id,
-                    'target' => "Commentaires",
-                    'target_id' => $comment->product->id
-                ]);
-            }
-            $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success ', 'message' => "Le commentaire posté par {$comment->user->name} a été approuvé et sera désormais visible sur la plateforme part tous les utilisateurs"]);
-        }
-        else{
-            $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'error ', 'message' => "Le commentaire que vous rechercher n'existe pas"]);
-        }
-    }
-
-    public function deleteAComment($comment_id)
-    {
-        $comment = Comment::find($comment_id);
-        if($comment){
-            if($comment->deleteThisModel(false)){
-                $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "Le commentaire posté par {$comment->user->name} a été supprimé avec succès",  'title' => 'Réussie']);
-            }
-            else{
-                $this->dispatchBrowserEvent('FireAlert', ['type' => 'error ', 'message' => "La suppression du commentaire a échoué",  'title' => 'Echec']);
-            }
-        }
-    }
-    
-    public function deleteNotApprovedComments()
-    {
-    }
-
-    public function deleteAllComments()
-    {
-        // $this->emit('__throwAuthenticationModal');
-    }
-
-    public function advancedRequests($classMapping)
-    {
-        $this->classMapping = $classMapping;
-        $this->emit('startAdvancedRequests', $classMapping);
-    }
-
-
-    public function thisAuthenticationIs($response)
-    {
-        if($response){
-            $this->__truncateModel($this->classMapping, $response);
-            $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success ', 'message' => "Les données de la classe {{$this->classMapping}} ont été refraichies avec succès!",  'title' => "Authentification approuvée"]);
-        }
-        else{
-            $this->dispatchBrowserEvent('FireAlert', ['type' => 'error', 'message' => "Vous n'êtes pas authorisé",  'title' => "Echec d'authentification"]);
-        }
-    }
-
-
     // CATEGORIES
 
     public function deleteACategory($category_id)
@@ -440,7 +492,6 @@ class Admin extends Component
         if($product){
             if($category){
                 if($product->restoreThisModel()){
-                    $this->mount();
                     $this->emit('aProductHasBeenRestored', $product->id);
                     $this->dispatchBrowserEvent('FireAlert', ['type' => 'success', 'message' => "L'article {$product->getName()} a été restauré avec succès",  'title' => 'Réussie']);
                 }
@@ -496,15 +547,28 @@ class Admin extends Component
         return $carts;
     }
 
+    public function setAdminTrashedData()
+    {
+        $this->adminTrashedData = true;
+        session()->put('adminTrashedData', true);
+        $this->adminTrashedData = session('adminTrashedData');
+    }
+    public function resetAdminTrashedData()
+    {
+        $this->adminTrashedData = false;
+        session()->put('adminTrashedData', false);
+        $this->adminTrashedData = session('adminTrashedData');
+    }
+
     public function getCategories()
     {
         $categories = [];
         if(session()->has('adminTrashedData') && session('adminTrashedData')){
             $this->adminTrashedData = session('adminTrashedData');
-            $categories = Category::onlyTrashed()->orderBy('name', 'asc')->get();
+            $categories = Category::onlyTrashed()->orderBy('name', 'asc')->paginate($this->categoriesPerPage, ['*'], null, $this->page);
         }
         else{
-            $categories = Category::orderBy('name', 'asc')->get();
+            $categories = Category::orderBy('name', 'asc')->paginate($this->categoriesPerPage, ['*'], null, $this->page);
         }
         return $categories;
     }
@@ -515,13 +579,25 @@ class Admin extends Component
         $products = [];
         if(session()->has('adminTrashedData') && session('adminTrashedData')){
             $this->adminTrashedData = session('adminTrashedData');
-            $products = Product::onlyTrashed()->orderBy('slug', 'asc')->get();
+            $products = Product::onlyTrashed()->orderBy('slug', 'asc')->paginate($this->productsPerPage, ['*'], null, $this->page);
         }
         else{
-            $products = Product::orderBy('slug', 'asc')->get();
+            $products = Product::orderBy('slug', 'asc')->paginate($this->productsPerPage, ['*'], null, $this->page);
         }
         
         return $products;
+    }
+
+    public function loadNextPage()
+    {
+        $this->page += 1;
+        $this->emit('onPageChangeFromOtherComponent', $this->page);
+    }
+
+    public function loadPrevPage()
+    {
+        $this->page -= 1;
+        $this->emit('onPageChangeFromOtherComponent', $this->page);
     }
 
 
@@ -530,10 +606,10 @@ class Admin extends Component
         $users = [];
         if(session()->has('adminTrashedData') && session('adminTrashedData')){
             $this->adminTrashedData = session('adminTrashedData');
-            $users = User::onlyTrashed()->orderBy('name', 'asc')->get();
+            $users = User::onlyTrashed()->orderBy('name', 'asc')->paginate($this->usersPerPage, ['*'], null, $this->page);
         }
         else{
-            $users = User::orderBy('name', 'asc')->get();
+            $users = User::orderBy('name', 'asc')->paginate($this->usersPerPage, ['*'], null, $this->page);
         }
 
         return $users;
@@ -545,10 +621,10 @@ class Admin extends Component
         $admins = [];
         if(session()->has('adminTrashedData') && session('adminTrashedData')){
             $this->adminTrashedData = session('adminTrashedData');
-            $admins = User::onlyTrashed()->where('role', 'admin')->orderBy('name', 'asc')->get();
+            $admins = User::onlyTrashed()->where('role', 'admin')->orderBy('name', 'asc')->paginate($this->usersPerPage, ['*'], null, $this->page);
         }
         else{
-            $admins = User::where('role', 'admin')->orderBy('name', 'asc')->get();
+            $admins = User::where('role', 'admin')->orderBy('name', 'asc')->paginate($this->usersPerPage, ['*'], null, $this->page);
         }
         return $admins;
     }
@@ -558,10 +634,10 @@ class Admin extends Component
         $unconfirmed = [];
         if(session()->has('adminTrashedData') && session('adminTrashedData')){
             $this->adminTrashedData = session('adminTrashedData');
-            $unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->get();
+            $unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->paginate($this->usersPerPage, ['*'], null, $this->page);
         }
         else{
-            $unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->get();
+            $unconfirmed = User::orderBy('name', 'asc')->whereNotNull('email_verified_token')->whereNotNull('token')->whereNull('email_verified_at')->paginate($this->usersPerPage, ['*'], null, $this->page);
         }
         
         return $unconfirmed;
@@ -569,7 +645,13 @@ class Admin extends Component
 
     public function getComments()
     {
-        return Comment::all()->reverse();
+        if(session()->has('adminTrashedData') && session('adminTrashedData')){
+            $this->adminTrashedData = session('adminTrashedData');
+            return Comment::whereId(0)->paginate($this->categoriesPerPage, ['*'], null, $this->page);
+        }
+        else{
+            return Comment::whereNotNull('created_at')->orderBy('created_at', 'desc')->paginate($this->commentsPerPage, ['*'], null, $this->page);
+        }
     }
 
 }

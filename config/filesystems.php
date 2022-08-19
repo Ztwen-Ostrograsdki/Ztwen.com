@@ -41,14 +41,19 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
-        'profilPhotos' => [
+        'usersPhotos' => [
             'driver' => 'local',
-            'root' => public_path().('/profilPhotos'),
+            'root' => public_path().('/usersPhotos'),
             'visibility' => 'public',
         ],
         'articlesImages' => [
             'driver' => 'local',
             'root' => public_path().('/articlesImages'),
+            'visibility' => 'public',
+        ],
+        'categoriesImages' => [
+            'driver' => 'local',
+            'root' => public_path().('/categoriesImages'),
             'visibility' => 'public',
         ],
 
@@ -78,8 +83,9 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
-        public_path('storage/profilPhotos') => storage_path('app/profilPhotos'),
+        public_path('storage/usersPhotos') => storage_path('app/usersPhotos'),
         public_path('storage/articlesImages') => storage_path('app/articlesImages'),
+        public_path('storage/categoriesImages') => storage_path('app/categoriesImages'),
 
     ],
 

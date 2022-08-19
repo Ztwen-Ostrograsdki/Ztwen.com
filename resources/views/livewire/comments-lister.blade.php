@@ -1,35 +1,22 @@
-@if($comments->count() > 0)
-<div>
 <div class="w-100 m-0 p-0" >
     @foreach ($comments as $key => $com)
-    <div class="w-100 mx-auto p-0 border my-3 z-bg-hover-secondary">
+    <div class="w-100 mx-auto p-0 border my-3 z-bg-hover-secondary rounded">
         <div class="row m-0 mx-auto p-0 w-100">
             <div class="col-xl-3 col-xxl-3 col-lg-3 col-md-3 d-none d-md-block d-xxl-block d-xl-block d-lg-block p-0 m-0 border-right">
-                <img class="w-100 h-100" src="{{$com->product->getRandomDefaultImage()}}" alt="image de l'article {{$com->product->slug}}">
+                <img class="w-100 h-100" src="{{$com->product->__profil()}}" alt="image de l'article {{$com->product->slug}}">
             </div>
             <div class="col-12 col-xl-9 col-xxl-9 col-lg-9 col-md-9">
                 <div class="w-100 m-0 p-0 py-1 d-flex justify-content-between">
                     <div class="m-0 p-0 py-1 d-flex justify-content-between">
                         <h6 class="text-center p-0 m-0">
-                            @if($com->user->current_photo)
-                                <span class="d-flex">
-                                    Posté par : 
-                                    <img width="45" class="border rounded-circle ml-1" src="/storage/profilPhotos/{{$com->user->currentPhoto()}}" alt="Le profil du poster">
-                                    <span class="mx-2 text-uppercase">{{$com->user->name}}</span>
-                                    @if($com->user->role == 'admin')
-                                        <span class="fa fa-user-secret mt-1 @isMaster($com->user) text-warning @else text-white-50 @endisMaster float-right"></span>
-                                    @endif
-                                </span>
-                            @else
-                                <span class="d-flex">
-                                    Posté par : 
-                                    <img width="45" class="border rounded-circle ml-1" src="{{$com->user->currentPhoto()}}" alt="mon profil">
-                                    <span class="mx-2 text-uppercase">{{$com->user->name}}</span>
-                                    @if($com->user->role == 'admin')
-                                    <span class="fa fa-user-secret @isMaster($com->user) text-warning @else text-white-50 @endisMaster mt-1 float-right"></span>
-                                    @endif
-                                </span>
-                            @endif
+                            <span class="d-flex">
+                                Posté par : 
+                                <img width="22" class="border rounded-circle ml-1" src="{{$com->user->__profil('110')}}" alt="Le profil du poster">
+                                <span class="mx-2 text-uppercase">{{$com->user->name}}</span>
+                                @if($com->user->role == 'admin')
+                                    <span class="fa fa-user-secret mt-1 @isMaster($com->user) text-warning @else text-white-50 @endisMaster float-right"></span>
+                                @endif
+                            </span>
                         </h6>
                     </div>
                     <div class="d-flex justify-content-start">
@@ -59,7 +46,7 @@
                     <span>
                         <span class="d-flex justify-content-between">
                             <strong class="text-bold">Article : </strong>
-                            <a class="text-white d-inline-block pl-1" href="{{route('product-profil', ['id' => $com->product->id])}}">
+                            <a class="text-white d-inline-block pl-1" href="{{route('product.profil', ['slug' => $com->product->slug])}}">
                                 <span class="text-capitalize text-info"> {{ $com->product->getName() }}</span>
                             </a>
                             @isAdmin()
@@ -78,20 +65,24 @@
                     </span>
                 </div>
                 <hr class="bg-white">
-                <div class="d-flex w-100 m-0 justify-content-between">
-                    <span>
-                        <strong>Prix: </strong> <span>{{$com->product->price}}</span>
-                    </span>
-                    <span>
-                        <strong>Total: </strong> <span>{{$com->product->total}}</span>
-                    </span>
-                    <span>
-                        <strong>vendus: </strong> <span>{{$com->product->sells}}</span>
-                    </span>
-                    <span>
-                        <strong>Reduction: </strong> <span>{{$com->product->reduction}}</span> <span>%</span>
-                    </span>
-                </div>
+                @auth
+                    @isMaster()
+                        <div class="d-flex w-100 m-0 justify-content-between">
+                            <span>
+                                <strong>Prix: </strong> <span>{{$com->product->price}}</span>
+                            </span>
+                            <span>
+                                <strong>Total: </strong> <span>{{$com->product->total}}</span>
+                            </span>
+                            <span>
+                                <strong>vendus: </strong> <span>{{$com->product->sells}}</span>
+                            </span>
+                            <span>
+                                <strong>Reduction: </strong> <span>{{$com->product->reduction}}</span> <span>%</span>
+                            </span>
+                        </div>
+                    @endisMaster
+                @endauth
                 <div class="d-flex justify-content-between m-0 w-100 text-danger">
                     <div class="d-flex justify-content-start m-0 text-danger w-auto">
                         <strong>
@@ -108,7 +99,7 @@
                         </strong>
                         <span class="mx-1">
                             <strong class="text-white-50"> || Catégorie : </strong>
-                            <a class="text-white d-inline-block pl-1" href="{{route('category', ['id' => $com->product->category->id])}}">
+                            <a class="text-white d-inline-block pl-1" href="{{route('category.profil', ['slug' => $com->product->category->getSlug()])}}">
                                 <span class="text-uppercase z-text-cyan"> {{ $com->product->category->name }}</span>
                             </a>
                             @isAdmin()
@@ -133,5 +124,3 @@
     </div>
     @endforeach
 </div>
-</div>
-@endif

@@ -10,9 +10,10 @@ use App\Models\ShoppingBag;
 use App\Helpers\DateFormattor;
 use App\Models\SeenLikeProductSytem;
 use Illuminate\Database\Eloquent\Model;
+use App\Helpers\ProductsTraits\ProductTrait;
+use App\Helpers\ZtwenManagers\GaleryManager;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Helpers\ActionsTraits\ModelActionTrait;
-use App\Helpers\ProductsTraits\ProductTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
@@ -24,11 +25,14 @@ class Product extends Model
     use DateFormattor;
     use ModelActionTrait;
     use ProductTrait;
+    use GaleryManager;
 
     public $myLikes;
     public $livewire_product_errors = [];
     public $livewire_product_alert_type = "FireAlertDoNotClose";
+    public $livewire_product_alert_by_toast = "ToastDoNotClose";
     const MAX_IMAGES = 3;
+    public $imagesFolder = 'productsImages';
     const IMAGES_BASE_PATH = '/storage/articlesImages/';
     const DEFAULT_PRODUCT_GALERY_PATH = ["/myassets/default/default-img-product.jpg", "/myassets/default/default-img-product.jpg", "/myassets/default/default-img-product.jpg",];
 
@@ -53,8 +57,9 @@ class Product extends Model
     
     public function images()
     {
-        return $this->hasMany(Image::class);
+        return $this->morphToMany(Image::class, 'imageable');
     }
+
 
     public function user()
     {
@@ -77,41 +82,6 @@ class Product extends Model
         return $this->seen;
     }
 
-    public function productGalery()
-    {
-        if($this->images->count() < 1){
-            return self::DEFAULT_PRODUCT_GALERY_PATH;
-        }
-        else{
-            return $this->images;
-        }
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return 'path' of image
-     */
-    public function getRandomDefaultImage()
-    {
-        $r = rand(0, 2);
-        if($this->images->count() < 1){
-            return ($this->productGalery())[$r];
-        }
-        return self::IMAGES_BASE_PATH . $this->images->reverse()->first()->name;
-    }
-
-    public function getProductDefaultImageInGalery()
-    {
-        $galery = $this->productGalery();
-        $size = $galery->count() - 1;
-        $r = rand(0, $size);
-        $images = [];
-        foreach ($galery as $key => $image) {
-            $images[] = $image;
-        }
-        return $images[$r]->name;
-    }
 
     public function shoppingBags()
     {

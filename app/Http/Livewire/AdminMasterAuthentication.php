@@ -43,7 +43,7 @@ class AdminMasterAuthentication extends Component
                 $this->emit('thisAuthenticationIs', true);
             }
             else{
-                $this->dispatchBrowserEvent('FireAlert', ['type' => 'error', 'message' => "Vous n'êtes pas authorisé",  'title' => "Echec d'authentification"]);
+                $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'error', 'message' => "Vous n'êtes pas authorisé",  'title' => "Echec d'authentification"]);
                 return redirect()->back();
             }
         }

@@ -1,6 +1,6 @@
 <div class="d-inline">
     <span>
-        <span wire:poll>
+        <span>
             @if(auth()->user()->myNotifications->count() == 0)
             Aucune notif. 
             @elseif(auth()->user()->myNotifications->count() == 1)

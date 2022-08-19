@@ -7,7 +7,10 @@ window.addEventListener('reloadPage', event => {
     location.reload(true);
 });
 window.addEventListener('modal-updateProductGalery', event => {
-    $('#updateProductModal').modal();
+    $('#updateProductGaleryModal').modal();
+});
+window.addEventListener('modal-updateCategoryGalery', event => {
+    $('#updateCategoryGaleryModal').modal();
 });
 window.addEventListener('modal-userCartManager', event => {
     $('#userCartManagerModal').modal();
@@ -35,6 +38,10 @@ window.addEventListener('modal-openSingleChatModal', event => {
 window.addEventListener('modal-adminAuthenticationModal', event => {
     $('#adminAuthenticationModal').modal();
     $("#adminAuthenticationModal input").focus();
+});
+window.addEventListener('modal-displayProcessModal', event => {
+    $('.modal').modal('hide');
+    $('#processModal').modal();
 });
 
 

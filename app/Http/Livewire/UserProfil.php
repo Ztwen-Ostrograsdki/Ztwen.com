@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
+use App\Models\Image;
 use App\Models\Product;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -54,6 +55,7 @@ class UserProfil extends Component
 
     use WithFileUploads;
 
+
     public function render()
     {
         $this->hasNewData = true;
@@ -72,7 +74,6 @@ class UserProfil extends Component
             return abort(403, "Vous n'êtes pas authorisé à cette page");
         }
         if($id){
-           
             $user = User::find($id);
             if($user){
                 $this->user_id = $id;
@@ -130,10 +131,6 @@ class UserProfil extends Component
     public function getUserCart()
     {
         $data = Auth::user()->shoppingBags->pluck('product_id')->toArray();
-        // if(count($data) > 0){
-        //     $carts = Product::whereIn('id', $data)->get();
-        // }
-
         $this->carts_counter = count($data);
     }
 

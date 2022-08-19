@@ -16,7 +16,7 @@
     x-init="checkScroll"
 >
     <div class="w-100 mx-auto d-flex justify-center my-2">
-        <span class="py-2 px-3 text-white zw-35 text-center d-inline-block z-bg-secondary-light-opac border border-white rounded" wire:click="loadMore">Charger plus d'articles...</span>
+        <span class="py-2 cursor-pointer px-3 text-white zw-35 text-center d-inline-block z-bg-secondary-light-opac border border-white rounded" wire:click="loadMore">Charger plus d'articles...</span>
     </div>
     <div wire:loading.delay>
         <div id="preloader-white">

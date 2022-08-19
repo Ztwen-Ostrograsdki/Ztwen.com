@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\User;
 use Livewire\Component;
 use App\Rules\PasswordChecked;
+use Illuminate\Support\Carbon;
 
 class AdminAuthorization extends Component
 {
@@ -25,7 +26,7 @@ class AdminAuthorization extends Component
         }
         else{
             $this->user->__generateAdminKey();
-            $this->default_key = $this->user->userAdminKey->key;
+            return $this->mount();
         }
         
     }
@@ -46,11 +47,31 @@ class AdminAuthorization extends Component
         $this->user->__hydrateAdminSession();
         $this->validate();
         $this->validate(['code' => new PasswordChecked($this->default_key)]);
-        $this->dispatchBrowserEvent('FireAlertDoNotClose', ['type' => 'success', 'message' => "Authentification réussie"]);
-        $this->user->__regenerateAdminSession();
-        $this->user->__regenerateAdminKey();
-        return redirect()->route('admin');
+        if($this->keyIsExpires()){
+            $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'error', 'title' => 'Authentification échouée', 'message' => "Cette clé a déjà expiré. Veuillez renseigner la nouvelle clé."]);
+            $this->addError('code', "Cette clé n'est plus valable. Taper la nouvelle clé!");
+            $this->user->__regenerateAdminSession();
+            $this->user->__regenerateAdminKey();
+        }
+        else{
+            $this->dispatchBrowserEvent('ToastDoNotClose', ['type' => 'success', 'message' => "Authentification réussie"]);
+            $this->user->__regenerateAdminSession();
+            $this->user->__regenerateAdminKey();
+            return redirect()->route('admin');
+        }
         
+    }
+
+
+    public function keyIsExpires()
+    {
+        $now = Carbon::now();
+        $e = $this->user->userAdminKey->updated_at;
+        $times = $now->diffInMinutes($e);
+        if($times > 5){
+            return true;
+        }
+        return false;
     }
 
 

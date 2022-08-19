@@ -2,22 +2,20 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\User;
-use App\Models\Image;
 use App\Models\Product;
 use Livewire\Component;
-use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use App\Helpers\ZtwenManagers\ZtwenImageManager;
 
 class ProductEditor extends Component
 {
     use WithFileUploads;
     public $product;
-    public $product_image;
-    public $product_image_name;
-    protected $listeners = ['targetedProduct', 'resetTargetedProduct'];
+    public $product_image = null;
+    protected $listeners = ['editProductGaleryEvent'];
+    protected $rules = [
+        'product_image' => 'image|max:3000|mimes:png,jpg,jpeg'
+    ];
 
 
     public function render()
@@ -25,88 +23,30 @@ class ProductEditor extends Component
         return view('livewire.product-editor');
     }
 
-
-    public function resetTargetedProduct()
+    public function updateProductGalery()
     {
+        $this->validate();
+        $make = (new ZtwenImageManager($this->product, $this->product_image))->storer($this->product->imagesFolder);
+        if ($make) {
+            $this->dispatchBrowserEvent('hide-form');
+            $this->dispatchBrowserEvent('Toast', ['title' => 'Mise à jour réussie', 'message' => "La galerie de l'article a été mis à jour avec succès", 'type' => 'success']);
+        }
+        else{
+            $this->dispatchBrowserEvent('Toast', ['title' => 'Ereur serveur', 'message' => "La mise à jour de la galerie a échoué, veuillez réessayer!", 'type' => 'error']);
+        }
         
     }
-    public function targetedProduct($product_id)
+
+
+    public function editProductGaleryEvent($product_id)
     {
         $product = Product::find($product_id);
         if($product){
-            $this->product = $product;
-        }
-    }
-
-
-    public function updateProductGalery()
-    {
-        if($this->authenticated()){
-            $this->validate(['product_image' => 'image|max:1500|mimes:png,jpg,jpeg']);
-            $this->photoExtension = $this->product_image->extension();
-            $this->setImageName($this->photoExtension);
-            $first = null;
-
-            $oldsImages = $this->product->images;
-            if($oldsImages->count() > 2){
-                $first = $oldsImages->first();
-            }
-            $this->product_image->storeAs('articlesImages', $this->getImageName());
-            $intoDB = Image::create(['name' => $this->getImageName(), 'product_id' => $this->product->id]);
-            if ($intoDB) {
-                if($first){
-                    $local = Storage::delete($first->name);
-                    $first->delete();
-                }
-                $this->dispatchBrowserEvent('hide-form');
-                $this->emit('updatingFinish', true);
-                $this->dispatchBrowserEvent('FireAlert', ['title' => 'Mise à jour réussie', 'message' => "La mise à jour de la galerie s'est bien déroulée", 'type' => 'success']);
-            }
-            else{
-                $local = Storage::delete($this->getImageName());
-                $this->emit('updatingFinish', true);
-                $this->dispatchBrowserEvent('FireAlert', ['title' => 'Ereur serveur', 'message' => "La mise à jour de la galerie a échoué, veuillez réessayer!", 'type' => 'error']);
-            }
-            $this->emit('productUpdated', $this->product->id);
-            $this->emit('updatingFinish', true);
-        }
-
-    }
-
-
-    public function setImageName($extension)
-    {
-        $name = getdate()['year'].''.getdate()['mon'].''.getdate()['hours'].''.getdate()['minutes'].''.getdate()['seconds']. '' .  Str::random(15) . '.' . $extension;
-        $this->product_image_name = $name;
-        return $this;
-    }
-
-    public function getImageName()
-    {
-        return $this->product_image_name;
-    }
-
-    public function productUpdated($product_id)
-    {
-        // $product = Product::find($product_id);
-        // if($product){
-        //     $this->emit('productUpdated', $product_id);
-        // }
-    }
-
-
-    public function authenticated()
-    {
-        if(Auth::user()){
-            if(User::find(Auth::user()->id)->__hasAdminAuthorization()){
-                return true;
-            }
-            else{
-                return $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Authentification requise', 'message' => "Veuillez vous authentifier avant de d'exécuter cette action!", 'type' => 'warning']);
-            }
+            $this->$product = $product;
+            $this->dispatchBrowserEvent('modal-updateProductGalery');
         }
         else{
-            return redirect()->route('login');
+            return abort(403);
         }
     }
 

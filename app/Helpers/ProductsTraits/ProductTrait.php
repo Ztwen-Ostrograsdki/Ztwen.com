@@ -88,7 +88,7 @@ trait ProductTrait{
             else{
                 $errors = [
                     'title' => 'Article déjà ajouté!',
-                    'message' => "Cet article est déjà dans votre panier! ",
+                    'message' => "Cet article est déjà dans votre panier!",
                     'type' => "info",
                 ];
                 $this->livewire_product_errors = $errors;

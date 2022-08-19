@@ -33,10 +33,12 @@
         @livewire('product-editor')
         @livewire('edit-product-data')
         @livewire('create-new-product')
+        @livewire('manage-category-galery')
         @livewire('comment-manager')
         @livewire('display-my-notifications')
         @livewire('single-chat-inbox')
         @livewire('admin-master-authentication')
+        @livewire('process-modal')
         {{-- chargement des modals --}}
 
         <div class=" bg-gray-100 border" style="background-color: rgb(167, 193, 219); min-height: 150vh !important;">

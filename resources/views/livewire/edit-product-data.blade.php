@@ -1,4 +1,4 @@
-<x-z-modal-generator :icon="'fa bi-tag fa-2x'" :modalName="'editProductModal'" :modalHeaderTitle="'Edition d\'un article'" :modalBodyTitle="'Edition d\'un article'">
+<x-z-modal-generator :icon="'fa bi-tag'" :modalName="'editProductModal'" :modalHeaderTitle="'Edition d\'un article'">
     <form autocomplete="off" class="mt-3 pb-3 form-group bg-transparent" wire:submit.prevent="updateData">
         <div class=" m-0 p-0 mt-0 mb-2 row w-100 d-flex justify-between">
             <x-z-input :width="'col-6'"  :error="$errors->first('slug')" :modelName="'slug'" :labelTitle="'Le Slug'" ></x-z-input>
@@ -22,6 +22,6 @@
             <x-z-input :width="'col-4'" :error="$errors->first('reduction')" :modelName="'reduction'" :labelTitle="'La réduction effectuée'" ></x-z-input>
         </div>
         <x-z-button>Mettre à jour</x-z-button>
-        <x-z-modal-dismisser>Annuler</x-z-modal-dismisser>
+        <x-z-modal-dismisser :classes="'mt-3'">Annuler</x-z-modal-dismisser>
     </form>
 </x-z-modal-generator>

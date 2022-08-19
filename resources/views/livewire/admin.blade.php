@@ -1,4 +1,4 @@
-<div class="m-0 p-0 w-100">
+<div class="m-0 p-0 w-100" x-data="{ selector: false }">
    <div class="z-justify-relative-top-80 w-100" style="width: 90%;">
       <div class="w-100 border m-0 p-0">
          <div class="m-0 p-0 w-100">
@@ -15,7 +15,7 @@
                      </div>
                      <hr class="m-0 p-0 w-100 text-white bg-white">
                      <div class="m-0 py-2 @if($adminTagName == 'notifications') z-admin-active @endif px-2">
-                        <div wire:click="setActiveTag('notifications', 'Notifications')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
+                        <div class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="bi-envelope-fill mr-2"></span>
                            <span class="w-100 m-0 d-none d-xl-inline">Notifications</span>
                            <span class="">255</span>
@@ -27,10 +27,10 @@
                         <div wire:click="setActiveTag('comments', 'Commentaires')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-chat-fill "></span>
                            <span class="w-100 m-0 d-none d-xl-inline">Commentaires</span>
-                           @if ($comments->count() > 9)
-                              <span class="">{{$comments->count()}}</span>
+                           @if ($comments->total() > 9)
+                              <span class="">{{$comments->total()}}</span>
                            @else
-                              <span class="">0{{$comments->count()}}</span>
+                              <span class="">0{{$comments->total()}}</span>
                            @endif
                            <span class="@if($adminTagName == 'comments') bi-chevron-down @else bi-chevron-right @endif "></span>
                         </div>
@@ -40,10 +40,10 @@
                         <div wire:click="setActiveTag('admins', 'Administrateurs')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-person-workspace"></span>
                            <span class="w-100 m-0 d-none d-xl-inline">Administrateurs</span>
-                           @if ($admins->count() > 9)
-                              <span class="">{{$admins->count()}}</span>
+                           @if ($admins->total() > 9)
+                              <span class="">{{$admins->total()}}</span>
                            @else
-                              <span class="">0{{$admins->count()}}</span>
+                              <span class="">0{{$admins->total()}}</span>
                            @endif
                            <span class="@if($adminTagName == 'admins') bi-chevron-down @else bi-chevron-right @endif "></span>
                         </div>
@@ -53,10 +53,10 @@
                         <div wire:click="setActiveTag('users', 'Utilisateurs')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-people-fill"></span>
                            <span class="w-100 m-0 d-none d-xl-inline">Utilisateurs</span>
-                           @if ($users->count() > 9)
-                              <span class="">{{$users->count()}}</span>
+                           @if ($users->total() > 9)
+                              <span class="">{{$users->total()}}</span>
                            @else
-                              <span class="">0{{$users->count()}}</span>
+                              <span class="">0{{$users->total()}}</span>
                            @endif
                            <span class="@if($adminTagName == 'users') bi-chevron-down @else bi-chevron-right @endif "></span>
                         </div>
@@ -66,10 +66,10 @@
                         <div wire:click="setActiveTag('unconfirmed', 'Email non confirmé')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-person-x-fill  "></span>
                            <span class="w-100 m-0 d-none d-xl-inline">Email non confirmé</span>
-                           @if ($unconfirmed->count() > 9)
-                              <span class="">{{$unconfirmed->count()}}</span>
+                           @if ($unconfirmed->total() > 9)
+                              <span class="">{{$unconfirmed->total()}}</span>
                            @else
-                              <span class="">0{{$unconfirmed->count()}}</span>
+                              <span class="">0{{$unconfirmed->total()}}</span>
                            @endif
                            <span class="@if($adminTagName == 'unconfirmed') bi-chevron-down @else bi-chevron-right @endif "></span>
                         </div>
@@ -79,10 +79,10 @@
                         <div wire:click="setActiveTag('categories', 'Catégories')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-list-check"></span>
                            <span class="w-100 m-0 d-none d-xl-inline">Catégories</span>
-                           @if ($categories->count() > 9)
-                              <span class="">{{$categories->count()}}</span>
+                           @if ($categories->total() > 9)
+                              <span class="">{{$categories->total()}}</span>
                            @else
-                              <span class="">0{{$categories->count()}}</span>
+                              <span class="">0{{$categories->total()}}</span>
                            @endif
                            <span class="@if($adminTagName == 'categories') bi-chevron-down @else bi-chevron-right @endif "></span>
                         </div>
@@ -92,10 +92,10 @@
                         <div wire:click="setActiveTag('products', 'Articles')" class="d-flex w-100 cursor-pointer m-0 p-0 justify-content-between">
                            <span class="mr-2 bi-cart-check"></span>
                            <span class="w-100 m-0  d-none d-xl-inline">Articles</span>
-                           @if ($products->count() > 9)
-                              <span class="">{{$products->count()}}</span>
+                           @if ($products->total() > 9)
+                              <span class="">{{$products->total()}}</span>
                            @else
-                              <span class="">0{{$products->count()}}</span>
+                              <span class="">0{{$products->total()}}</span>
                            @endif
                            <span class="@if($adminTagName == 'products') bi-chevron-down @else bi-chevron-right @endif "></span>
                         </div>
@@ -111,33 +111,33 @@
                                 </x-responsive-nav-link>
                             </x-slot>
                             <x-slot name="content" :class="'text-left p-0 m-0 text-dark'">
-                                <x-dropdown-link title="Actions sur les articles" wire:click="advancedRequests('articles')" class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                <x-dropdown-link title="Actions sur les articles" wire:click="advancedRequests('-App-Models-Product')" class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
                                        <span class="bi-cart-dash mr-1"></span>
-                                       <span>Vider les articles</span>
+                                       <span>Gérer les articles</span>
                                 </x-dropdown-link>
-                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                <x-dropdown-link title="Actions sur les catégories" wire:click="advancedRequests('-App-Models-Category')" class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
                                     <span class="bi-tags mr-1"></span>
-                                    <span>Vider les Catégories</span>
+                                    <span>Gérer les Catégories</span>
                                 </x-dropdown-link>
-                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                <x-dropdown-link title="Actions sur les utilisateurs" wire:click="advancedRequests('-App-Models-User')" class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
                                     <span class="bi-people mr-1"></span>
-                                    <span>Vider les Utilisateurs</span>
+                                    <span>Gérer les Utilisateurs</span>
                                 </x-dropdown-link>
-                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                <x-dropdown-link title="Actions sur les utilisateurs" wire:click="advancedRequests('-App-Models-User')" class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
                                     <span class="fa fa-user-secret mr-1"></span>
-                                    <span>Vider les admins</span>
+                                    <span>Gérer les admins</span>
                                 </x-dropdown-link>
-                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                <x-dropdown-link title="Actions sur les commentaires" wire:click="advancedRequests('-App-Models-Comment')" class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
                                     <span class="fa fa-comment mr-1"></span>
-                                    <span>Vider les commentaires</span>
+                                    <span>Gérer les commentaires</span>
                                 </x-dropdown-link>
-                                <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                <x-dropdown-link title="Actions sur les clées" wire:click="advancedRequests('-App-Models-UserAdminKey')" class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
                                     <span class="bi-key mr-1"></span>
-                                    <span>Vider toutes clées</span>
+                                    <span>Gérer toutes clées</span>
                                 </x-dropdown-link>
                                 <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
                                     <span class="bi-table mr-1"></span>
-                                    <span>Vider toutes les tables</span>
+                                    <span>Gérer toutes les tables</span>
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
@@ -152,9 +152,17 @@
                                 <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Req. avancées</span>
                            </span>
                            @endif
+                           <span x-show="!selector" title="Activer la sélection multiple" class="cursor-pointer py-1 my-1 border rounded px-2" x-on:click="selector = true;">
+                              <span class="bi-check-all"></span>
+                              <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Selectionner</span>
+                           </span>
+                           <span x-show="selector" title="Annuler la sélection multiple" class="cursor-pointer py-1 my-1 border rounded px-2 bg-secondary-light-opac" x-on:click="selector = false;">
+                              <span class="bi-check-all"></span>
+                              <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Selectionner</span>
+                           </span>
                            <span title="Regénérer une clé de session d'administration" wire:click="regenerateAdminKey" class="cursor-pointer py-1 my-1 border rounded px-2">
-                                 <span class="bi-key"></span>
-                                 <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Générer une clé</span>
+                              <span class="bi-key"></span>
+                              <span class="d-none d-xxl-inline d-xl-inline d-md-inline d-lg-inline ml-1">Générer une clé</span>
                            </span>
                            <span title="Afficher la clé de session d'administration" wire:click="displayAdminSessionKey" class="cursor-pointer py-1 border rounded px-2">
                               <span class="bi-eye"></span>
@@ -180,7 +188,7 @@
                      <strong class="bi-chevron-right  d-none text-white" id="adminHider"></strong>
                      <strong class="bi-chevron-left text-white" id="adminShower"></strong>
                   </span>
-                  <div class="w-100 mx-auto mt-2 border">
+                  <div x-show="!selector" x-transition class="w-100 mx-auto mt-2 border">
                     <div class="mx-auto d-flex w-100 justify-content-between">
                         <div class="col-6 bg-info">
                            <h6 class="text-center text-white text-uppercase mt-4">
@@ -188,12 +196,12 @@
                            </h6>
                         </div>
                         <div class="col-3 p-0 text-white flex-column border-left d-flex justify-content-between">
-                           <span wire:click="getTheActiveData" class="py-2 px-2 cursor-pointer @if(!$adminTrashedData) bg-info @endif">
+                           <span wire:click="resetAdminTrashedData" class="py-2 px-2 cursor-pointer @if(!$adminTrashedData) bg-info @endif">
                               <span class="bi-minecart"></span>
                               <span>Actifs</span>
                            </span>
                            <hr class="bg-white p-0 m-0">
-                           <span wire:click="getTheTrashedData" class="py-2 px-2 cursor-pointer @if($adminTrashedData) bg-info @endif">
+                           <span wire:click="setAdminTrashedData" class="py-2 px-2 cursor-pointer @if($adminTrashedData) bg-info @endif">
                               <span class="bi-trash"></span>
                               <span>Corbeille</span>
                            </span>
@@ -213,35 +221,12 @@
                                     <span class="d-none d-lg-inline d-xl-inline">Ajouter une categorie</span>
                                     </span>
                                 </div>
-                            @elseif($adminTagName == 'products')
+                           @elseif($adminTagName == 'products')
                                 <div class="text-white-50 cursor-pointer border-left p-3 col-3" data-toggle="modal" data-target="#createProductModal" data-dismiss="modal">
                                     <span class="">
                                     <span class="fa bi-cart-plus fa-2x"></span>
                                     <span class="d-none d-lg-inline d-xl-inline">Ajouter un article</span>
                                     </span>
-                                </div>
-                            @elseif($adminTagName == 'comments')
-                                <div class="text-white-50 border-left col-3">
-                                 @if($comments->count() > 0)
-                                       <div class="d-flex flex-column p-1 justify-content-between mx-auto w-100">
-                                          <div class="w-100 row p-0 m-0 mx-auto">
-                                             <span title="Supprimer les commentaires non approuvés" style="font-size: 17px" class="btn-success col-5 border mx-1 px-2 border-white cursor-pointer text-white ">
-                                                <span class="fa fa-trash cursor-pointer text-white"></span>
-                                                <span class="">Vider</span>
-                                             </span>
-                                             <span title="Supprimer tous les commentaires" style="font-size: 17px" class="btn-danger mx-1 border px-2 col-5 border-white cursor-pointer text-white ">
-                                                <span class="fa fa-trash cursor-pointer text-white"></span>
-                                                <span class="">Vider</span>
-                                             </span>
-                                          </div>
-                                          <div class="w-100 m-0 mx-auto row p-0 mt-2">
-                                             <span title="Faire quelques choses..." style="font-size: 17px" class="btn-danger mx-1 border col-10 px-4 border-white cursor-pointer text-white ">
-                                                <span class="fa fa-desktop cursor-pointer text-white"></span>
-                                                <span class="">Quelques ...</span>
-                                             </span>
-                                          </div>
-                                       </div>
-                                 @endif
                                 </div>
                            @endif
                         @endisAdmin

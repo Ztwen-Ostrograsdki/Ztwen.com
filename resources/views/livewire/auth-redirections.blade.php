@@ -1,4 +1,5 @@
-@if($target == 'login')
+<div>
+    @if($target == 'login')
 <div class="zw-90 row mx-auto" style="position: relative; top:200px;">
     <div class="col-12 col-lg-6 col-xl-6 col-md-6 mx-auto z-bg-secondary-light-opac border rounded z-border-orange" style="opacity: 0.8;">
         <div class="w-100 mx-auto p-3">
@@ -183,3 +184,5 @@
     </div>
 </div>
 @endif
+
+</div>

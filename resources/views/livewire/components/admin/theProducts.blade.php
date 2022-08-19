@@ -8,19 +8,16 @@
             <th>Posté dépuis</th>
             <th>Demandes</th>
             <th>Vendus</th>
-            <th>Action</th>
+            <th x-show="!selector">Action</th>
+            <th x-show="selector">Sélectionnez</th>
         </thead>
         <tbody>
             @foreach($products as $key => $p)
-                <tr class="">
-                    <td class="text-center border-right">{{$key + 1}}</td>
+                <tr class="@if(in_array($p->id, $selecteds)) bg-secondary-light @endif">
+                    <td class="text-center border-right">{{(($products->currentPage() - 1) * $products->perPage()) + $key + 1}}</td>
                     <td class="m-0 pl-1">
-                        <a class="text-white w-75 p-0 m-0" href="{{route('product-profil', ['id' => $p->id])}}">
-                            @if($p->images->count() > 0)
-                                <img class="m-0 p-0 d-inline-block border ml-1 my-1" width="50" src="/storage/articlesImages/{{$p->getProductDefaultImageInGalery()}}" alt="image de l'article {{$p->slug}}">
-                            @else
-                                <img class="m-0 p-0 d-inline-block border ml-1 my-1" width="50" src="{{$p->getRandomDefaultImage()}}" alt="image de l'article {{$p->slug}}">
-                            @endif
+                        <a class="text-white w-75 p-0 m-0" href="{{route('product.profil', ['slug' => $p->slug])}}">
+                            <img class="m-0 p-0 d-inline-block border ml-1 my-1" width="50" src="{{$p->__profil('100')}}" alt="image de l'article {{$p->slug}}">
                             <span class="">
                                 {{ mb_substr($p->getName(), 0, 30) }}
                             </span>
@@ -31,7 +28,7 @@
                         {{ $p->price }}
                     </td>
                     <td class="text-center">
-                        {{ str_ireplace("Il y a ", '', $p->getDateAgoFormated()) }}
+                        {{ str_ireplace("Il y a ", '', $p->getDateAgoFormated(true)) }}
                     </td>
                     <td class="">
                         <x-dropdown align="right" width="48" class="text-bold m-0 p-0 bg-secondary">
@@ -71,19 +68,21 @@
                         </span>
                     </td>
                     @else
-                    <td class="text-center w-auto p-0">
+                    <td x-show="!selector" class="text-center w-auto p-0">
                         <span class="row mx-auto w-100 m-0 p-0">
                             <span title="Supprimer définivement cet article. Il sera ainsi rétiré définitivement des articles postés" wire:click="forceDeleteAProduct({{$p->id}})" class="text-danger  col-4 p-2 px-3 cursor-pointer fa fa-trash"></span>
                             <span title="Envoyez cet article dans la corbeille. Il sera ainsi rétiré des articles postés" wire:click="deleteAProduct({{$p->id}})" class="text-info col-4 p-2 px-3 cursor-pointer fa fa-trash border-right border-left"></span>
                             <span title="Retirer cet article des postes pour le moment, masquer cet article!" wire:click="hideThisProduct({{$p->id}})" class="text-warning col-4 p-2 px-3 cursor-pointer fa fa-reply"></span>
                         </span>
                     </td>
-
+                    <td x-show="selector" class="p-0" title="Sélectionnez">
+                        <input wire:model="selecteds" value="{{$p->id}}" type="checkbox" class="form-checkbox m-0 mx-auto w-100 py-3 cursor-pointer fa fa-1x bg-transparent">
+                    </td>
                     @endif
                 </tr>
             @endforeach
         </tbody>
-    </table>                                                     
+    </table> 
 </div>
 @else
     <div class="d-flex flex-column mx-auto text-center p-3 mt-4">

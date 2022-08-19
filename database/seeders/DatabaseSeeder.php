@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
        
         // Comment::factory(7)->create();
         
-        // Category::factory(10)->create();
-        // Product::factory(25)->create();
+        // Category::factory(13)->create();
+        // Product::factory(100)->create();
 
         // $comments = Comment::all();
 

@@ -7,10 +7,8 @@
                    <div class="d-fex flex-column w-100 mb-3">
                         <div class="m-0" id="OpenEditPhotoProfilModal" title="Doucle cliquer pour changer la photo de profil">
                            <div class="d-flex w-100 justify-content-between cursor-pointer m-0 p-0">
-                            @if($user && $user->current_photo)
-                                <img src="/storage/profilPhotos/{{$user->currentPhoto()}}" alt="mon profil">
-                            @elseif($user && !$user->current_photo)
-                                <img src="{{$user->currentPhoto()}}" alt="mon profil">
+                            @if($user)
+                                <img src="{{$user->__profil('250')}}" alt="mon profil">
                             @endif
                            </div>
                         </div>
@@ -131,8 +129,14 @@
                      </div>
                      </div>
                      <div class="border mt-3 p-3">
-                        <div class="mx-auto justify-center d-flex w-75">
-                           <h5 class="text-uppercase text-white">{{$activeTagTitle}}</h5>
+                        <div class="mx-auto justify-center d-flex w-100">
+                           <h5 class=" text-white w-100">
+                               <span class="float-left text-uppercase">{{$activeTagTitle}}</span>
+                               <a class="float-right text-white btn bg-orange border-white border" href="{{route('carts.validation', ['user_id' => auth()->user()->id])}}">
+                                   <span class="">Valider panier</span>
+                                   <strong class="bi-cart-check text-white "></strong>
+                               </a>
+                           </h5>
                         </div>
                         <hr class="w-100 bg-white text-white mt-2">
                         <div class="px-2" style="height: 360px; overflow: auto">
@@ -143,11 +147,7 @@
                                         @foreach($demandes as $key => $req)
                                             <div class="m-0 my-2 p-0 mx-auto border z-bg-hover-secondary d-flex justify-content-between w-100">
                                                 <div class="w-25 m-0 p-0 border-right">
-                                                    @if($req['user']->current_photo)
-                                                        <img src="/storage/profilPhotos/{{$req['user']->currentPhoto()}}" alt="le profil de {{$req['user']->name}}">
-                                                    @else
-                                                    <img src="{{$req['user']->currentPhoto()}}" alt="le profil de {{$req['user']->name}}">
-                                                    @endif
+                                                    <img src="{{$req['user']->__profil('250')}}" alt="le profil de {{$req['user']->name}}">
                                                 </div>
                                                 <div class="m-0 p-0 w-75 p-2">
                                                     <h6 class="text-white">
@@ -195,11 +195,7 @@
                                     @foreach($myFollowers as $u)
                                         <div class="m-0 my-2 p-0 mx-auto border z-bg-hover-secondary d-flex justify-content-between w-100">
                                             <div class="w-25 m-0 p-0 border-right">
-                                                @if($u->current_photo)
-                                                    <img src="/storage/profilPhotos/{{$u->currentPhoto()}}" alt="le profil de {{$u->name}}">
-                                                @else
-                                                <img src="{{$u->currentPhoto()}}" alt="le profil de {{$u->name}}">
-                                                @endif
+                                                <img src="{{$u->__profil('250')}}" alt="le profil de {{$u->name}}">
                                             </div>
                                         <div class="m-0 p-0 w-75 p-2">
                                             <h6 class="text-white">
@@ -254,11 +250,7 @@
                                     @foreach($myFriends as $u)
                                         <div class="m-0 my-2 p-0 mx-auto border z-bg-hover-secondary d-flex justify-content-between w-100">
                                             <div class="w-25 m-0 p-0 border-right">
-                                                @if($u->current_photo)
-                                                    <img class="h-100" src="/storage/profilPhotos/{{$u->currentPhoto()}}" alt="le profil de {{$u->name}}">
-                                                @else
-                                                <img class="h-100" src="{{$u->currentPhoto()}}" alt="le profil de {{$u->name}}">
-                                                @endif
+                                                <img class="h-100" src="{{$u->__profil('250')}}" alt="le profil de {{$u->name}}">
                                             </div>
                                         <div class="m-0 p-0 w-75 p-2">
                                             <h6 class="text-white">

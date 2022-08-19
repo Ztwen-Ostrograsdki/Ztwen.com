@@ -2,125 +2,83 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\User;
 use App\Models\Product;
 use Livewire\Component;
-use App\Models\ShoppingBag;
 use Illuminate\Support\Facades\Auth;
 
 class ProductProfil extends Component
 {
 
     protected $listeners = [
-        'connected', 
-        'targetedProduct', 
-        'resetTargetedProduct',
-        'productUpdated', 
-        'updatingFinish',
+        'newCommentAddEvent', 'aCommentWasApprovedEvent'
     ];
-    public $galery;
-    public $product;
-    public $product_category;
-    public $updating = false;
+    public $slug;
 
-    public function mount()
+    public function mount(string $slug)
     {
-        $id = (int)request()->id;
-        if($id){
-            $product = Product::find($id);
+        $slug = (string)request()->slug;
+        if($slug){
+            $product = Product::whereSlug($slug)->first();
             if($product){
-                $this->product = $product;
-                $this->product_category = $this->product->category;
-                $this->galery = $this->product->productGalery();
-                $this->emit('targetedProduct', $this->product->id);
+                $this->slug = $slug;
             }
             else{
-                $product = Product::withTrashed('deleted_at')->whereId($id)->firstOrFail();
-                if($product){
-                    return abort(403, "L'article que vous rechercher a été retiré ou supprimé");
-                }
-                else{
-                    return abort(403, "Votre requête ne peut aboutir désolé");
-                }
+                return abort(404);
             }
         }
     }
 
-    public function getProduct()
-    {
-        $this->mount();
-        $this->product_category = $this->product->category;
-    }
-
-
-    public function resetTargetedProduct()
-    {
-        $this->reset('product');
-    }
-
-    public function targetedProduct($p)
-    {
-        $product = Product::find($p);
-        $this->product = $product;
-        $this->galery = $this->product->productGalery();
-    }
-
-    
     public function render()
     {
-        return view('livewire.product-profil');
+        if($this->slug){
+            $product = Product::whereSlug($this->slug)->first();
+            $product->update(['seen' => $product->seen + 1]);
+            $comments = $product->comments->where('approved', true)->where('blocked', false)->reverse()->take(6);
+
+        }
+        return view('livewire.product-profil', compact('product', 'comments'));
     }
 
     public function addNewComment()
     {
-        $this->emit('addNewComment', $this->product->id);
+        $product = Product::whereSlug($this->slug)->first();
+        $this->emit('addNewComment', $product->id);
     }
 
-    public function liked()
+    public function likedThis($product_id = null)
     {
         $user = Auth::user();
-        $product = $this->product;
-        if($product && $user){
-            if($this->user->likedThis('product', $product->id, $this->user->id)){
-                $this->mount();
+        if($user){
+            $product = Product::whereSlug($this->slug)->first();
+            if($product){
+                $user = User::find($user->id);
+                if($user->__likedThis($product->id)){
+                    $this->dispatchBrowserEvent('ToastDoNotClose', ['title' => 'LIKE', 'message' => "Vous avez liker l'article {$product->getName()} !", 'type' => 'success']);
+                }
+            }
+            else{
+                $this->dispatchBrowserEvent('ToastDoNotClose', ['title' => 'Article inconnue', 'message' => "L'article que vous tenter de liker est introuvable ou a été déjà retiré!", 'type' => 'warning']);
             }
         }
         else{
-            return abort(403, "Votre requête ne peut aboutir");
+            $this->dispatchBrowserEvent('ToastDoNotClose', ['title' => 'Connexion requise', 'message' => "Veuillez vous connecter avant d'exécuter cette action!", 'type' => 'warning']);
         }
-    }
-
-    public function productUpdated($product_id)
-    {
-        $this->getProduct();
-    }
-
-    public function updatingFinish($asset = true)
-    {
-        $this->updating = false;
-        $this->mount();
     }
 
 
     public function updateProductGalery($product_id = null)
     {
-        if($product_id){
-            $id = $product_id;
-        }
-        else{
-            $id = $this->product->id;
-        }
-        $this->emit('targetedProduct', $id);
-        $this->dispatchBrowserEvent('modal-updateProductGalery');
-        
+        $product = Product::whereSlug($this->slug)->first();
+        $this->emit('editProductGaleryEvent', $product->id);
     }
 
     public function editAProduct()
     {
-        $this->emit('editAProduct', $this->product->id);
+        $product = Product::whereSlug($this->slug)->first();
+        $this->emit('editAProduct', $product->id);
         $this->dispatchBrowserEvent('modal-editProduct');
-        $this->getProduct();
     }
-
 
     public function bought()
     {
@@ -129,65 +87,44 @@ class ProductProfil extends Component
 
     public function addToCart($product_id = null)
     {
-        if(!$product_id){
-            $product = $this->product;
-        }
-        else{
-            $p = Product::find($product_id);
-            if($p){
-                $product = $p;
-            }
-            else{
-                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Article inconnue', 'message' => "L'article que vous tenter d'ajouter à votre panier est introuvable ou a été déjà retiré!", 'type' => 'warning']);
-            }
-        }
+        $product = Product::whereSlug($this->slug)->first();
         if($product){
             $add = $product->__addToUserCart();
             if($add){
-                // $this->emit('cartEdited', Auth::user()->id);
-                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Ajout réussi', 'message' => "L'article {$product->getName()} a été ajouté à votre panier avec succès!", 'type' => 'success']);
+                $this->dispatchBrowserEvent('Toast', ['title' => 'Ajout réussi', 'message' => "L'article {$product->getName()} a été ajouté à votre panier avec succès!", 'type' => 'success']);
             }
             else{
-                $this->dispatchBrowserEvent($product->livewire_product_alert_type, $product->livewire_product_errors);
+                $this->dispatchBrowserEvent($product->livewire_product_alert_by_toast, $product->livewire_product_errors);
             }
         }
-        // $this->getProduct();
-
     }
 
 
     
     public function deleteFromCart($product_id = null)
     {
-        if(!$product_id){
-            $product = $this->product;
-        }
-        else{
-            $p = Product::find($product_id);
-            if($p){
-                $product = $p;
-            }
-            else{
-                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Article inconnue', 'message' => "L'article que vous tenter d'ajouter à votre panier est introuvable ou a été déjà retiré!", 'type' => 'warning']);
-            }
-        }
+        $product = Product::whereSlug($this->slug)->first();
         if($product){
             $del = $product->__retrieveFromUserCart();
             if($del){
-                $this->emit('cartEdited', Auth::user()->id);
-                $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Suppression réussie', 'message' => "L'article {$product->getName()} a été retiré de votre panier avec succès!", 'type' => 'success']);
+                $this->dispatchBrowserEvent('Toast', ['title' => 'Suppression réussie', 'message' => "L'article {$product->getName()} a été retiré de votre panier avec succès!", 'type' => 'success']);
             }
             else{
-                $this->dispatchBrowserEvent($product->livewire_product_alert_type, $product->livewire_product_errors);
+                $this->dispatchBrowserEvent($product->livewire_product_alert_by_toast, $product->livewire_product_errors);
             }
         }
-        $this->getProduct();
     }
 
 
-    public function connected($user_id)
+    public function newCommentAddEvent()
     {
-        $this->getProduct();
+        
+    }
+
+
+    public function aCommentWasApprovedEvent()
+    {
+
     }
 
 }

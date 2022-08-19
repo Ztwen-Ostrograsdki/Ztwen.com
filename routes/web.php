@@ -4,11 +4,13 @@ use App\Http\Livewire\Home;
 use App\Http\Livewire\Admin;
 use App\Http\Livewire\Messenger;
 use App\Http\Livewire\UserProfil;
+use App\Http\Livewire\ProductsHome;
 use App\Http\Livewire\ShowProducts;
 use App\Http\Livewire\MessengerChat;
 use App\Http\Livewire\ProductProfil;
 use App\Http\Livewire\ResetPassword;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Livewire\CategoryProfil;
 use App\Http\Livewire\ShowCategories;
 use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\AuthRedirections;
@@ -16,9 +18,9 @@ use App\Http\Livewire\AdminAuthorization;
 use App\Http\Livewire\RegisteringNewUser;
 use App\Http\Livewire\EmailVerifyNotification;
 use App\Http\Controllers\BlockTemporaryMyAccount;
+use App\Http\Livewire\CartsValidation;
 use App\Http\Livewire\ConfirmedEmailVerification;
 use App\Http\Livewire\ForceEmailVerifyNotification;
-use App\Http\Livewire\ProductsHome;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,9 +36,10 @@ use App\Http\Livewire\ProductsHome;
 Route::get('/', Home::class)->name('home');
 
 Route::get('/articles', ProductsHome::class)->name('products');
-Route::get('/articles/{id?}', ProductProfil::class)->name('product-profil');
+Route::get('/articles/{slug}', ProductProfil::class)->name('product.profil');
 Route::get('/categories', ShowCategories::class)->name('categories');
-Route::get('/categories/{id?}', ShowCategories::class)->name('category');
+Route::get('/categories/{slug}', CategoryProfil::class)->name('category.profil');
+Route::get('/caisse/validation-panier/{user_id}', CartsValidation::class)->name('carts.validation')->middleware(['auth', 'verifiedUser']);
 
 Route::post('/inscription', RegisteringNewUser::class)->middleware('guest')->name('inscription');
 

@@ -309,7 +309,7 @@ header .navbar {
 
 .banner .text-content h4 {
     color: #f33f3f;
-    font-size: 22px;
+    /* font-size: 22px; */
     text-transform: uppercase;
     font-weight: 700;
     margin-bottom: 15px;
@@ -317,7 +317,7 @@ header .navbar {
 
 .banner .text-content h2 {
     color: #fff;
-    font-size: 62px;
+    /* font-size: 62px; */
     text-transform: uppercase;
     letter-spacing: 5px;
 }
@@ -390,7 +390,6 @@ header .navbar {
 }
 
 .product-item .down-content h4 {
-    font-size: 17px;
     color: #1a6692;
     margin-bottom: 20px;
 }
@@ -399,7 +398,6 @@ header .navbar {
     position: absolute;
     top: 30px;
     right: 30px;
-    font-size: 18px;
     color: #121212;
 }
 

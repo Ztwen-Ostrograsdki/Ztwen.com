@@ -6,14 +6,17 @@ use Illuminate\View\Component;
 
 class ZModalDismisser extends Component
 {
+    public $targetModal= null;
+    public $classes = '';
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($classes = '', $targetModal = null)
     {
-        //
+        $this->classes = $classes;
+        $this->targetModal = $targetModal; 
     }
 
     /**

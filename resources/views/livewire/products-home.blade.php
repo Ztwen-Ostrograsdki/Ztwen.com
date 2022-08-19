@@ -36,11 +36,20 @@
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <div class="mx-auto w-100 d-flex justify-content-center">
-                            <select wire:change="changeCategory" wire:model="categorySelected" class="bg-info form-select-lg text-white py-2" name="categories" id="categories">
+                            <select wire:change="changeCategory" wire:model="categorySelected" class="bg-info text-white py-2" name="categories" id="categories">
                                 <option class="text-dark" value="">Selectionner la catégorie à afficher</option>
                                 @foreach ($categories as $category)
                                     <option value="{{$category->id}}">
                                         {{$category->name}}
+                                        <span class="">
+                                            (
+                                                @if ($category->products->count() > 9)
+                                                    {{$category->products->count()}}
+                                                @else
+                                                    0{{$category->products->count()}}
+                                                @endif
+                                            )
+                                        </span>
                                     </option>
                                 @endforeach
                             </select>
@@ -49,21 +58,21 @@
                     <div class="col-md-12">
                         <div class="filters">
                             <ul>
-                                @if ($categorySelected)
+                                @if ($categorySelected && $categoryName)
                                     <li class="@if(session()->has('sectionSelected') && session('sectionSelected') == 'allPosted') active @endif" data-filter="*"> 
-                                        <span class="text-dark">Catégorie listée</span> : {{$categorySelected}} 
-                                        @if(count($products_targeted) > 9)
-                                            <span>({{count($products_targeted)}})</span>
+                                        <span class="text-dark">Catégorie listée</span> : {{$categoryName ? $categoryName->name : ''}} 
+                                        @if(count($categoryName->products) > 9)
+                                            <span>({{count($categoryName->products)}})</span>
                                         @else
-                                            <span>(0{{count($products_targeted)}})</span>
+                                            <span>(0{{count($categoryName->products)}})</span>
                                         @endif
                                     </li> 
-                                @else
+                                @elseif($products_records)
                                     <li wire:click="changeSection('allPosted')" class="@if(session()->has('sectionSelected') && session('sectionSelected') == 'allPosted') active @endif" data-filter="*">Tous les articles 
-                                        @if(count($products_targeted) > 9)
-                                            <span>({{count($products_targeted)}})</span>
+                                        @if($products_records > 9)
+                                            <span>({{$products_records}})</span>
                                         @else
-                                            <span>(0{{count($products_targeted)}})</span>
+                                            <span>(0{{$products_records}})</span>
                                         @endif
                                     </li>
                                 @endif
@@ -79,7 +88,10 @@
 
         @if(!$searching)
             <div>
-                @livewire('show-products')
+                @livewire('show-products', [
+                    'section' => $active_section, 
+                    'category' => $categorySelected
+                ])
             </div>
         @else
         <div>

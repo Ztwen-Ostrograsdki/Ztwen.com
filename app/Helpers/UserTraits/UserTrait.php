@@ -9,6 +9,9 @@ use App\Models\SeenLikeProductSytem;
 
 trait UserTrait{
 
+
+
+   
     public function __reporteThisUser()
     {
         
@@ -108,6 +111,9 @@ trait UserTrait{
             return abort(403, "Votre requête ne peut aboutir");
         }
     }
+
+
+
 
     
 }

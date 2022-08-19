@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
  */
 trait AdminTrait{
 
+
+
     /**
      * Use to regenerate or create a new admin into session who want to connect to the an amin route/dashboard
      * 
@@ -69,7 +71,7 @@ trait AdminTrait{
     public function __sendKey($key)
     {
         $make = MyNotifications::create([
-            'content' => "Bienvenu(e) sur la plateforme. Nous vous envoyons la clé de connexion à la page d'administration. Clé: "  . $key,
+            'content' => $key . " #Bienvenu(e) sur la plateforme. Nous vous envoyons la clé de connexion à la page d'administration. ",
             'user_id' =>  auth()->user()->id,
             'target' => "Admin-Key",
             'target_id' => null
@@ -91,7 +93,7 @@ trait AdminTrait{
     public function __sendAdvancedKey($key)
     {
         $make = MyNotifications::create([
-            'content' => "Salut! Je vous envoie la clé des requêtes irreversibles dans la page d'administration. Clé: "  . $key,
+            'content' => $key . " #Salut! Je vous envoie la clé des requêtes irreversibles dans la page d'administration." ,
             'user_id' =>  auth()->user()->id,
             'target' => "Admin-Advanced-Key",
             'target_id' => null
@@ -113,29 +115,19 @@ trait AdminTrait{
     {
         $key = Str::random(4);
         if($this->hasAdminKey()){
-            $make = $this->userAdminKey->update([
-                'user_id' => $this->id,
-                'key' => Hash::make($key)
-            ]);
-            if($make){
-                $this->__destroyStrongKeys();
-                $this->__refreshNotifications();
-                return $this->__sendKey($key);
-            }
-            return false;
+            $this->__destroyWeakKeys();
+            $this->__refreshNotifications();
         }
-        else{
-            $make = UserAdminKey::create([
-                'user_id' => $this->id,
-                'key' =>  Hash::make($key)
-            ]);
-            if($make){
-                $this->__destroyStrongKeys();
-                $this->__refreshNotifications();
-                return $this->__sendKey($key);
-            }
-            return false;
+        $make = UserAdminKey::create([
+            'user_id' => $this->id,
+            'key' =>  Hash::make($key)
+        ]);
+        if($make){
+            $this->__destroyStrongKeys();
+            $this->__refreshNotifications();
+            return $this->__sendKey($key);
         }
+        return false;
     }
 
     /**
@@ -147,31 +139,29 @@ trait AdminTrait{
     {
         $key = Str::random(4);
         if($this->hasAdminAdvancedKey()){
-            $make = $this->userAdminKey->forceFill([
-                'user_id' => $this->id,
-                'advanced' => 1,
-                'key' => Hash::make($key)
-            ])->save();
-            if($make){
-                $this->__destroyWeakKeys();
-                $this->__refreshNotifications();
-                return $this->__sendAdvancedKey($key);
-            }
-            return false;
+            $this->__destroyStrongKeys();
+            $this->__refreshNotifications();
         }
-        else{
-            $make = UserAdminKey::create([
-                'user_id' => $this->id,
-                'key' =>  Hash::make($key)
-            ]);
-            $make->forceFill(['advanced' => true])->save();
-            if($make){
-                $this->__destroyWeakKeys();
-                $this->__refreshNotifications();
-                return $this->__sendAdvancedKey($key);
-            }
-            return false;
+        $make = UserAdminKey::create([
+            'user_id' => $this->id,
+            'key' =>  Hash::make($key)
+        ]);
+        $make->forceFill(['advanced' => true])->save();
+        if($make){
+            $this->__destroyWeakKeys();
+            $this->__refreshNotifications();
+            return $this->__sendAdvancedKey($key);
         }
+        return false;
+    }
+    /**
+     * Use to regenerate a strong key
+     *
+     * @return bool
+     */
+    public function __regenerateAdvancedRequestKey()
+    {
+        return $this->__generateAdvancedRequestKey();
     }
 
 
@@ -273,16 +263,5 @@ trait AdminTrait{
         }
         
     }
-
-    
-
-
-
-
-
-
-
-
-
 
 }

@@ -10,17 +10,16 @@ use Illuminate\Support\Facades\Auth;
 class ShowProducts extends Component
 {
     protected $listeners = [
-        
+        'refreshData' => 'reloadDataToRender',
     ];
     public $records = 6;
     public $targets = null;
-    public $section = null;
-    public $category = null;
     public $perPage;
     public $page;
+    public $onHome = false;
     public $scroll = true;
-    public $active_section;
-    public $categorySelected = null;
+    public $section;
+    public $category = null;
 
     public function mount($page = null, $perPage = null) 
     {
@@ -37,14 +36,21 @@ class ShowProducts extends Component
             $products = $this->getSelectedSessionProducts();
             return view('livewire.show-products', compact('products'));
         }
+        elseif($this->onHome){
+            $products = Product::orderBy('created_at', 'desc')->take(6)->get();
+            return view('livewire.show-products', compact('products'));
+        }
         else{
             $products = Product::where('slug', 'like', '%' . $this->targets . '%')->orWhere('description', 'like', '%' . $this->targets . '%')->paginate($this->perPage, ['*'], null, $this->page);
             return view('livewire.show-products', compact('products'));
         }
     }
 
-
-
+    public function reloadDataToRender($section = null, $category = null)
+    {
+        $this->section = $section;
+        $this->category = $category;
+    }
 
     public function getProducts()
     {
@@ -57,18 +63,8 @@ class ShowProducts extends Component
 
     public function getSelectedSessionProducts()
     {
-        if(session()->has('sectionSelected') && session('sectionSelected')){
-            $this->active_section = session('sectionSelected');
-        }
-        else{
-            $this->active_section = 'allPosted';
-        }
-        if(session()->has('categorySelected') && session('categorySelected')){
-            $this->categorySelected = session('categorySelected');
-        }
-
-        $section = $this->active_section;
-        $category = $this->categorySelected;
+        $section = $this->section;
+        $category = $this->category;
         if($section == 'lastPosted'){
             return $this->lastPosted($category);
         }
@@ -78,8 +74,6 @@ class ShowProducts extends Component
         else{
             return $this->allPosts($category);
         }
-        
-        
     }
 
     public function allPosts($category = null)

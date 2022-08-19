@@ -47,12 +47,13 @@ class LoadMoreProducts extends Component
     {
         
         if (!$this->loadMore) {
-            return view('livewire.load-more-products');
+            return view('livewire.load-more-products', ['onHome' => false]);
         } else {
             $products = Product::paginate($this->perPage, ['*'], null, $this->page);
 
             return view('livewire.show-products', [
                 'products' => $products,
+                'onHome' => false,
             ]);
         }
     }

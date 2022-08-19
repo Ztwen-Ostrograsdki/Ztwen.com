@@ -7,42 +7,26 @@
             <th class="">Nom</th>
             <th class="d-none d-lg-table-cell d-xl-table-cell">Email</th>
             <th>Inscrit depuis</th>
-            <th>Action</th>
+            <th x-show="!selector">Action</th>
+            <th x-show="selector">Sélectionnez</th>
         </thead>
         <tbody>
             @foreach($data as $k => $u)
-                <tr class="@isMaster($u) text-warning @endisMaster">
-                    <td class=" text-center">{{$k + 1}}</td>
+                <tr class="@isMaster($u) text-warning @endisMaster @if(in_array($u->id, $selecteds)) bg-secondary-light @endif">
+                    <td class="text-center border-right">{{(($data->currentPage() - 1) * $data->perPage()) + $k + 1}}</td>
                     <td class="text-capitalize pl-2">
-                        @if($u->current_photo)
-                            <span class="d-flex">
-                            <img width="30" class="border rounded-circle" src="/storage/profilPhotos/{{$u->currentPhoto()}}" alt="mon profil">
-                            <span class="mx-2 d-none d-lg-inline d-xl-inline">
-                                {{$u->name}}
-                            </span>
-                            <span class="d-inline d-lg-none d-xl-none">
-                                {{mb_substr($u->name, 0, 9)}}...
-                            </span>
-                            @if($u->role == 'admin')
-                                <span class="fa fa-user-secret mt-1 @isMaster($u) text-warning @else text-white-50 @endisMaster float-right"></span>
-                            @endif
-                            </span>
-                        @else
-                            <span class="d-flex">
-                                <img width="30" class="border rounded-circle" src="{{$u->currentPhoto()}}" alt="mon profil">
-                                <span class="mx-2">{{$u->name}}</span>
-                                @if($u->role == 'admin')
-                                <span class="fa fa-user-secret @isMaster($u) text-warning @else text-white-50 @endisMaster mt-1 float-right"></span>
-                                @endif
-                                @if(auth()->user()->id !== $u->id)
-                                <span title="Lancer un chat avec {{$u->name}} pas message" class="float-right mx-2">
-                                    <span wire:click="openSingleChat({{$u->id}})" class="float-right cursor-pointer">
-                                        <span class="fa bi-messenger cursor-pointer text-success"></span>
-                                    </span>
-                                </span>
-                                @endif
-                            </span>
+                        <span class="d-flex">
+                        <img width="23" class="border rounded-circle my-1" src="{{$u->__profil(110)}}" alt="photo de profil">
+                        <span class="mx-2 d-none d-lg-inline d-xl-inline">
+                            {{$u->name}}
+                        </span>
+                        <span class="d-inline d-lg-none d-xl-none">
+                            {{mb_substr($u->name, 0, 9)}}...
+                        </span>
+                        @if($u->role == 'admin')
+                            <span class="fa fa-user-secret mt-1 @isMaster($u) text-warning @else text-white-50 @endisMaster float-right"></span>
                         @endif
+                        </span>
                     </td>
                     <td title="Cette addresse mail @if($u->hasVerifiedEmail()) a déja été confirmé @else n'a pas encore été confirmé @endif" class="text-center @if($u->hasVerifiedEmail()) text-success @else text-danger @endif d-none d-lg-table-cell d-xl-table-cell">
                         {{$u->email}}
@@ -50,7 +34,7 @@
                     <td class="text-center">
                         {{ str_ireplace("Il y a ", '', $u->getDateAgoFormated(true)) }}
                     </td>
-                    <td class="text-center w-auto p-0">
+                    <td x-show="!selector" class="text-center w-auto p-0">
                         @isNotMaster($u)
                             <span class="row w-100 m-0 p-0">
                                 @if ($u->deleted_at)
@@ -87,6 +71,9 @@
                         @else
                         <strong class="text-success">Master</strong>
                         @endisNotMaster
+                    </td>
+                    <td x-show="selector" class="p-0" title="Sélectionnez">
+                        <input wire:model="selecteds" value="{{$u->id}}" type="checkbox" class="form-checkbox m-0 mx-auto w-100 py-3 cursor-pointer fa fa-1x bg-transparent">
                     </td>
                 </tr>
             @endforeach

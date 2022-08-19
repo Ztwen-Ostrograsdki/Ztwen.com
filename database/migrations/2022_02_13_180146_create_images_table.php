@@ -13,18 +13,10 @@ class CreateImagesTable extends Migration
      */
     public function up()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::create('images', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->unsignedBigInteger('product_id');
-            $table->foreign('product_id')
-                  ->references('id')
-                  ->on('products')
-                  ->onDelete('restrict')
-                  ->onUpdate('restrict');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

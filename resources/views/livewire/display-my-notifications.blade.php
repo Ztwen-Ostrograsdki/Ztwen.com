@@ -26,14 +26,18 @@
         @foreach ($myNotifications as $notif)
             @if($notif->target !== "Admin-Advanced-Key")
             <h6 class="border rounded my-1 d-flex flex-column">
-                <span class="float-left p-2">
-                    <span class="fa fa-check text-success"></span>
-                    <span class="mx-1 z-word-break-break text-white-50" style="">
-                        {{$notif->content}}
+                <span class="float-left d-flex row justify-content-between p-2">
+                    <span class="col-9">
+                        <span class="fa fa-check text-success"></span>
+                        <span class="mx-1 z-word-break-break text-white-50" style="">
+                            {{$notif->content}}
+                        </span>
                     </span>
-                    <span title="Supprimer cette notification" wire:click="deleteThis({{$notif->id}})" class="float-right text-right cursor-pointer bg-orange rounded border border-white px-2 py-1">
-                        <span class="fa fa-close"></span>
-                        <span>Lu</span>
+                    <span class="col-3 d-flex justify-content-end">
+                        <span class="d-table align-content-center cursor-pointer bg-orange rounded border border-white px-2 py-1" title="Supprimer cette notification" wire:click="deleteThis({{$notif->id}})" >
+                            <span class="fa fa-close"></span>
+                            <span>Lu</span>
+                        </span>
                     </span>
                 </span>
                 <div class="d-flex justify-content-between text-white-50 w-100 p-1">

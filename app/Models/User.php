@@ -29,6 +29,7 @@ use App\Helpers\ActionsTraits\ModelActionTrait;
 use App\Helpers\ActionsTraits\FollowSystemTrait;
 use App\Helpers\UserTraits\MustVerifyEmailTrait;
 use App\Helpers\UserTraits\UserPasswordManagerTrait;
+use App\Helpers\ZtwenManagers\GaleryManager;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -49,6 +50,7 @@ class User extends Authenticatable
     use UserPasswordManagerTrait;
     use UserTrait; 
     use ChatManageTrait;
+    use GaleryManager;
 
     /**
      * The attributes that are mass assignable.
@@ -100,6 +102,9 @@ class User extends Authenticatable
     ];
 
 
+    public $imagesFolder = 'usersPhotos';
+
+
     public function likes()
     {
         return $this->hasMany(SeenLikeProductSytem::class);
@@ -112,16 +117,13 @@ class User extends Authenticatable
     
     public function images()
     {
-        return $this->hasMany(Image::class);
+        return $this->morphToMany(Image::class, 'imageable');
     }
+
+
     public function myRequests()
     {
         return $this->hasMany(MyRequest::class);
-    }
-
-    public function photos()
-    {
-        return $this->hasMany(Photo::class);
     }
 
     public function products()
@@ -134,23 +136,6 @@ class User extends Authenticatable
         return $this->hasMany(History::class);
     }
 
-    public function currentPhoto()
-    {
-        $photos = $this->photos;
-        if($photos->toArray() !== []){
-            return $this->current_photo;
-        }
-        return $this->defaultProfil();
-    }
-
-    public function myGalery()
-    {
-        $photos = $this->photos;
-        if($photos->toArray() !== []){
-            return $this->photos;
-        }
-        return [];
-    }
 
     public function isMyFriend($user)
     {
@@ -250,16 +235,6 @@ class User extends Authenticatable
         foreach ($messages as $m){
             $m->update(['seen' => true]);
         }
-    }
-
-    /**
-     * set a default profil photo for a model
-     *
-     * @return string
-     */
-    public function defaultProfil()
-    {
-        return Photo::DEFAULT_PROFIL_PHOTO_PATH;
     }
 
     public function iFollowingButNotYet($user)

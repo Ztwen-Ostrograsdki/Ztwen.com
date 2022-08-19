@@ -1,4 +1,4 @@
- <x-z-modal-generator :header_color="'text-orange'" :icon="'fa fa-user-plus fa-2x'" :modalName="'registerModal'" :modalHeaderTitle="'Inscription'" :modalBodyTitle="'Inscription'">
+ <x-z-modal-generator :hasHeader="false" :width="6" :icon="'fa fa-user-plus'" :modalName="'registerModal'" :modalBodyTitle="'Inscription'">
 <form autocomplete="off" class="form-group pb-3 px-2 bg-transparent" wire:submit.prevent="submit">
     <x-z-input :type="'text'" :error="$errors->first('name')" :modelName="'name'" :labelTitle="'Votre nom et prénoms...'"  ></x-z-input>
     <x-z-input :type="'email'" :error="$errors->first('email')" :modelName="'email'" :labelTitle="'Votre adresse mail...'"  ></x-z-input>

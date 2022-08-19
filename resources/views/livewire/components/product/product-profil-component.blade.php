@@ -2,40 +2,16 @@
     <div class="mx-auto p-0 border shadow mb-2">
         <div class="row m-0 mx-auto p-0 w-100">
             <div class="col-12 p-0 m-0" style="height: auto !important">
-                @if($product && $product->images->count() > 0 && $product->productGalery() !== [])
-                <div id="productProfilImagesCarouselTrue" class="carousel slide m-0 border-bottom" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        @foreach ($product->productGalery() as $key => $image)
-                            <li data-target="#productProfilImagesCarouselTrue" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
-                        @endforeach
-                    </ol>
-                    <div class="carousel-inner w-100 h-100">
-                        @foreach ($product->productGalery() as $key => $image)
-                            <div class="carousel-item @if($key == 0)active @endif">
-                                <img class="" width="100%" class="" src="/storage/articlesImages/{{$image->name}}" alt="slide-{{$key}}">
-                            </div>
-                        @endforeach
-                    </div>
-                    <a class="carousel-control-prev" href="#productProfilImagesCarouselTrue" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#productProfilImagesCarouselTrue" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </div>
-                @elseif($product->images->count() < 1 || $product->productGalery() == [])
                 <div id="productProfilImagesCarouselFalse" class="carousel slide border-bottom  m-0" data-ride="carousel">
                     <ol class="carousel-indicators">
-                        @foreach ($product->productGalery() as $key => $image)
+                        @foreach ($product->getImagesOfSize() as $key => $image)
                             <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
                         @endforeach
                     </ol>
                     <div class="carousel-inner border w-100 h-100">
-                        @foreach ($product->productGalery() as $key => $image)
+                        @foreach ($product->getImagesOfSize() as $key => $image)
                             <div class="carousel-item @if($key == 0)active @endif">
-                                <img width="" class="" src="{{$image}}" alt="slide-{{$key}}">
+                                <img width="" class="w-100" src="{{$image}}" alt="slide-{{$key}}">
                             </div>
                         @endforeach
                     </div>
@@ -48,26 +24,6 @@
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
-                @else
-                <div id="productProfilImagesCarouselFalse" class="carousel slide m-0" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                            <li data-target="#productProfilImagesCarouselFalse" data-slide-to="{{$key}}" class="@if($key == 0)active @endif"></li>
-                    </ol>
-                    <div class="carousel-inner w-100 h-100">
-                        <div class="carousel-item @if($key == 0)active @endif">
-                            <img width="150" class="" src="{{$image}}" alt="slide-{{$key}}">
-                        </div>
-                    </div>
-                    <a class="carousel-control-prev" href="#productProfilImagesCarouselFalse" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#productProfilImagesCarouselFalse" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </div>
-                @endif
             </div>
             <div class="col-12">
                 <h6 class="text-center text-uppercase py-2">
@@ -153,7 +109,7 @@
                         </span>
                         @endisAdmin
                         @auth
-                            <span wire:click="liked({{ $product->id }})" class="cursor-pointer mx-2 mt-1 z-scale" title="Liker cet article">
+                            <span wire:click="likedThis({{ $product->id }})" class="cursor-pointer mx-2 mt-1 z-scale" title="Liker cet article">
                                 <span class="fa fa-2x fa-heart text-danger"></span>
                             </span>
                         @endauth
@@ -163,18 +119,12 @@
                     <h6 class="text-center p-2 text-uppercase">
                         <span class="text-secondary">Catégorie:</span> 
                         <span class="text-white">
-                            <a class="text-primary" href="{{route('category', ['id' => $product->category_id])}}">
+                            <a class="text-primary" href="{{route('category.profil', ['slug' => $product->category->getSlug()])}}">
                                 {{ $product->category->name }}
                             </a>
                         </span>
                     </h6>
                 </div>
-                <div class="d-flex justify-content-end m-0 w-auto">
-                    <small class="text-muted py-1">
-                        Article édité {{ $product->getDateAgoFormated() }}
-                    </small>
-                </div>
-
             </div>
         </div>
     </div>

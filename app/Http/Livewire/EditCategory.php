@@ -110,7 +110,7 @@ class EditCategory extends Component
                 return true;
             }
             else{
-                return $this->dispatchBrowserEvent('FireAlertDoNotClose', ['title' => 'Authentification requise', 'message' => "Veuillez vous authentifier avant de d'exécuter cette action!", 'type' => 'warning']);
+                return $this->dispatchBrowserEvent('ToastDoNotClose', ['title' => 'Authentification requise', 'message' => "Veuillez vous authentifier avant d'exécuter cette action!", 'type' => 'warning']);
             }
         }
         else{

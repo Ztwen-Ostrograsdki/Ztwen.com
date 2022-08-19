@@ -50,6 +50,7 @@ class CreateCategory extends Component
                             ]);
                         }
                     }
+                    $this->emit('reloadAdminComponent');
                 }
                 else{
                     $this->dispatchBrowserEvent('FireAlert', ['title' => 'Echec ', 'message' => "La création de la catégorie a échoué", 'type' => 'error']);

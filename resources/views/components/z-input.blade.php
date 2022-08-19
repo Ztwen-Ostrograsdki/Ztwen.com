@@ -1,7 +1,7 @@
 @php
     $inputId = Str::random(15);
     if($hasLabel){
-        $placeholder = "Veuillez renseigner " . $labelTitle . ' ...';
+        $placeholder = "Veuillez renseigner " . strtolower($labelTitle) . ' ...';
     }
 @endphp
 

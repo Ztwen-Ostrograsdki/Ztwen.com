@@ -1,292 +1,108 @@
-<div class="m-0 p-0 w-100" >
-    <div class="z-justify-relative-top-80 zw-90 mx-auto">
-        <div class="w-100 mx-auto m-0 p-0 mt-3">
-            <div class="m-0 p-0 w-100 pb-3">
-                <form  class="d-flex mt-3 bg-transparent w-75" role="search">
+<div class="w-100 mx-auto" style="position: relative; top: 100px; margin-bottom: 100px !important">
+    <div class="zw-90 mx-auto">
+        <div class="w-100 mx-auto m-0 p-0">
+            <div class="m-0 p-0 w-100 pb-3 mx-auto">
+                <form  class="d-flex bg-transparent w-100 mx-auto" role="search">
                     <input wire:model="search" class=" form-control border border-secondary me-2 bg-transparent" type="search" placeholder="Chercher un article ou une catégorie..." aria-label="Search">
-                    <button class="btn btn-outline-success z-bg-secondary z-border-orange z-text-orange" type="submit">Search</button>
+                    <button class="btn btn-outline-success z-bg-secondary z-border-orange z-text-orange" type="submit">Chercher</button>
                 </form>
-                <main class="" style="z-index:2010;" >
-                    <nav class="navbar navbar-dark" >
-                        <div class="container-fluid" style="z-index:2010 !important;">
-                          <div class="zw-85 d-flex justify-content-start">
-                            <button style="left: 0!important" class="navbar-toggler py-2 px-3 pt-3 border z-border-orange z-bg-secondary mr-1 position-relative d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenuOfCategories" aria-controls="offcanvasMenuOfCategories">
-                                <span class="bi-bookmarks z-text-orange mr-2"></span>
-                                <h6>Les categories <span class="float-right z-text-orange ml-3">({{$categories->count()}})</span></h6>
-                            </button>
-                            @if ($category && !$search)
-                                <button style="left: 0!important" class="navbar-toggler w-auto py-2 px-1 pt-3 border z-border-orange z-bg-secondary mr-1 position-relative d-flex" type="button">
-                                    <span class=" z-text-orange mr-1">
-                                        <span class="float-left ml-1">
-                                            <span class="bi-bookmark-check mr-1"></span>
-                                            <span class="bi-chevron-right"></span>
-                                        </span>
-                                    </span>
-                                    <h6>
-                                        <span class="d-none d-xxl-inline d-xl-inline">Catégorie sélectionnée: </span>
-                                        <span>{{$category->name}} </span> 
-                                        <span class="float-right z-text-orange ml-3">({{$category->products->count()}})</span>
-                                        @isAdmin()
-                                            <span wire:click="editACategory({{$category->id}})" title="Editer cette catégorie" class="fa fa-edit text-white-50 float-right mt-1 ml-3 cursor-pointer"></span>
-                                        @endisAdmin
-                                        @if($category->products->count() > 0)
-                                            @isAdmin()
-                                                <span wire:click="createNewCategory" data-target="#createProductModal" data-toggle="modal" data-dismiss="modal" class="btn btn-primary border border-white">
-                                                    <span class="fa fa-plus"></span>
-                                                    Ajouter un article
-                                                </span>
-                                            @endisAdmin
-                                        @else
-                                            <span class="btn btn-info border border-warning">
-                                                Aucun article enregistré
-                                            </span>
-                                        @endif
-                                    </h6>
-                                </button>
-                            @endif
-                          </div>
-                          <div style="" class="offcanvas offcanvas-start text-white bg-dark" tabindex="-1" id="offcanvasMenuOfCategories" aria-labelledby="offcanvasMenuOfCategoriesLabel">
-                            <div class="offcanvas-header mt-5">
-                              <h5 class="offcanvas-title mt-5" id="offcanvasMenuOfCategoriesLabel">
-                                <span class="bi-list-check mr-2"></span> Liste
-                              </h5>
-                              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                            </div>
-                            <div class="offcanvas-body" style="z-index:30000 !important;" >
-                                <span>Plus de {{$productsCounter}} articles disponibles</span>
-                                <hr>
-                                <ul class="navbar-nav justify-content-end text-white flex-grow-1 pe-3">
-                                    @if($categories->count() > 0)
-                                        @foreach ($categories as $key => $cat)
-                                        <li wire:click="categorySelected({{$cat->id}})" class="nav-item cursor-pointer">
-                                            <span class="nav-link text-white-50">
-                                                <span class="bi-tag mr-2"></span>
-                                                <span>{{ __($cat->name) }}</span>
-                                                <span class="float-right">({{$cat->products->count()}})</span>
-                                                <span class="sr-only">(current)</span>
-                                            </span>
-                                        </li>
-                                        @endforeach
-                                    @else
-                                        <li class="nav-item cursor-pointer">
-                                            <span class="nav-link text-dark">
-                                                <span>Aucun article postés</span>
-                                            </span>
-                                        </li>
-                                    @endif
-                                    @auth
-                                    <x-z-linker :params="['id' => auth()->user()->id]" :routeName="'user-profil'" :isActive="request()->routeIs('user-profil')">
-                                        <span class="bi-person mr-2"></span>
-                                        <span>{{ __('Profil') }}</span>
-                                    </x-z-linker>
-                                    @endauth
-                                    @guest
-                                    <x-z-linker :routeName="'login'" :isActive="request()->routeIs('login')">
-                                        <span class="bi-person-check mr-2"></span>
-                                        <span>{{ __('Se connecter') }}</span>
-                                    </x-z-linker>
-                                    <x-z-linker :routeName="'registration'" :isActive="request()->routeIs('registration')">
-                                        <span class="bi-person-plus mr-2"></span>
-                                        <span>{{ __("S'inscrire") }}</span>
-                                    </x-z-linker>
-                                    @endguest
-                                    
-                                </ul>
-                                <form  class="d-flex mt-3" role="search">
-                                    <input class="form-control me-2" type="search" placeholder="Chercher un article ou une catégorie..." aria-label="Search">
-                                    <button class="btn btn-outline-success" type="submit">Search</button>
-                                </form>
-                            </div>
-                          </div>
-                        </div>
-                      </nav>
-                  </main>
-            </div>
-            <div class="row w-100 mx-auto justify-content-center mt-1">
-                <div class="col-12" >
-                    <div class="col-12 p-2" style="max-height: 700px; overflow: auto">
-                        @if ($search)
-                            <ul class="navbar-nav justify-content-end text-white flex-grow-1 pe-3">
-                                @if($targets)
-                                    @if ($targets['products'])
-                                        <h6 class="text-white-50 z-bg-secondary-light-opac border border-warning px-3 py-1 text-right">Plus de {{$targets['products']->count()}} articles trouvés</h6>
-                                        @foreach ($targets['products'] as $key => $t_p)
-                                        <div class="cursor-pointer d-xxl-none d-xl-none d-lg-none pb-1 row justify-between text-white-50 z-bg-secondary border mb-1">
-                                            <div class="p-0 m-0">
-                                                <a class="w-100" href="{{route('product-profil', ['id' => $t_p->id])}}">
-                                                    <img width="100%" class="border w-100" src="{{$t_p->getRandomDefaultImage()}}" alt="">
-                                                </a>
-                                            </div>
-                                            <div class="">
-                                                <h6 class="col-12">
-                                                    <h6>
-                                                        <span class="text-white">Article : </span> <span>{{$t_p->getName()}}</span>
-                                                    </h6>
-                                                    <h6>
-                                                        <span class="text-white">Catégorie : </span> <span>{{$t_p->category->name}}</span>
-                                                    </h6>
-                                                </h6>
-                                                <span>
-                                                    <span class="text-white">Description :</span> 
-                                                    <span>{{mb_substr($t_p->description, 0, 50)}}</span>
-                                                </span>
-                                                <span class="d-flex justify-between">
-                                                    <span>
-                                                        <strong>Prix : </strong> <span>{{$t_p->price}} FCFA</span>
-                                                    </span>
-                                                    <span>
-                                                        <strong>Total : </strong> <span>{{$t_p->total}}</span>
-                                                    </span>
-                                                    <span>
-                                                        <strong>Reduction : </strong> <span>{{$t_p->reduction}}</span> <span>%</span>
-                                                    </span>
-                                                </span>
-                                                <span class="d-flex justify-content-between">
-                                                    <span class="z-text-orange">
-                                                        <strong>
-                                                            <strong class="mt-1"> {{$t_p->likes->count()}}</strong>
-                                                            <strong class="fa fa-heart mt-1"></strong>
-                                                        </strong>
-                                                        <strong class="mx-3">
-                                                            <strong class="mt-1"> {{$t_p->comments->count()}} </strong>
-                                                            <strong class="fa fa-comments mt-1"></strong>
-                                                        </strong>
-                                                        <strong class="">
-                                                            <strong class="mt-1"> {{$t_p->seen}} </strong>
-                                                            <strong class="fa fa-eye mt-1"></strong>
-                                                        </strong>
-                                                    </span>
-                                                    <span>
-                                                        Posté : <span>{{$t_p->getDateAgoFormated()}}</span>
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="cursor-pointer d-none d-xxl-flex d-xl-flex d-lg-flex p-0 justify-between text-white-50 z-bg-secondary border mb-1">
-                                            <div class="p-0 m-0 zw-35">
-                                                <a class="w-100" href="{{route('product-profil', ['id' => $t_p->id])}}">
-                                                    <img width="100%" class="w-100 border-right h-100" src="{{$t_p->getRandomDefaultImage()}}" alt="image">
-                                                </a>
-                                            </div>
-                                            <div class="row m-0 p-0">
-                                                <h6 class="col-12 pt-2 d-flex justify-content-between">
-                                                    <span>
-                                                        <span class="text-white">Article : </span> <span>{{$t_p->getName()}}</span>
-                                                    </span>
-                                                    <span>
-                                                        <span class="text-white">Catégorie : </span> <span>{{$t_p->category->name}}</span>
-                                                    </span>
-                                                </h6>
-                                                <hr class="m-0 p-0">
-                                                <span>
-                                                    <span class="text-white">Description :</span> 
-                                                    <span>{{mb_substr($t_p->description, 0, 50)}}</span>
-                                                </span>
-                                                <span class="d-flex justify-between">
-                                                    <span>
-                                                        <strong>Prix : </strong> <span>{{$t_p->price}} FCFA</span>
-                                                    </span>
-                                                    <span>
-                                                        <strong>Total : </strong> <span>{{$t_p->total}}</span>
-                                                    </span>
-                                                    <span>
-                                                        <strong>vendus : </strong> <span>{{$t_p->sells}}</span>
-                                                    </span>
-                                                    <span>
-                                                        <strong>Reduction : </strong> <span>{{$t_p->reduction}}</span> <span>%</span>
-                                                    </span>
-                                                    <span class="z-text-orange">
-                                                        <strong>
-                                                            <strong class="mt-1"> {{$t_p->likes->count()}}</strong>
-                                                            <strong class="fa fa-heart mt-1"></strong>
-                                                        </strong>
-                                                        <strong class="mx-3">
-                                                            <strong class="mt-1"> {{$t_p->comments->count()}} </strong>
-                                                            <strong class="fa fa-comments mt-1"></strong>
-                                                        </strong>
-                                                        <strong class="">
-                                                            <strong class="mt-1"> {{$t_p->seen}} </strong>
-                                                            <strong class="fa fa-eye mt-1"></strong>
-                                                        </strong>
-                                                    </span>
-                                                </span>
-                                                <span class="">
-                                                    Posté : <span>{{$t_p->getDateAgoFormated()}}</span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        @endforeach
-                                    @else
-                                        <div class="border-bottom">
-                                            <h5 class="nav-link text-dark">
-                                                <span>Aucun article trouvés</span>
-                                            </h5>
-                                        </div>
-                                    @endif
-                                    @if ($targets['categories'])
-                                        <h6 class="text-white-50 z-bg-secondary-light-opac border border-warning px-3 py-1">Plus de {{$targets['categories']->count()}} catégories trouvées</h6>
-                                        @foreach ($targets['categories'] as $key => $t_c)
-                                            <li wire:click="categorySelected({{$t_c->id}})" class="nav-item cursor-pointer text-dark px-2">
-                                                <h5>
-                                                    <span class="bi-tag mr-2"></span>
-                                                    <span>{{ $t_c->name }}</span>
-                                                </h5>
-                                                <h6>Plus de {{$t_c->products->count()}} articles disponibles dans cette catégorie</h6>
-                                            </li>
-                                            <hr class="m-0 p-0 bg-secondary">
-                                        @endforeach
-                                    @else
-                                        <li class="nav-item cursor-pointer">
-                                            <span class="nav-link text-dark">
-                                                <span>Aucune catégorie trouvée</span>
-                                                <span class="sr-only">(current)</span>
-                                            </span>
-                                        </li>
-                                    @endif
-                                @else
-                                    <li class="nav-item cursor-pointer">
-                                        <span class="nav-link text-white-50">
-                                            <span>Aucun éléments correspondants à ''{{$search}}'' trouvés</span>
-                                            <span class="sr-only">(current)</span>
-                                        </span>
-                                    </li>
-                                @endif
-                            </ul>
-                        @else
-                            @if($category)
-                                @if($category->products->count() > 0)
-                                    <div class="zw-85 mx-auto my-1">
-                                        @foreach ($category->products as $p)
-                                            @include("livewire.components.product.product-profil-component", [
-                                                'product' => $p
-                                            ])
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <div class="w-100 mx-auto my-1 bg-info border d-flex flex-column justify-content-center">
-                                        <h3 class="text-warning p-2 text-center">
-                                            <span class="fa fa-warning mr-2"></span>
-                                            Oooups!!! Cette catégorie n'a pas encore d'articles enregistrés!
-                                        </h3>
-                                        @isAdmin()
-                                            <div class="mx-auto my-2 w-100 d-flex justify-content-center">
-                                                <span wire:click="createNewCategory" data-target="#createProductModal" data-toggle="modal" data-dismiss="modal" class="btn btn-primary border border-white">
-                                                    <span class="fa fa-plus"></span>
-                                                    Ajouter un article
-                                                </span>
-                                            </div>
-                                        @endisAdmin
-                                    </div>
-                                @endif
-                            @else
-                                <h4 class="cursor-pointer z-secondary text-center text-white py-2 border border-bottom px-2">
-                                    <span> Selectionnez une catégorie </span>
-                                </h4>
-                            @endif
-                        @endif
+                @if($search && strlen($search) > 2)
+                    <div class="w-75 mx-auto mt-1">
+                        <small class="text-dark">{{$categories->count()}} résultat(s) trouvés</small>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
+    <div class="col-11 mx-auto">
+        @if(count($categories) > 0)
+            <div class="col-md-12 mb-3">
+                <div class="filters-content">
+                    <div class="row grid">
+                        @foreach($categories as $category)
+                            <div class="col-lg-3 col-md-3 all des ">
+                                <div class="product-item shadow">
+                                    <a href="{{route('category.profil', ['slug' => $category->getSlug()])}}">
+                                        <img class="" src="{{$category->__profil()}}" alt="image de la catégorie {{$category->name}}">
+                                    </a>
+                                        <div class="down-content mx-auto px-lg-1">
+                                            <div class="">
+                                                <h4 class="w-100" title="{{$category->name}}">
+                                                    <strong>{{ mb_strlen($category->name) > 19 ? (mb_substr($category->name, 0, 20) . '...' ) : $category->name}} </strong>
+                                                    @auth
+                                                        @isMaster()
+                                                            <strong wire:click="editACategory({{$category->id}})" title="Editer cette catégorie" class="cursor-pointer fa fa-edit mt-1 text-dark float-right"></strong>
+                                                        @endisMaster
+                                                    @endauth
+                                                </h4>
+                                            </div>
+                                            <p class="px-1">
+                                                {{$category->description}}
+                                            </p>
+                                            <div class="row w-100 mx-auto">
+                                                <div class=" d-flex cursor-pointer justify-content-center col-12 mx-auto p-0">
+                                                    <div class="p-0 m-0 w-100">
+                                                        <x-dropdown align="right" width="48" class="text-bold m-0 w-75 p-0 bg-secondary border">
+                                                            <x-slot name="trigger">
+                                                                <x-responsive-nav-link class="text-white-50 cursor-pointer border z-bg-hover-secondary rounded p-0 px-2 py-2 m-0">
+                                                                        @if ($category->products->count() > 0)
+                                                                            @if ($category->products->count() == 1)
+                                                                                0{{ $category->products->count() }} article
+                                                                            @elseif ($category->products->count() < 10)
+                                                                                0{{ $category->products->count() }} articles
+                                                                            @else
+                                                                                {{ $category->products->count() }} articles
+                                                                            @endif
+                                                                        @else
+                                                                        Aucun article posté
+                                                                        @endif
+                                                                    <strong class="fa fa-chevron-down float-right mt-1"></strong>
+                                                                </x-responsive-nav-link>
+                                                            </x-slot>
+                                                            <x-slot name="content" :class="'text-left p-0 m-0'">
+                                                                @if ($category->products->count() > 0)
+                                                                    @foreach ($category->products as $p)
+                                                                        <x-dropdown-link class="nav-item text-left z-a w-100 p-0 m-0 z-hover-secondary text-bold"  href="{{route('product.profil', ['slug' => $p->slug])}}">
+                                                                            {{ mb_substr($p->getName(), 0, 14) }}
+                                                                        </x-dropdown-link>
+                                                                    @endforeach
+                                                                @else
+                                                                    <x-dropdown-link class="nav-item text-left w-100 p-0 m-0 z-hover-secondary text-bold" href="#">
+                                                                        <span class="fa  mr-3"></span>Aucun article
+                                                                    </x-dropdown-link>
+                                                                @endif
+                                                            </x-slot>
+                                                        </x-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    @if($categories->hasMorePages())
+                        <div class="w-100 mx-auto d-flex justify-center my-2 mb-3">
+                            <span  wire:click="loadMoreCategories({{$categories->lastPage()}})" class="py-2 px-3 text-white cursor-pointer zw-65 text-center d-inline-block z-bg-secondary-light-opac border border-white rounded">
+                                <span class="d-none d-xxl-inline d-lg-inline d-xl-inline d-md-inline">Charger </span> Plus de catégories...
+                                <span class="fa fa-arrow-right ml-2"></span>
+                            </span>
+                        </div>
+                    @elseif($categories->total() > $perPage && !$categories->hasMorePages())
+                        <div class="w-100 mx-auto d-flex justify-center my-2 mb-3">
+                            <span  wire:click="loadLessCategories({{$categories->lastPage()}})" class="py-2 px-3 text-white cursor-pointer zw-65 text-center d-inline-block z-bg-secondary-light-opac border border-white rounded">
+                                <span class="fa fa-arrow-left mr-2"></span>
+                                Revenir en arrière...
+                            </span>
+                        </div>
+                    @endif
+                </div>
+            </div>
+            @else
+            <div class="d-flex flex-column mx-auto text-center border col-10 rounded shadow p-3 my-2">
+                <span class="fa fa-warning text-orange fa-2x"></span>
+                <h5 class="text-orange">Ouups aucune catéogie trouvée !!!</h5>
+            </div>
+            @endif
+        </div>
 </div>

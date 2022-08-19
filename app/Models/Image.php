@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,21 +12,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Image extends Model
 {
     use HasFactory;
-    use SoftDeletes;
+    const DEFAULT_PROFIL_PHOTO_PATH = "/myassets/images/product_02.jpg";
 
     protected $fillable = [
         'name',
-        'product_id',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->morphedByMany(User::class, 'imageable');
     }
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->morphedByMany(Product::class, 'imageable');
+    }
+
+    public function category()
+    {
+        return $this->morphedByMany(Category::class, 'imageable');
     }
 
 }

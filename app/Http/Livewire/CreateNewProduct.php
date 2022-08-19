@@ -72,6 +72,7 @@ class CreateNewProduct extends Component
                             ]);
                         }
                     }
+                    $this->emit('reloadAdminComponent');
 
                 }
                 else{

@@ -7,21 +7,22 @@
             <th>Description</th>
             <th>Articles</th>
             <th>Vendus</th>
-            <th>Action</th>
+            <th x-show="!selector">Action</th>
+            <th x-show="selector">Sélectionnez</th>
         </thead>
         <tbody>
             @foreach($categories as $key => $c)
-                <tr class="z-hover-secondary p-0">
-                    <td class="text-center p-0">{{$key + 1}}</td>
+            <tr class="@if(in_array($c->id, $selecteds)) bg-secondary-light @endif">
+                <td class="text-center border-right">{{(($categories->currentPage() - 1) * $categories->perPage()) + $key + 1}}</td>
                     <td class="p-0">
-                        <a class="text-white col-9 d-inline-block pl-1" href="{{route('category', ['id' => $c->id])}}">
+                        <a class="text-white col-9 d-inline-block pl-1" href="{{route('category.profil', ['slug' => $c->getSlug()])}}">
                             {{$c->name}}
                         </a>
                         <span wire:click="editACategory({{$c->id}})" title="Editer cette catégorie" class="col-3 cursor-pointer float-right fa fa-edit mt-1 text-white"></span>
 
                     </td>
                     <td class="p-0">
-                        <a class="text-white w-100 d-inline-block pl-1" href="{{route('category', ['id' => $c->id])}}">
+                        <a class="text-white w-100 d-inline-block pl-1" href="{{route('category.profil', ['slug' => $c->getSlug()])}}">
                             {{ mb_substr($c->description, 0, 27) }} ...
                         </a>
                     </td>
@@ -46,7 +47,7 @@
                             <x-slot name="content" :class="'text-left p-0 m-0'">
                                 @if ($c->products->count() > 0)
                                     @foreach ($c->products as $p)
-                                        <x-dropdown-link class="nav-item text-left z-a w-100 p-0 m-0 z-hover-secondary text-bold"  href="{{route('product-profil', ['id' => $p->id])}}">
+                                        <x-dropdown-link class="nav-item text-left z-a w-100 p-0 m-0 z-hover-secondary text-bold"  href="{{route('product.profil', ['slug' => $p->slug])}}">
                                             {{ mb_substr($p->getName(), 0, 14) }}
                                         </x-dropdown-link>
                                     @endforeach
@@ -59,7 +60,7 @@
                         </x-dropdown>
                     </td>
                     <td class="text-center">{{ $c->products->count() }}</td>
-                    <td class="text-center w-auto p-0 m-0">
+                    <td x-show="!selector" class="text-center w-auto p-0 m-0">
                         @if($c->deleted_at)
                         <span class="row mx-auto w-100 m-0 p-0">
                             <span class="text-danger col-6 p-2 px-3 cursor-pointer fa fa-trash"></span>
@@ -71,6 +72,9 @@
                             <span title="Envoyez cette catégorie dans la corbeille: Elle sera retiré de la liste des catégorie ainsi que les différents articles qui lui sont associés" wire:click="deleteACategory({{$c->id}})" class="text-info col-6 p-2 px-3 cursor-pointer fa fa-trash border-right border-left"></span>
                         </span>
                         @endif
+                    </td>
+                    <td x-show="selector" class="p-0" title="Sélectionnez">
+                        <input wire:model="selecteds" value="{{$c->id}}" type="checkbox" class="form-checkbox m-0 mx-auto w-100 py-3 cursor-pointer fa fa-1x bg-transparent">
                     </td>
                 </tr>
             @endforeach

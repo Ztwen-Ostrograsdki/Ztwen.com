@@ -331,20 +331,20 @@ hr {
     background-color: #334 !important;
 }
 
+.z-bg-secondary-light-opac {
+    background-color: rgba(10, 10, 40, 0.87) !important;
+}
+
 .z-bg-secondary-light {
-    background-color: #335 !important;
+    background-color: rgba(10, 10, 40, 0.97) !important;
 }
 
 .bg-secondary-light {
-    background-color: #335 !important;
-}
-
-.z-bg-secondary-light-opac {
-    background-color: rgba(10, 10, 40, 0.7) !important;
+    background-color: rgba(10, 10, 50, 0.97) !important;
 }
 
 .bg-secondary-light-opac {
-    background-color: rgba(10, 10, 40, 0.7) !important;
+    background-color: rgba(10, 10, 40, 0.87) !important;
 }
 
 .z-bg-secondary {
@@ -400,7 +400,7 @@ hr {
 }
 
 .border-orange {
-    border-color: #f33f3f !important;
+    border: thin solid #f33f3f !important;
 }
 
 .z-color-hover-orange:hover {
